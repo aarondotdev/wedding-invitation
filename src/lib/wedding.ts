@@ -7,6 +7,8 @@ export const wedding = {
   displayDate: "Saturday, June 12, 2027",
   hashtag: "#ForeverStartsHere",
   rsvpBy: "May 1, 2027",
+  // RSVPs are accepted until this moment (end of the rsvpBy day)
+  rsvpDeadline: "2027-05-01T23:59:59-07:00",
   events: [
     {
       title: "Ceremony",
@@ -32,3 +34,7 @@ export const wedding = {
   ],
   dressCode: "Garden formal — soft pastels welcome",
 };
+
+export function isRsvpOpen() {
+  return Date.now() <= new Date(wedding.rsvpDeadline).getTime();
+}
