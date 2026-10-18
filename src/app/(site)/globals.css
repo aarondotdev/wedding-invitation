@@ -1,38 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf7f2;
-  --foreground: #3d3a35;
-  --accent: #b08d57;
-  --blush: #f3e6e1;
+  --background: #2b2723;
+  --surface: #34302b;
+  --foreground: #f4efe8;
+  --muted: #a8a097;
+  --accent: #c8a46a;
+  --line: rgb(244 239 232 / 0.14);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --color-blush: var(--blush);
-  --font-serif: var(--font-serif);
+  --color-line: var(--line);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
   --font-script: var(--font-script);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 300;
 }
 
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+::selection {
+  background: var(--accent);
+  color: var(--background);
 }
 
-.animate-fade-up {
-  animation: fade-up 1s ease-out both;
+/* Display headings: Bodoni Moda at a large optical size, tight leading like an editorial spread */
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "opsz" 96;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Hero glow behind the portrait */
+.hero-glow {
+  background: radial-gradient(ellipse 55% 60% at 50% 45%, rgb(122 100 64 / 0.45), transparent 70%),
+    var(--background);
+}
+
+/* While the motion layer starts, keep animated elements hidden so they don't flash. The class is
+   removed by InvitationMotion, or after 3 s by the inline fallback if scripts never run. */
+html.motion-pending [data-split],
+html.motion-pending [data-fade],
+html.motion-pending [data-reveal] {
+  visibility: hidden;
+}
+
+/* SplitText line masks */
+.split-line-mask {
+  overflow: clip;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+/* ScrollSmoother needs the wrapper to fill the viewport */
+#smooth-wrapper {
+  overflow: hidden;
 }

@@ -1,12 +1,26 @@
 // Starting values for the "Page text" and "Sharing & SEO" globals in the CMS (/cms).
 // Edit the wording there; these prefill the form and are used until a field has been saved.
 export const pageTextDefaults = {
+  nav: {
+    story: "Our story",
+    celebration: "Celebration",
+    schedule: "Schedule",
+    rsvp: "RSVP",
+  },
   hero: {
     greeting: "Dear {name},",
     intro: "Together with their families",
     ampersand: "&",
     invitationLine: "request the pleasure of your company",
     rsvpButton: "RSVP",
+  },
+  story: {
+    title: "Two hearts under one moon",
+    text: "Every love story is beautiful, but ours is our favourite. After years of laughter, adventures and quiet moments together, we're ready to begin our next chapter, and we would love for you to be there.",
+  },
+  statement: {
+    text: "We would be honoured to celebrate this day with you",
+    note: "Your presence is the greatest gift. Come as you are, and leave with memories we will share forever.",
   },
   sections: {
     countdownTitle: "Counting down",
@@ -58,6 +72,18 @@ export const pageTextDefaults = {
 };
 
 export type PageText = typeof pageTextDefaults;
+
+export type SitePhoto = { url: string; width: number; height: number; alt: string };
+
+// Photos chosen in "Page text". Only the hero has a bundled fallback; the others are hidden when empty.
+export type PagePhotos = { hero: SitePhoto; story: SitePhoto | null; statement: SitePhoto | null };
+
+export const DEFAULT_HERO_PHOTO: SitePhoto = {
+  url: "/couple-hero.jpg",
+  width: 1200,
+  height: 1534,
+  alt: "Lorenz and Jenzell embracing under a glowing crescent moon",
+};
 
 // Empty strings mean "use the automatic wording" (built from the names and date in getSeo()).
 export const seoDefaults = {

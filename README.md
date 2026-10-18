@@ -23,10 +23,12 @@ Everything visitors read or see is changed here. You don't need to touch any cod
 
 | Section | What it controls |
 | --- | --- |
-| **Wedding details** | The couple's names, wedding date and time (drives the countdown), how the date is written, the RSVP deadline, hashtag, dress code, the ceremony and reception cards (time, venue, address, map link), and the order of the day |
-| **Page text** | All other wording, in tabs that follow the page from top to bottom: the greeting and lines around the names, section headings, countdown labels, the reply form's options and buttons, thank-you and other messages, the home page, and the "invalid link" page |
+| **Wedding details** | The couple's names, wedding date and time (drives the countdown), how the date is written, the RSVP deadline, hashtag, dress code, the ceremony and reception (time, venue, address, map link, optional photo), and the order of the day |
+| **Page text** | All other wording and the main photos, in tabs that follow the page from top to bottom: **Top of the invitation** (greeting, lines around the names, the large photo behind the names), **Menu** (the links at the top, which also label each section), **Our story** (heading, text, optional photo), **Big statement** (the large sentence that lights up as guests scroll, a short note, optional photo), section headings, countdown labels, the reply form, reply messages, the home page and the "invalid link" page |
 | **Sharing & SEO** | The browser-tab title and the preview shown when a link is pasted into WhatsApp, Messenger, Viber or iMessage: title, text and image |
 | **Images** | Photos you've uploaded. Each needs a short description. |
+
+**Photos** appear in black and white on the invitation; the originals you upload stay in colour. Tall (portrait) photos work best. Any photo except the one behind the names can be left empty, and that part of the page simply shows text.
 
 **Words in `{curly brackets}`** are filled in automatically, e.g. `{name}` becomes the guest's name. Keep them exactly as they are; the hint under each field says which ones it uses.
 

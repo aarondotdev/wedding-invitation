@@ -87,6 +87,13 @@ export const Wedding: GlobalConfig = {
         { name: "venue", type: "text", required: true },
         { name: "address", type: "text", required: true },
         { name: "mapUrl", type: "text", label: "Map URL" },
+        {
+          name: "photo",
+          type: "upload",
+          relationTo: "media",
+          label: "Photo",
+          admin: { description: "Optional photo of the venue, shown in black and white beside this event." },
+        },
       ],
     },
     {

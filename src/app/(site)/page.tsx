@@ -1,4 +1,3 @@
-import Divider from "@/components/Divider";
 import { getPageText } from "@/lib/site-content";
 import { getWedding } from "@/lib/wedding";
 
@@ -6,16 +5,14 @@ export default async function Home() {
   const [wedding, text] = await Promise.all([getWedding(), getPageText()]);
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center bg-gradient-to-b from-blush to-background px-6 py-20 text-center">
-      <h1 className="font-script text-7xl leading-tight sm:text-8xl">
+    <main className="hero-glow flex flex-1 flex-col items-center justify-center px-6 py-20 text-center">
+      <h1 className="font-display text-[clamp(4rem,13vw,11rem)] leading-[0.85]">
         {wedding.partner1}
-        <span className="mx-4 block text-5xl text-accent sm:inline sm:text-6xl">
-          {text.hero.ampersand}
-        </span>
+        <span className="my-3 block font-script text-[0.32em] leading-none text-accent">{text.hero.ampersand}</span>
         {wedding.partner2}
       </h1>
-      <Divider />
-      <p className="max-w-md text-xl italic">{text.pages.homeMessage}</p>
+      <div aria-hidden className="my-10 h-16 w-px bg-accent" />
+      <p className="max-w-md text-lg leading-relaxed text-muted">{text.pages.homeMessage}</p>
     </main>
   );
 }

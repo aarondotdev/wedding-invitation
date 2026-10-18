@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  images: {
+    // CMS uploads are served from Vercel Blob
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
+  },
   experimental: {
     // Guest list uploads are capped at 2 MB in the import action; leave room for multipart overhead
     serverActions: { bodySizeLimit: "3mb" },

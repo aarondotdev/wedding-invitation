@@ -70,7 +70,24 @@ as a "Theme" global rather than in CSS constants.
   `public/og-default.jpg`
 - `media` collection: uploads in Vercel Blob (unique filenames, direct public URLs)
 
+- `pageText` also holds the photos: `hero.photo` (falls back to `public/couple-hero.jpg`), `story.photo`,
+  `statement.photo`; wedding events have an optional `photo`. Read via `photos` from `getPageText()` and
+  `event.photo` from `getWedding()`; empty optional photos hide that block.
+
 There are no known hard-coded gaps. Keep it that way: new visible text gets a field in the same change.
+
+## Design and animation
+
+- Guest pages use the editorial design: CSS tokens in `src/app/(site)/globals.css` (`background`, `surface`,
+  `foreground`, `muted`, `accent`, `line`), `font-display` (Bodoni Moda) for headings, Outfit for body,
+  `font-script` (Great Vibes) for signatures, numbered `SectionLabel`s with hairline rules.
+- Animation is GSAP, driven by `src/components/motion/InvitationMotion.tsx`. Keep pages as Server Components
+  and opt elements in with data attributes instead of writing per-component GSAP:
+  `data-hero-title`, `data-split`, `data-fade`, `data-reveal`, `data-parallax`, `data-scrub`, `data-draw`.
+- Everything must still work with reduced motion (no animation) and without JavaScript (the
+  `motion-pending` class only hides elements briefly and is removed after 3 s regardless).
+- Don't put Tailwind `translate-*` on elements GSAP animates (`data-reveal`, `data-parallax`); GSAP and
+  CSS `translate` stack. Position them with flexbox/grid instead.
 
 ## Other conventions
 

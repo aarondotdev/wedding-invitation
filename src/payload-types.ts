@@ -369,6 +369,10 @@ export interface Wedding {
     venue: string;
     address: string;
     mapUrl?: string | null;
+    /**
+     * Optional photo of the venue, shown in black and white beside this event.
+     */
+    photo?: (number | null) | Media;
     id?: string | null;
   }[];
   schedule?:
@@ -410,6 +414,56 @@ export interface PageText {
      * Button that jumps down to the reply form.
      */
     rsvpButton?: string | null;
+    /**
+     * Large portrait behind the names. A tall photo works best. Leave empty to use the built-in photo. Shown in black and white.
+     */
+    photo?: (number | null) | Media;
+  };
+  nav?: {
+    /**
+     * Link to the story section.
+     */
+    story?: string | null;
+    /**
+     * Link to the ceremony and reception.
+     */
+    celebration?: string | null;
+    /**
+     * Link to the order of the day.
+     */
+    schedule?: string | null;
+    /**
+     * Link to the reply form.
+     */
+    rsvp?: string | null;
+  };
+  story?: {
+    /**
+     * Large heading of the story section.
+     */
+    title?: string | null;
+    /**
+     * A few sentences about the two of you.
+     */
+    text?: string | null;
+    /**
+     * Optional photo next to the story. Leave empty for text only. Shown in black and white.
+     */
+    photo?: (number | null) | Media;
+  };
+  statement?: {
+    /**
+     * One sentence shown in very large letters that light up as guests scroll. Keep it short (about 6–10 words).
+     */
+    text?: string | null;
+    /**
+     * Short paragraph beside the statement.
+     */
+    note?: string | null;
+    /**
+     * Optional small photo beside the statement. Shown in black and white.
+     */
+    photo?: (number | null) | Media;
   };
   sections?: {
     /**
@@ -620,6 +674,7 @@ export interface WeddingSelect<T extends boolean = true> {
         venue?: T;
         address?: T;
         mapUrl?: T;
+        photo?: T;
         id?: T;
       };
   schedule?:
@@ -646,6 +701,29 @@ export interface PageTextSelect<T extends boolean = true> {
         ampersand?: T;
         invitationLine?: T;
         rsvpButton?: T;
+        photo?: T;
+      };
+  nav?:
+    | T
+    | {
+        story?: T;
+        celebration?: T;
+        schedule?: T;
+        rsvp?: T;
+      };
+  story?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        photo?: T;
+      };
+  statement?:
+    | T
+    | {
+        text?: T;
+        note?: T;
+        photo?: T;
       };
   sections?:
     | T
