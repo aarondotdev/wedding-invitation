@@ -76,7 +76,7 @@ as a "Theme" global rather than in CSS constants.
   `getDetails()`
 - Arrays: a never-saved global shows the placeholder defaults; once saved, render exactly what was saved
   (an emptied list hides its section).
-- `pageText` also holds the photos: `hero.photo` (falls back to `public/couple-hero.jpg`), `story.photo`,
+- `pageText` also holds the photos (all optional; empty hides the block): `hero.photo`, `story.photo`,
   `statement.photo`, `statement.bandPhoto`, `statement.secondaryPhoto`, and `story.chapters[].photo`;
   wedding events have an optional `photo`. Read via `photos` from `getPageText()` and
   `event.photo` from `getWedding()`; empty optional photos hide that block.
