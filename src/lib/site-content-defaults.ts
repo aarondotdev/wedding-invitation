@@ -4,7 +4,11 @@ export const pageTextDefaults = {
   nav: {
     story: "Our story",
     celebration: "Celebration",
+    entourage: "Entourage",
+    details: "Details",
     schedule: "Schedule",
+    gallery: "Gallery",
+    faq: "FAQ",
     rsvp: "RSVP",
   },
   hero: {
@@ -76,7 +80,22 @@ export type PageText = typeof pageTextDefaults;
 export type SitePhoto = { url: string; width: number; height: number; alt: string };
 
 // Photos chosen in "Page text". Only the hero has a bundled fallback; the others are hidden when empty.
-export type PagePhotos = { hero: SitePhoto; story: SitePhoto | null; statement: SitePhoto | null };
+export type PagePhotos = {
+  hero: SitePhoto;
+  story: SitePhoto | null;
+  statement: SitePhoto | null;
+  statementBand: SitePhoto | null;
+  statementSecondary: SitePhoto | null;
+};
+
+// Numbered story rows (placeholders; edit them in the CMS)
+export const storyChapterDefaults = [
+  { title: "How we met", text: "A few lines about where your story began. Edit this in the CMS." },
+  { title: "Falling in love", text: "A few lines about the moments that brought you closer. Edit this in the CMS." },
+  { title: "Forever starts here", text: "A few lines about the proposal and what comes next. Edit this in the CMS." },
+];
+
+export type StoryChapter = { title: string; text: string; photo: SitePhoto | null };
 
 export const DEFAULT_HERO_PHOTO: SitePhoto = {
   url: "/couple-hero.jpg",

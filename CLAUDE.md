@@ -70,8 +70,15 @@ as a "Theme" global rather than in CSS constants.
   `public/og-default.jpg`
 - `media` collection: uploads in Vercel Blob (unique filenames, direct public URLs)
 
+- `entourage` global (`src/payload/globals/Entourage.ts`): parents, principal sponsors and entourage groups
+  (nested `names` arrays), read with `getEntourage()`; placeholder names in `src/lib/details-defaults.ts`
+- `details` global (`src/payload/globals/Details.ts`): dress code + palette, FAQ, gallery; read with
+  `getDetails()`
+- Arrays: a never-saved global shows the placeholder defaults; once saved, render exactly what was saved
+  (an emptied list hides its section).
 - `pageText` also holds the photos: `hero.photo` (falls back to `public/couple-hero.jpg`), `story.photo`,
-  `statement.photo`; wedding events have an optional `photo`. Read via `photos` from `getPageText()` and
+  `statement.photo`, `statement.bandPhoto`, `statement.secondaryPhoto`, and `story.chapters[].photo`;
+  wedding events have an optional `photo`. Read via `photos` from `getPageText()` and
   `event.photo` from `getWedding()`; empty optional photos hide that block.
 
 There are no known hard-coded gaps. Keep it that way: new visible text gets a field in the same change.
@@ -83,7 +90,13 @@ There are no known hard-coded gaps. Keep it that way: new visible text gets a fi
   `font-script` (Great Vibes) for signatures, numbered `SectionLabel`s with hairline rules.
 - Animation is GSAP, driven by `src/components/motion/InvitationMotion.tsx`. Keep pages as Server Components
   and opt elements in with data attributes instead of writing per-component GSAP:
-  `data-hero-title`, `data-split`, `data-fade`, `data-reveal`, `data-parallax`, `data-scrub`, `data-draw`.
+  `data-hero-title`, `data-split`, `data-fade`, `data-reveal`, `data-parallax`, `data-scrub`, `data-draw`,
+  `data-hscroll` (+ `data-hscroll-track`), `data-colorize`.
+- Image placements follow the reference (dev.bricksfly.com/dance): alternating numbered `FeatureRow`s,
+  a full-bleed band into the statement, a small portrait beside and a large landscape below the statement.
+- CMS hooks must call `expireTags()` (`src/lib/revalidate.ts`), not `revalidateTag` directly: hooks also run
+  in `payload run` scripts where Next's cache isn't available.
+- Personal photos go in the CMS (Vercel Blob), not in `public/` — the repo is public.
 - Everything must still work with reduced motion (no animation) and without JavaScript (the
   `motion-pending` class only hides elements briefly and is removed after 3 s regardless).
 - Don't put Tailwind `translate-*` on elements GSAP animates (`data-reveal`, `data-parallax`); GSAP and

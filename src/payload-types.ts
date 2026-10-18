@@ -90,11 +90,15 @@ export interface Config {
   globals: {
     wedding: Wedding;
     pageText: PageText;
+    entourage: Entourage;
+    details: Detail;
     seo: Seo;
   };
   globalsSelect: {
     wedding: WeddingSelect<false> | WeddingSelect<true>;
     pageText: PageTextSelect<false> | PageTextSelect<true>;
+    entourage: EntourageSelect<false> | EntourageSelect<true>;
+    details: DetailsSelect<false> | DetailsSelect<true>;
     seo: SeoSelect<false> | SeoSelect<true>;
   };
   locale: null;
@@ -429,9 +433,25 @@ export interface PageText {
      */
     celebration?: string | null;
     /**
+     * Link to the family and entourage.
+     */
+    entourage?: string | null;
+    /**
+     * Link to the dress code.
+     */
+    details?: string | null;
+    /**
      * Link to the order of the day.
      */
     schedule?: string | null;
+    /**
+     * Label of the photo gallery.
+     */
+    gallery?: string | null;
+    /**
+     * Link to the questions and answers.
+     */
+    faq?: string | null;
     /**
      * Link to the reply form.
      */
@@ -450,6 +470,23 @@ export interface PageText {
      * Optional photo next to the story. Leave empty for text only. Shown in black and white.
      */
     photo?: (number | null) | Media;
+    /**
+     * Numbered rows under the story, each with a large photo that alternates left and right (01, 02, 03…). Leave empty to hide them.
+     */
+    chapters?:
+      | {
+          /**
+           * e.g. "How we met"
+           */
+          title: string;
+          text?: string | null;
+          /**
+           * A tall (portrait) photo works best.
+           */
+          photo?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
   };
   statement?: {
     /**
@@ -461,9 +498,17 @@ export interface PageText {
      */
     note?: string | null;
     /**
+     * Full-width wide photo shown just above the statement. A landscape photo works best. Leave empty to hide it.
+     */
+    bandPhoto?: (number | null) | Media;
+    /**
      * Optional small photo beside the statement. Shown in black and white.
      */
     photo?: (number | null) | Media;
+    /**
+     * Optional large landscape photo below the statement, on the right.
+     */
+    secondaryPhoto?: (number | null) | Media;
   };
   sections?: {
     /**
@@ -619,6 +664,148 @@ export interface PageText {
   createdAt?: string | null;
 }
 /**
+ * Parents, principal sponsors and the entourage, shown in their own section of the invitation.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "entourage".
+ */
+export interface Entourage {
+  id: number;
+  /**
+   * Large heading of the section.
+   */
+  title?: string | null;
+  /**
+   * A sentence under the heading. Leave empty to hide it.
+   */
+  intro?: string | null;
+  /**
+   * Usually two groups: the groom's parents and the bride's parents.
+   */
+  parents?:
+    | {
+        /**
+         * e.g. "Bridesmaids" or "Parents of the Bride".
+         */
+        title: string;
+        /**
+         * One name per row. Drag rows to change the order.
+         */
+        names?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  sponsors?: {
+    title?: string | null;
+    /**
+     * One name per row. Shown in two columns.
+     */
+    names?:
+      | {
+          name: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Best man, maid of honour, groomsmen, bridesmaids, secondary sponsors, bearers and flower girls. Add, remove or reorder groups freely.
+   */
+  entourage?:
+    | {
+        /**
+         * e.g. "Bridesmaids" or "Parents of the Bride".
+         */
+        title: string;
+        /**
+         * One name per row. Drag rows to change the order.
+         */
+        names?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Dress code, frequently asked questions and the photo gallery.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "details".
+ */
+export interface Detail {
+  id: number;
+  dressCode?: {
+    title?: string | null;
+    /**
+     * Explain the attire. The short dress-code line in Wedding details is shown with the venues.
+     */
+    description?: string | null;
+    /**
+     * Leave empty to hide it.
+     */
+    note?: string | null;
+    /**
+     * Shown as colour swatches. Leave empty to hide the palette.
+     */
+    palette?:
+      | {
+          /**
+           * e.g. Sage
+           */
+          name: string;
+          /**
+           * A hex code like #A3B18A. Find one at htmlcolorcodes.com.
+           */
+          color: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional photo or illustration of the attire.
+     */
+    photo?: (number | null) | Media;
+  };
+  faq?: {
+    title?: string | null;
+    intro?: string | null;
+    /**
+     * Guests tap a question to see its answer. Drag to reorder.
+     */
+    items?:
+      | {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  gallery?: {
+    title?: string | null;
+    intro?: string | null;
+    /**
+     * Shown in this order. On computers they scroll sideways; leave empty to hide the gallery.
+     */
+    photos?:
+      | {
+          photo: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * How the website appears in browser tabs and when a link is shared in WhatsApp, Messenger, Viber or iMessage. Chat apps can take a while to show changes for links shared before.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -708,7 +895,11 @@ export interface PageTextSelect<T extends boolean = true> {
     | {
         story?: T;
         celebration?: T;
+        entourage?: T;
+        details?: T;
         schedule?: T;
+        gallery?: T;
+        faq?: T;
         rsvp?: T;
       };
   story?:
@@ -717,13 +908,23 @@ export interface PageTextSelect<T extends boolean = true> {
         title?: T;
         text?: T;
         photo?: T;
+        chapters?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              photo?: T;
+              id?: T;
+            };
       };
   statement?:
     | T
     | {
         text?: T;
         note?: T;
+        bandPhoto?: T;
         photo?: T;
+        secondaryPhoto?: T;
       };
   sections?:
     | T
@@ -779,6 +980,101 @@ export interface PageTextSelect<T extends boolean = true> {
         homeMessage?: T;
         invalidLinkTitle?: T;
         invalidLinkMessage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "entourage_select".
+ */
+export interface EntourageSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  parents?:
+    | T
+    | {
+        title?: T;
+        names?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  sponsors?:
+    | T
+    | {
+        title?: T;
+        names?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+      };
+  entourage?:
+    | T
+    | {
+        title?: T;
+        names?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "details_select".
+ */
+export interface DetailsSelect<T extends boolean = true> {
+  dressCode?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        note?: T;
+        palette?:
+          | T
+          | {
+              name?: T;
+              color?: T;
+              id?: T;
+            };
+        photo?: T;
+      };
+  faq?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        items?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
+      };
+  gallery?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        photos?:
+          | T
+          | {
+              photo?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

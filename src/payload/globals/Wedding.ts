@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { expireTags } from "@/lib/revalidate";
 import type { GlobalConfig } from "payload";
 import { WEDDING_CACHE_TAG, weddingDefaults } from "@/lib/wedding-defaults";
 
@@ -12,7 +12,7 @@ export const Wedding: GlobalConfig = {
     afterChange: [
       () => {
         // Expire immediately so the couple sees their edit on the next page load
-        revalidateTag(WEDDING_CACHE_TAG, { expire: 0 });
+        expireTags(WEDDING_CACHE_TAG);
       },
     ],
   },

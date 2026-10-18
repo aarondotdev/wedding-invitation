@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { after, userAgent } from "next/server";
 import Invitation from "@/components/Invitation";
-import { getPageText } from "@/lib/site-content";
+import { getDetails, getEntourage, getPageText } from "@/lib/site-content";
 import { getGuestByCode, markOpened } from "@/lib/supabase";
 import { getWedding, isRsvpOpen } from "@/lib/wedding";
 
@@ -33,7 +33,15 @@ export default async function InvitePage({ params }: PageProps<"/i/[code]">) {
     after(() => markOpened(guest));
   }
 
-  const [wedding, text, rsvpOpen] = await Promise.all([getWedding(), getPageText(), isRsvpOpen()]);
+  const [wedding, text, entourage, details, rsvpOpen] = await Promise.all([
+    getWedding(),
+    getPageText(),
+    getEntourage(),
+    getDetails(),
+    isRsvpOpen(),
+  ]);
 
-  return <Invitation wedding={wedding} text={text} guest={guest} rsvpOpen={rsvpOpen} />;
+  return (
+    <Invitation wedding={wedding} text={text} entourage={entourage} details={details} guest={guest} rsvpOpen={rsvpOpen} />
+  );
 }

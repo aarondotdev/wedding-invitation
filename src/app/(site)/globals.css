@@ -66,3 +66,10 @@ html.motion-pending [data-reveal] {
 #smooth-wrapper {
   overflow: hidden;
 }
+
+/* Horizontal gallery while pinned (set by InvitationMotion on wide screens) */
+[data-hscroll-track].is-hscroll {
+  display: flex;
+  width: max-content;
+  gap: 1rem;
+}

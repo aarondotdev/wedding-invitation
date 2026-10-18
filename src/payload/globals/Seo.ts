@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { expireTags } from "@/lib/revalidate";
 import type { GlobalConfig } from "payload";
 import { SEO_CACHE_TAG, seoDefaults } from "@/lib/site-content-defaults";
 
@@ -15,7 +15,7 @@ export const Seo: GlobalConfig = {
   hooks: {
     afterChange: [
       () => {
-        revalidateTag(SEO_CACHE_TAG, { expire: 0 });
+        expireTags(SEO_CACHE_TAG);
       },
     ],
   },

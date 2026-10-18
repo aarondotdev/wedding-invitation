@@ -8,6 +8,8 @@ import { fileURLToPath } from "url";
 import { migrations } from "./migrations";
 import { Media } from "./payload/collections/Media";
 import { Users } from "./payload/collections/Users";
+import { Details } from "./payload/globals/Details";
+import { Entourage } from "./payload/globals/Entourage";
 import { PageText } from "./payload/globals/PageText";
 import { Seo } from "./payload/globals/Seo";
 import { Wedding } from "./payload/globals/Wedding";
@@ -23,7 +25,7 @@ export default buildConfig({
     meta: { titleSuffix: " · Wedding CMS" },
   },
   collections: [Users, Media],
-  globals: [Wedding, PageText, Seo],
+  globals: [Wedding, PageText, Entourage, Details, Seo],
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
   db: postgresAdapter({
