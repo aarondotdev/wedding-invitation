@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { after } from "next/server";
+import { headers } from "next/headers";
+import { after, userAgent } from "next/server";
 import Invitation from "@/components/Invitation";
 import { getGuestByCode, markOpened } from "@/lib/supabase";
 import { getWedding, isRsvpOpen } from "@/lib/wedding";
@@ -9,6 +10,10 @@ import { getWedding, isRsvpOpen } from "@/lib/wedding";
 // guest is verified. Invalid codes render not-found.tsx (noindex; status stays 200 once
 // the shell has streamed).
 export const instant = false;
+
+// Chat-app link preview fetchers not always covered by userAgent().isBot
+const PREVIEW_BOTS =
+  /facebookexternalhit|facebookcatalog|meta-externalagent|WhatsApp|Viber|TelegramBot|Twitterbot|Slackbot|Discordbot|LinkedInBot|SkypeUriPreview|Snapchat|Pinterest|redditbot|Applebot|Google-PageRenderer|bot\b|crawler|spider|preview/i;
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -19,7 +24,13 @@ export default async function InvitePage({ params }: PageProps<"/i/[code]">) {
   const guest = await getGuestByCode(code);
   if (!guest) notFound();
 
-  after(() => markOpened(guest));
+  // Link previews (WhatsApp, Messenger, etc.) fetch the page when a link is pasted into a chat;
+  // only count real visits as "opened".
+  const requestHeaders = await headers();
+  const ua = requestHeaders.get("user-agent") ?? "";
+  if (!userAgent({ headers: requestHeaders }).isBot && !PREVIEW_BOTS.test(ua)) {
+    after(() => markOpened(guest));
+  }
 
   const [wedding, rsvpOpen] = await Promise.all([getWedding(), isRsvpOpen()]);
 
