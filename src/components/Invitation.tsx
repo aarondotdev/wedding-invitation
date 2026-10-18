@@ -2,7 +2,7 @@ import Countdown from "@/components/Countdown";
 import Divider from "@/components/Divider";
 import RsvpForm from "@/components/RsvpForm";
 import type { Guest } from "@/lib/supabase";
-import { wedding } from "@/lib/wedding";
+import type { Wedding } from "@/lib/wedding-defaults";
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -13,9 +13,11 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 export default function Invitation({
+  wedding,
   guest,
   rsvpOpen,
 }: {
+  wedding: Wedding;
   guest: Guest;
   rsvpOpen: boolean;
 }) {
@@ -38,7 +40,7 @@ export default function Invitation({
           </p>
           <Divider />
           <p className="text-2xl tracking-wide sm:text-3xl">{wedding.displayDate}</p>
-          <p className="mt-2 text-lg text-foreground/70">{wedding.events[0].venue}</p>
+          <p className="mt-2 text-lg text-foreground/70">{wedding.events[0]?.venue}</p>
           <a
             href="#rsvp"
             className="mt-10 inline-block rounded-full border border-accent px-8 py-3 text-sm uppercase tracking-[0.25em] text-accent transition hover:bg-accent hover:text-white"
@@ -71,20 +73,24 @@ export default function Invitation({
               <p className="mt-4 text-3xl">{event.time}</p>
               <p className="mt-4 text-xl font-medium">{event.venue}</p>
               <p className="text-foreground/70">{event.address}</p>
-              <a
-                href={event.mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-block text-sm uppercase tracking-[0.2em] text-accent underline-offset-4 hover:underline"
-              >
-                View map
-              </a>
+              {event.mapUrl && (
+                <a
+                  href={event.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-block text-sm uppercase tracking-[0.2em] text-accent underline-offset-4 hover:underline"
+                >
+                  View map
+                </a>
+              )}
             </div>
           ))}
         </div>
-        <p className="mt-10 text-center text-lg italic">
-          Dress code: {wedding.dressCode}
-        </p>
+        {wedding.dressCode && (
+          <p className="mt-10 text-center text-lg italic">
+            Dress code: {wedding.dressCode}
+          </p>
+        )}
       </section>
 
       {/* Schedule */}

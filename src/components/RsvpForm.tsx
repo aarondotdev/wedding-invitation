@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { submitRsvp, type RsvpState } from "@/app/i/[code]/actions";
+import { submitRsvp, type RsvpState } from "@/app/(site)/i/[code]/actions";
 import type { Guest } from "@/lib/supabase";
 
 const inputClass =

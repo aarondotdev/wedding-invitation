@@ -1,12 +1,13 @@
-import { signOut } from "@/app/admin/login/actions";
+import { signOut } from "@/app/(site)/admin/login/actions";
 import { requireAdmin } from "@/lib/auth";
-import { wedding } from "@/lib/wedding";
+import { getWedding } from "@/lib/wedding";
 
 // Reads the session cookie on every request; nothing here can be prerendered or cached.
 export const instant = false;
 
 export default async function DashboardLayout({ children }: LayoutProps<"/admin">) {
   const email = await requireAdmin();
+  const wedding = await getWedding();
 
   return (
     <>

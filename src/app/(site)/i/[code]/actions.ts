@@ -16,7 +16,7 @@ export async function submitRsvp(
   _prev: RsvpState,
   formData: FormData,
 ): Promise<RsvpState> {
-  if (!isRsvpOpen()) {
+  if (!(await isRsvpOpen())) {
     return { status: "error", message: "RSVPs have closed. Please contact the couple directly." };
   }
 
