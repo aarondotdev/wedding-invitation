@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Payload uploads stored on disk during local dev (production uses Vercel Blob)
 /media/
+
+# React Grab, copied from node_modules by `npm run dev` (local development only)
+/public/react-grab.js

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, Great_Vibes, Outfit } from "next/font/google";
+import Script from "next/script";
 import { getSeo } from "@/lib/site-content";
 import "./globals.css";
 
@@ -64,6 +65,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP }} />
+        {/* React Grab (react-grab.com): hover an element, press Ctrl/⌘+C to copy its component and source
+            for a coding agent. Local development only; `npm run dev` copies the pinned build to public/. */}
+        {process.env.NODE_ENV === "development" && (
+          <Script src="/react-grab.js" crossOrigin="anonymous" strategy="beforeInteractive" />
+        )}
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
