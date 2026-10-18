@@ -3,6 +3,7 @@ import * as migration_20261018_133536_cms_editable_content from './20261018_1335
 import * as migration_20261018_140226_editorial_redesign from './20261018_140226_editorial_redesign';
 import * as migration_20261018_144910_invitation_details from './20261018_144910_invitation_details';
 import * as migration_20261018_155456_rsvp_choice_cards from './20261018_155456_rsvp_choice_cards';
+import * as migration_20261018_164253_header_menu_labels from './20261018_164253_header_menu_labels';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261018_155456_rsvp_choice_cards.up,
     down: migration_20261018_155456_rsvp_choice_cards.down,
-    name: '20261018_155456_rsvp_choice_cards'
+    name: '20261018_155456_rsvp_choice_cards',
+  },
+  {
+    up: migration_20261018_164253_header_menu_labels.up,
+    down: migration_20261018_164253_header_menu_labels.down,
+    name: '20261018_164253_header_menu_labels'
   },
 ];

@@ -1,14 +1,25 @@
 @import "tailwindcss";
 
-/* Burgundy and gold. All text/background pairs pass WCAG AA (most AAA). */
+/* White with burgundy and gold (guest pages). Text colours pass WCAG AA on white: burgundy 13.6:1,
+   rose 7.5:1, ink gold 5.3:1. --accent is the brighter gold for lines and decoration (and the
+   guest admin's buttons); use --accent-ink for gold text, buttons and borders on white. */
 :root {
-  --background: #3b0d18;
-  --surface: #4a1420;
-  --foreground: #f6eee3;
-  --muted: #d4b5ae;
+  --background: #ffffff;
+  --surface: #fbf6f1;
+  --foreground: #5c0f1f;
+  --muted: #7a4650;
   --accent: #d4ae62;
-  --line: rgb(212 174 98 / 0.22);
+  --accent-ink: #8a6516;
+  --line: rgb(212 174 98 / 0.5);
+  --glow-inner: rgb(212 174 98 / 0.16);
+  --glow-outer: rgb(92 15 31 / 0.05);
+  /* Font roles → families from src/theme/fonts.ts (guest pages override these per preset) */
+  --font-display: var(--ff-bodoni-moda);
+  --font-sans: var(--ff-outfit);
+  --font-script: var(--ff-great-vibes);
 }
+/* These :root values are what the guest admin and CMS use. Guest pages get their palette and
+   fonts from src/theme (themeScopeProps) on their root element, so presets never leak into admin. */
 
 @theme inline {
   --color-background: var(--background);
@@ -16,6 +27,7 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
   --color-line: var(--line);
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
@@ -45,8 +57,8 @@ body {
 /* Hero glow behind the portrait */
 .hero-glow {
   background:
-    radial-gradient(ellipse 55% 60% at 50% 45%, rgb(212 174 98 / 0.16), transparent 70%),
-    radial-gradient(ellipse 80% 80% at 50% 40%, rgb(122 28 46 / 0.6), transparent 75%),
+    radial-gradient(ellipse 55% 60% at 50% 45%, var(--glow-inner), transparent 70%),
+    radial-gradient(ellipse 85% 85% at 50% 40%, var(--glow-outer), transparent 75%),
     var(--background);
 }
 
@@ -75,4 +87,131 @@ html.motion-pending [data-reveal] {
   display: flex;
   width: max-content;
   gap: 1rem;
+}
+
+/* ------------------------------------------------------------------------------------------------
+   Theme presets: header and hero layout variants (selected by data-header / data-layout on the
+   guest page's theme scope; see src/theme/config.ts). The default ("bar" + "editorial") is the
+   markup's own Tailwind styling, so these rules only change things for other variants.
+   ------------------------------------------------------------------------------------------------ */
+
+[data-hdr] {
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+}
+[data-hdr-menu] {
+  display: none;
+}
+
+/* transparent: no bar until the hero has scrolled away */
+[data-header="transparent"] [data-hdr]:not([data-scrolled]) {
+  background-color: transparent;
+  border-color: transparent;
+  backdrop-filter: none;
+}
+
+/* centered: monogram centred on top with RSVP on the right, links in a centred row below */
+[data-header="centered"] [data-hdr] {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  row-gap: 0.75rem;
+}
+[data-header="centered"] [data-hdr-monogram] {
+  grid-column: 2;
+  grid-row: 1;
+  margin-right: 0;
+}
+[data-header="centered"] [data-hdr-rsvp] {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+[data-header="centered"] [data-hdr-links] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: center;
+  white-space: nowrap;
+}
+/* Phones show no links (each link is hidden below md), so keep the header a single row */
+@media (max-width: 767px) {
+  [data-header="centered"] [data-hdr-links] {
+    display: none;
+  }
+}
+
+/* minimal: monogram and a menu button that opens a full-screen menu */
+[data-header="minimal"] [data-hdr-links],
+[data-header="minimal"] [data-hdr-rsvp] {
+  display: none;
+}
+[data-header="minimal"] [data-hdr-menu] {
+  display: inline-flex;
+}
+
+/* The names' letter masks clip to the tight line box (leading 0.82), which cut off descenders and tall
+   letters in fonts with deeper metrics (e.g. the "J" in Cormorant and Playfair). Give each mask room
+   above and below, and cancel it with negative margins so the layout doesn't move. */
+.hero-char-mask {
+  padding-block: 0.15em 0.35em;
+  margin-block: -0.15em -0.35em;
+}
+
+/* centered layout (also "split" when there is no hero photo): everything stacked and centred */
+:is([data-layout="centered"] [data-hero], [data-layout="split"] [data-hero]:not([data-has-photo]))
+  :is([data-hero-greeting], [data-hero-info]) {
+  margin-inline: auto;
+  text-align: center;
+}
+:is([data-layout="centered"] [data-hero], [data-layout="split"] [data-hero]:not([data-has-photo]))
+  :is([data-hero-title], [data-hero-amp]) {
+  translate: none;
+}
+
+/* split layout with a photo: photo on the left, names and details on the right (desktop) */
+[data-layout="split"] [data-hero][data-has-photo] :is([data-hero-title], [data-hero-amp]) {
+  translate: none;
+}
+@media (max-width: 1023px) {
+  [data-layout="split"] [data-hero][data-has-photo] :is([data-hero-greeting], [data-hero-info]) {
+    margin-inline: auto;
+    text-align: center;
+  }
+}
+@media (min-width: 1024px) {
+  [data-layout="split"] [data-hero][data-has-photo] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: 1fr auto auto auto 1fr;
+    column-gap: 4rem;
+  }
+  [data-layout="split"] [data-hero][data-has-photo] [data-hero-stage] {
+    display: contents;
+  }
+  [data-layout="split"] [data-hero][data-has-photo] [data-hero-photo] {
+    position: static;
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: center;
+  }
+  [data-layout="split"] [data-hero][data-has-photo] [data-hero-photo] > [data-reveal] {
+    width: min(100%, 32rem);
+  }
+  [data-layout="split"] [data-hero][data-has-photo] [data-hero-greeting] {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  [data-layout="split"] [data-hero][data-has-photo] [data-hero-names] {
+    grid-column: 2;
+    grid-row: 3;
+    margin-block: 2.5rem;
+    text-align: left;
+    font-size: clamp(3.5rem, 7vw, 7.5rem);
+  }
+  [data-layout="split"] [data-hero][data-has-photo] [data-hero-info] {
+    grid-column: 2;
+    grid-row: 4;
+    margin-left: 0;
+    text-align: left;
+  }
 }

@@ -1,3 +1,5 @@
+import type { SitePhoto } from "@/lib/site-content-defaults";
+
 // Starting values for the Wedding global in the CMS (/cms). Edit the details there; these are
 // only used to prefill the form and until the global has been saved for the first time.
 export const weddingDefaults = {
@@ -36,7 +38,7 @@ export const weddingDefaults = {
   dressCode: "Garden formal — soft pastels welcome",
 };
 
-type Photo = { url: string; width: number; height: number; alt: string };
+type Photo = SitePhoto;
 
 export type Wedding = Omit<typeof weddingDefaults, "events"> & {
   events: Array<(typeof weddingDefaults.events)[number] & { photo: Photo | null }>;

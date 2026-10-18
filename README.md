@@ -13,6 +13,14 @@ A Next.js wedding invitation where every guest gets a personal link (`/i/<code>`
 2. `npm install`
 3. `npm run dev`, then open a guest link such as `http://localhost:3000/i/<code>`
 
+**Theme switcher** (local development only): a **Theme** button in the bottom-right corner opens a panel that previews other looks on the real page: **theme** (colour palette), **fonts**, **header** style and **hero layout**. Your choice is saved in your browser only (the button shows "• preview"); **Reset** returns to the defaults. Guests always see the defaults, and the panel never appears on the live site.
+
+All presets live in `src/theme/config.ts`:
+- **Change the live look:** edit `defaults` and deploy.
+- **Add a colour theme:** add an entry to `themes` (text colours should keep WCAG AA contrast on the background).
+- **Add a font pairing:** put the `.woff2` file in `src/theme/fonts/` (fonts are self-hosted), declare it in `src/theme/fonts.ts`, then add an entry to `fonts`.
+- **Headers and layouts** are built-in variants (CSS in `src/app/(site)/globals.css`); a new one needs its CSS as well as a config entry.
+
 **React Grab** (local development only): hover any element on the site and press **Ctrl+C** (⌘+C on Mac) to copy its React component, file and HTML, ready to paste into a coding agent. It's a pinned dev dependency; `npm run dev` copies it to `public/react-grab.js` (gitignored), and it never loads in production.
 
 ## Editing the website (`/cms`)
@@ -33,6 +41,8 @@ Everything visitors read or see is changed here. You don't need to touch any cod
 | **Images** | Photos you've uploaded. Each needs a short description. |
 
 **Photos** appear in black and white on the invitation (gallery photos turn to colour as guests scroll); the originals you upload stay in colour. Tall (portrait) photos work best for chapters and venues, wide ones for the full-width photo and the gallery. Any photo can be left empty, and that part of the page simply shows text (with no photo behind the names, the top of the invitation shows just the names). **Emptying a list** (e.g. all questions, or all gallery photos) hides that section.
+
+**Keeping faces in view:** photos are cropped to fit their spot, which differs between phones and computers. To choose what stays in view, open the photo in *Images* and click the spot to keep (for example, between the couple's faces) on the preview. This is Payload's focal point. It defaults to the centre.
 
 **Words in `{curly brackets}`** are filled in automatically, e.g. `{name}` becomes the guest's name. Keep them exactly as they are; the hint under each field says which ones it uses.
 

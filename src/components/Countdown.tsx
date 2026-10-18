@@ -40,7 +40,7 @@ export default function Countdown({
           <span className="font-display text-6xl tabular-nums md:text-8xl">
             {values ? String(values[i]).padStart(2, "0") : "--"}
           </span>
-          <span className="mt-3 text-[0.65rem] font-medium uppercase tracking-[0.3em] text-accent sm:text-xs">
+          <span className="mt-3 text-[0.65rem] font-medium uppercase tracking-[0.3em] text-accent-ink sm:text-xs">
             {label}
           </span>
         </div>

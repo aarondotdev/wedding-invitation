@@ -1,3 +1,5 @@
+import type { SitePhoto } from "@/lib/site-content-defaults";
+
 // Starting values for the "Family & entourage" and "Guest details" globals in the CMS (/cms).
 // Names are placeholders: replace them in the CMS. These prefill the form and are shown until the
 // global has been saved for the first time.
@@ -93,7 +95,7 @@ export const detailsDefaults = {
 
 export type Details = typeof detailsDefaults;
 
-export type GalleryPhoto = { url: string; width: number; height: number; alt: string };
+export type GalleryPhoto = SitePhoto;
 
 export const ENTOURAGE_CACHE_TAG = "entourage";
 export const DETAILS_CACHE_TAG = "details";

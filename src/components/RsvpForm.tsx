@@ -36,11 +36,11 @@ function ChoiceCard({
   defaultChecked: boolean;
 }) {
   return (
-    <label className="group relative flex min-h-40 cursor-pointer flex-col justify-between gap-6 border border-line p-5 text-left transition-colors duration-300 hover:border-accent/60 has-checked:border-accent has-checked:bg-accent/10 has-focus-visible:ring-2 has-focus-visible:ring-accent has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background sm:p-7">
+    <label className="group relative flex min-h-40 cursor-pointer flex-col justify-between gap-6 border border-line p-5 text-left transition-colors duration-300 hover:border-accent/60 has-checked:border-accent-ink has-checked:bg-accent/10 has-focus-visible:ring-2 has-focus-visible:ring-accent-ink has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background sm:p-7">
       <input type="radio" name="attending" value={value} required={required} defaultChecked={defaultChecked} className="sr-only" />
       <span
         aria-hidden
-        className="absolute right-4 top-4 h-3.5 w-3.5 rounded-full border border-line transition-colors group-has-checked:border-accent group-has-checked:bg-accent sm:right-5 sm:top-5"
+        className="absolute right-4 top-4 h-3.5 w-3.5 rounded-full border border-line transition-colors group-has-checked:border-accent-ink group-has-checked:bg-accent-ink sm:right-5 sm:top-5"
       />
       <span className="pr-6 font-display text-2xl leading-tight sm:text-3xl">{label}</span>
       {note && <span className="text-sm leading-snug text-muted group-has-checked:text-foreground/80">{note}</span>}
@@ -130,7 +130,7 @@ export default function RsvpForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 rounded-full bg-accent px-8 py-4 text-xs font-medium uppercase tracking-[0.3em] text-background transition hover:bg-foreground disabled:opacity-60"
+        className="mt-2 rounded-full bg-accent-ink px-8 py-4 text-xs font-medium uppercase tracking-[0.3em] text-background transition hover:bg-foreground disabled:opacity-60"
       >
         {pending ? labels.sendingButton : guest.responded_at ? labels.updateButton : labels.sendButton}
       </button>

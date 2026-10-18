@@ -1,25 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Great_Vibes, Outfit } from "next/font/google";
 import Script from "next/script";
 import { getSeo } from "@/lib/site-content";
+import { PREVIEW_STORAGE_KEY, scopeVariables } from "@/theme/apply";
+import { themeConfig } from "@/theme/config";
+import { fontVariableClasses } from "@/theme/fonts";
 import "./globals.css";
-
-const display = Bodoni_Moda({
-  variable: "--font-display",
-  subsets: ["latin"],
-  axes: ["opsz"],
-});
-
-const sans = Outfit({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
-
-const script = Great_Vibes({
-  variable: "--font-script",
-  subsets: ["latin"],
-  weight: "400",
-});
 
 // Hide animated elements until the motion layer has set them up (avoids a flash of content),
 // but never for reduced motion, and never for more than 3 s in case scripts fail to load.
@@ -52,14 +37,37 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#3b0d18",
+  themeColor: "#ffffff",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+// Development only: re-apply a saved theme preview (from the dev theme switcher) to the guest page
+// before it paints, so reloading doesn't flash the default look first.
+function themePreviewBootstrap() {
+  const vars = (sel: { theme: string; font: string }) => scopeVariables({ ...themeConfig.defaults, ...sel });
+  const data = {
+    key: PREVIEW_STORAGE_KEY,
+    defaults: themeConfig.defaults,
+    ids: {
+      theme: themeConfig.themes.map((t) => t.id),
+      font: themeConfig.fonts.map((f) => f.id),
+      header: themeConfig.headers.map((h) => h.id),
+      layout: themeConfig.layouts.map((l) => l.id),
+    },
+    themeVars: Object.fromEntries(themeConfig.themes.map((t) => [t.id, vars({ theme: t.id, font: themeConfig.defaults.font })])),
+    fontVars: Object.fromEntries(themeConfig.fonts.map((f) => [f.id, vars({ theme: themeConfig.defaults.theme, font: f.id })])),
+  };
+  return `(function(d){try{var s=JSON.parse(localStorage.getItem(d.key)||"null");if(!s)return;var sel={};for(var k in d.defaults){sel[k]=d.ids[k].indexOf(s[k])>=0?s[k]:d.defaults[k]}var v=Object.assign({},d.themeVars[sel.theme]);var f=d.fontVars[sel.font];["--font-display","--font-sans","--font-script"].forEach(function(n){v[n]=f[n]});document.querySelectorAll("[data-theme-scope]").forEach(function(el){for(var k in sel)el.setAttribute("data-"+k,sel[k]);for(var n in v)el.style.setProperty(n,v[n])})}catch(e){}})(${JSON.stringify(data)})`;
+}
+
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Loaded only in development; the import (and the panel) is removed from production builds
+  const ThemeSwitcher =
+    process.env.NODE_ENV === "development" ? (await import("@/components/dev/ThemeSwitcher")).default : null;
+
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${script.variable} h-full antialiased`}
+      className={`${fontVariableClasses} h-full antialiased`}
       // MOTION_BOOTSTRAP adds a class before hydration
       suppressHydrationWarning
     >
@@ -71,7 +79,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Script src="/react-grab.js" crossOrigin="anonymous" strategy="beforeInteractive" />
         )}
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        {ThemeSwitcher && (
+          <>
+            <script dangerouslySetInnerHTML={{ __html: themePreviewBootstrap() }} />
+            <ThemeSwitcher />
+          </>
+        )}
+      </body>
     </html>
   );
 }

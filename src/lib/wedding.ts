@@ -45,9 +45,23 @@ export async function getWedding(): Promise<Wedding> {
 // A populated upload field as a plain photo, or null when empty / not populated
 export function toPhoto(value: unknown) {
   if (!value || typeof value !== "object") return null;
-  const m = value as { url?: string | null; width?: number | null; height?: number | null; alt?: string };
+  const m = value as {
+    url?: string | null;
+    width?: number | null;
+    height?: number | null;
+    alt?: string;
+    focalX?: number | null;
+    focalY?: number | null;
+  };
   if (!m.url) return null;
-  return { url: m.url, width: m.width ?? 1200, height: m.height ?? 1500, alt: m.alt ?? "" };
+  return {
+    url: m.url,
+    width: m.width ?? 1200,
+    height: m.height ?? 1500,
+    alt: m.alt ?? "",
+    focalX: m.focalX ?? 50,
+    focalY: m.focalY ?? 50,
+  };
 }
 
 export async function isRsvpOpen() {
