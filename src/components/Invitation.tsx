@@ -2,6 +2,7 @@ import Countdown from "@/components/Countdown";
 import Divider from "@/components/Divider";
 import RsvpForm from "@/components/RsvpForm";
 import type { Guest } from "@/lib/supabase";
+import { fill, type PageText } from "@/lib/site-content-defaults";
 import type { Wedding } from "@/lib/wedding-defaults";
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -14,30 +15,32 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export default function Invitation({
   wedding,
+  text,
   guest,
   rsvpOpen,
 }: {
   wedding: Wedding;
+  text: PageText;
   guest: Guest;
   rsvpOpen: boolean;
 }) {
+  const { hero, sections } = text;
+
   return (
     <main className="flex-1">
       {/* Hero */}
       <section className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blush to-background px-6 text-center">
         <div className="animate-fade-up">
-          <p className="mb-8 text-2xl italic sm:text-3xl">Dear {guest.name},</p>
-          <p className="text-sm uppercase tracking-[0.4em] text-accent">
-            Together with their families
-          </p>
+          <p className="mb-8 text-2xl italic sm:text-3xl">{fill(hero.greeting, { name: guest.name })}</p>
+          <p className="text-sm uppercase tracking-[0.4em] text-accent">{hero.intro}</p>
           <h1 className="mt-8 font-script text-7xl leading-tight sm:text-8xl md:text-9xl">
             {wedding.partner1}
-            <span className="mx-4 block text-5xl text-accent sm:inline sm:text-6xl">&amp;</span>
+            <span className="mx-4 block text-5xl text-accent sm:inline sm:text-6xl">
+              {hero.ampersand}
+            </span>
             {wedding.partner2}
           </h1>
-          <p className="mt-6 text-xl italic sm:text-2xl">
-            request the pleasure of your company
-          </p>
+          <p className="mt-6 text-xl italic sm:text-2xl">{hero.invitationLine}</p>
           <Divider />
           <p className="text-2xl tracking-wide sm:text-3xl">{wedding.displayDate}</p>
           <p className="mt-2 text-lg text-foreground/70">{wedding.events[0]?.venue}</p>
@@ -45,22 +48,22 @@ export default function Invitation({
             href="#rsvp"
             className="mt-10 inline-block rounded-full border border-accent px-8 py-3 text-sm uppercase tracking-[0.25em] text-accent transition hover:bg-accent hover:text-white"
           >
-            RSVP
+            {hero.rsvpButton}
           </a>
         </div>
       </section>
 
       {/* Countdown */}
       <section className="px-6 py-20">
-        <SectionTitle>Counting down</SectionTitle>
+        <SectionTitle>{sections.countdownTitle}</SectionTitle>
         <div className="mt-10">
-          <Countdown date={wedding.date} />
+          <Countdown date={wedding.date} labels={text.countdown} />
         </div>
       </section>
 
       {/* Events */}
       <section className="bg-blush/50 px-6 py-20">
-        <SectionTitle>The Celebration</SectionTitle>
+        <SectionTitle>{sections.eventsTitle}</SectionTitle>
         <div className="mx-auto mt-12 grid max-w-4xl gap-8 md:grid-cols-2">
           {wedding.events.map((event) => (
             <div
@@ -80,7 +83,7 @@ export default function Invitation({
                   rel="noopener noreferrer"
                   className="mt-6 inline-block text-sm uppercase tracking-[0.2em] text-accent underline-offset-4 hover:underline"
                 >
-                  View map
+                  {sections.viewMap}
                 </a>
               )}
             </div>
@@ -88,14 +91,14 @@ export default function Invitation({
         </div>
         {wedding.dressCode && (
           <p className="mt-10 text-center text-lg italic">
-            Dress code: {wedding.dressCode}
+            {sections.dressCodeLabel} {wedding.dressCode}
           </p>
         )}
       </section>
 
       {/* Schedule */}
       <section className="px-6 py-20">
-        <SectionTitle>Order of the Day</SectionTitle>
+        <SectionTitle>{sections.scheduleTitle}</SectionTitle>
         <ol className="mx-auto mt-12 max-w-md">
           {wedding.schedule.map((s) => (
             <li
@@ -111,18 +114,23 @@ export default function Invitation({
 
       {/* RSVP */}
       <section id="rsvp" className="bg-blush/50 px-6 py-20">
-        <SectionTitle>Kindly Reply</SectionTitle>
+        <SectionTitle>{sections.rsvpTitle}</SectionTitle>
         {rsvpOpen && (
           <p className="mb-10 mt-4 text-center text-lg">
-            Please respond by {wedding.rsvpBy}
+            {fill(sections.respondBy, { date: wedding.rsvpBy })}
           </p>
         )}
-        <RsvpForm guest={guest} open={rsvpOpen} />
+        <RsvpForm
+          guest={guest}
+          open={rsvpOpen}
+          labels={text.rsvpForm}
+          messages={text.rsvpMessages}
+        />
       </section>
 
       <footer className="px-6 py-12 text-center">
         <p className="font-script text-4xl">
-          {wedding.partner1} &amp; {wedding.partner2}
+          {wedding.partner1} {hero.ampersand} {wedding.partner2}
         </p>
         <p className="mt-2 text-sm uppercase tracking-[0.3em] text-accent">
           {wedding.hashtag}

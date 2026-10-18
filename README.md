@@ -1,6 +1,6 @@
 # Wedding Invitation
 
-A Next.js wedding invitation where every guest gets a personal link (`/i/<code>`). Only people with a valid link can see the invitation and RSVP. Guests and RSVPs are stored in Supabase.
+A Next.js wedding invitation where every guest gets a personal link (`/i/<code>`). Only people with a valid link can see the invitation and RSVP. Guests and RSVPs are stored in Supabase. All the wording, dates, places and the link-preview image are edited in the browser at `/cms`; no code changes are needed.
 
 ## Setup
 
@@ -8,10 +8,33 @@ A Next.js wedding invitation where every guest gets a personal link (`/i/<code>`
    - `SUPABASE_URL`: your project URL
    - `SUPABASE_SECRET_KEY`: Supabase dashboard → Project Settings → API Keys → **Secret keys** (`sb_secret_...`). Server-only; never commit it or prefix it with `NEXT_PUBLIC_`.
    - `NEXT_PUBLIC_SITE_URL`: the address guests will open, e.g. `https://ourwedding.com`
+   - `DATABASE_URL`, `PAYLOAD_SECRET`: for the content editor at `/cms` (see `.env.example`)
+   - `BLOB_READ_WRITE_TOKEN`: image storage for uploads (`vercel env pull` fetches it)
 2. `npm install`
 3. `npm run dev`, then open a guest link such as `http://localhost:3000/i/<code>`
 
-Edit names, dates, venues and the RSVP deadline in `src/lib/wedding.ts`.
+## Editing the website (`/cms`)
+
+Everything visitors read or see is changed here. You don't need to touch any code.
+
+1. Go to **`/cms`** on the website (e.g. `https://wedding-invitation-rust-alpha.vercel.app/cms`) and sign in.
+2. Open one of the sections on the left, change the text, and click **Save**.
+3. Refresh the website. Your change is already live; there's nothing to publish or deploy.
+
+| Section | What it controls |
+| --- | --- |
+| **Wedding details** | The couple's names, wedding date and time (drives the countdown), how the date is written, the RSVP deadline, hashtag, dress code, the ceremony and reception cards (time, venue, address, map link), and the order of the day |
+| **Page text** | All other wording, in tabs that follow the page from top to bottom: the greeting and lines around the names, section headings, countdown labels, the reply form's options and buttons, thank-you and other messages, the home page, and the "invalid link" page |
+| **Sharing & SEO** | The browser-tab title and the preview shown when a link is pasted into WhatsApp, Messenger, Viber or iMessage: title, text and image |
+| **Images** | Photos you've uploaded. Each needs a short description. |
+
+**Words in `{curly brackets}`** are filled in automatically, e.g. `{name}` becomes the guest's name. Keep them exactly as they are; the hint under each field says which ones it uses.
+
+**Empty fields** go back to the original wording. In *Sharing & SEO*, an empty title or description uses automatic text built from the names and date, so it stays correct if the date changes.
+
+**Changing the link-preview photo:** in *Sharing & SEO*, click **Preview image**, upload a photo and give it a description. A wide photo works best (1200 × 630 pixels, faces near the middle). Chat apps keep old previews for links shared before, so new links show the new photo right away and older ones may take a while.
+
+**Adding someone who can edit:** in `/cms`, open **Users** and click **Create New**. This is separate from the guest admin login.
 
 ## Guest admin page (`/admin/guests`)
 

@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "src/migrations/**",
     "src/payload-types.ts",
     "src/app/(payload)/**",
+    // Claude Code worktrees are separate checkouts, not part of this project
+    ".claude/**",
   ]),
 ]);
 

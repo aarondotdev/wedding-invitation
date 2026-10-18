@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Great_Vibes } from "next/font/google";
-import { getWedding } from "@/lib/wedding";
+import { getSeo } from "@/lib/site-content";
 import "./globals.css";
 
 const serif = Cormorant_Garamond({
@@ -16,27 +16,27 @@ const script = Great_Vibes({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const wedding = await getWedding();
-  const title = `${wedding.partner1} and ${wedding.partner2}`;
-  // Shown in link previews to anyone the link reaches, so no venue details here.
-  const description = `Together with their families, ${wedding.partner1} & ${wedding.partner2} invite you to celebrate their wedding on ${wedding.displayDate}.`;
+  const seo = await getSeo();
+  const image = { ...seo.shareImage };
 
   return {
-    // Makes the opengraph-image URL absolute, which link previews require
+    // Makes relative image URLs absolute, which link previews require
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-    title,
-    description,
-    applicationName: title,
+    title: seo.title,
+    description: seo.description,
+    applicationName: seo.title,
     openGraph: {
       type: "website",
-      siteName: title,
-      title: `You're invited: ${title}`,
-      description,
+      siteName: seo.title,
+      title: seo.shareTitle,
+      description: seo.shareDescription,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
-      title: `You're invited: ${title}`,
-      description,
+      title: seo.shareTitle,
+      description: seo.shareDescription,
+      images: [image],
     },
   };
 }

@@ -1,5 +1,7 @@
 "use server";
 
+import { getPageText } from "@/lib/site-content";
+import { fill } from "@/lib/site-content-defaults";
 import { getGuestByCode, supabaseAdmin } from "@/lib/supabase";
 import { isRsvpOpen } from "@/lib/wedding";
 
@@ -16,18 +18,20 @@ export async function submitRsvp(
   _prev: RsvpState,
   formData: FormData,
 ): Promise<RsvpState> {
+  const { rsvpMessages: m, rsvpForm } = await getPageText();
+
   if (!(await isRsvpOpen())) {
-    return { status: "error", message: "RSVPs have closed. Please contact the couple directly." };
+    return { status: "error", message: m.errorClosed };
   }
 
   const guest = await getGuestByCode(code);
   if (!guest) {
-    return { status: "error", message: "This invitation link is no longer valid." };
+    return { status: "error", message: m.errorInvalidLink };
   }
 
   const attendingValue = formData.get("attending");
   if (attendingValue !== "yes" && attendingValue !== "no") {
-    return { status: "error", message: "Please let us know whether you can attend." };
+    return { status: "error", message: m.errorChooseAttendance };
   }
   const attending = attendingValue === "yes";
 
@@ -37,7 +41,9 @@ export async function submitRsvp(
     if (!Number.isInteger(guestCount) || guestCount < 1 || guestCount > guest.party_size) {
       return {
         status: "error",
-        message: `Please choose between 1 and ${guest.party_size} ${guest.party_size === 1 ? "guest" : "guests"}.`,
+        message: fill(m.errorGuestCount, {
+          max: `${guest.party_size} ${guest.party_size === 1 ? rsvpForm.guestSingular : rsvpForm.guestPlural}`,
+        }),
       };
     }
   }
@@ -57,7 +63,7 @@ export async function submitRsvp(
 
   if (error) {
     console.error("RSVP update failed", error);
-    return { status: "error", message: "Something went wrong saving your RSVP. Please try again." };
+    return { status: "error", message: m.errorGeneric };
   }
 
   return { status: "success", attending };
