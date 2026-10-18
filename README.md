@@ -13,7 +13,48 @@ A Next.js wedding invitation where every guest gets a personal link (`/i/<code>`
 
 Edit names, dates, venues and the RSVP deadline in `src/lib/wedding.ts`.
 
-## Managing guests
+## Guest admin page (`/admin/guests`)
+
+Add guests, copy their links, download QR codes, import a list from Excel, and track RSVPs in the browser.
+
+### One-time setup
+
+1. In `.env.local`, set `SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys → Publishable key) and `ADMIN_EMAILS`, the comma-separated emails allowed to sign in:
+
+   ```
+   ADMIN_EMAILS=you@example.com,partner@example.com
+   ```
+
+2. Create the admin accounts. Re-run this after changing `ADMIN_EMAILS`:
+
+   ```bash
+   npm run admins
+   ```
+
+3. In the Supabase dashboard, open **Authentication → Email Templates → Magic Link** and replace the body with the following. It sends both a code and a link:
+
+   ```html
+   <h2>Sign in to the guest admin</h2>
+   <p>Your sign-in code is: <strong>{{ .Token }}</strong></p>
+   <p>Or, on this device, <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">click here to sign in</a>.</p>
+   ```
+
+4. In **Authentication → URL Configuration**, set **Site URL** to your site's address (`http://localhost:3000` while developing).
+5. Recommended: in **Authentication → Sign In / Providers**, turn off **Allow new users to sign up**. Admin accounts come from `npm run admins`, so nobody else needs to sign up.
+
+### Signing in
+
+Go to `/admin`, enter your email, then type the code from the email or click its link. Only emails in `ADMIN_EMAILS` receive a code. Anyone else sees the same screen, but no email is sent. Supabase's built-in email sender allows only a few emails per hour, which is fine for two admins. Add custom SMTP in Supabase if you need more.
+
+### Importing from Excel
+
+Click **Download template**, fill it in Excel, and save it as `.xlsx` or `.csv`. The columns are `name`, `party_size`, `phone`, `email` and `notes`; headers like "Party Size" or "Seats" also work. Upload it and check the preview. Rows marked duplicate or invalid are explained and skipped. Then click **Import**.
+
+Removing someone from `ADMIN_EMAILS` locks them out on their next page load.
+
+## Managing guests from the command line
+
+The admin page covers all of this. The script is handy for scripting or bulk QR export.
 
 1. **Write your guest list** as a CSV (see `scripts/guests.example.csv`):
 
@@ -68,4 +109,4 @@ A guest can still forward their own link. The party-size cap limits the impact, 
 
 ## Deploying
 
-Deploy anywhere that runs Next.js (e.g. Vercel). Add the three environment variables from `.env.local` to the host's settings.
+Deploy anywhere that runs Next.js (e.g. Vercel). Add the environment variables from `.env.local` (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAILS`, `NEXT_PUBLIC_SITE_URL`) to the host's settings, and set the Supabase **Site URL** to your production domain.

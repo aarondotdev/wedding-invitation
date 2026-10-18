@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // Guest list uploads are capped at 2 MB in the import action; leave room for multipart overhead
+    serverActions: { bodySizeLimit: "3mb" },
+  },
   headers() {
     return [
       {
