@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    media: Media;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,6 +77,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,9 +89,13 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     wedding: Wedding;
+    pageText: PageText;
+    seo: Seo;
   };
   globalsSelect: {
     wedding: WeddingSelect<false> | WeddingSelect<true>;
+    pageText: PageTextSelect<false> | PageTextSelect<true>;
+    seo: SeoSelect<false> | SeoSelect<true>;
   };
   locale: null;
   widgets: {
@@ -146,6 +152,32 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Photos used on the website.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Describe the photo in a few words, e.g. "Lorenz and Jenzell under a crescent moon". Read aloud to people using screen readers.
+   */
+  alt: string;
+  prefix?: string | null;
+  _objectKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -168,10 +200,15 @@ export interface PayloadKv {
  */
 export interface PayloadLockedDocument {
   id: number;
-  document?: {
-    relationTo: 'users';
-    value: number | User;
-  } | null;
+  document?:
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
@@ -236,6 +273,26 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  _objectKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -325,6 +382,224 @@ export interface Wedding {
   createdAt?: string | null;
 }
 /**
+ * All the wording on the invitation. Words in {curly brackets} are filled in automatically — keep them as they are.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pageText".
+ */
+export interface PageText {
+  id: number;
+  hero?: {
+    /**
+     * First line guests see. {name} becomes the guest's name, e.g. "Dear Maria & Jose,".
+     */
+    greeting?: string | null;
+    /**
+     * Small capitals above the couple's names.
+     */
+    intro?: string | null;
+    /**
+     * Shown between the two names, e.g. "&" or "and".
+     */
+    ampersand?: string | null;
+    /**
+     * e.g. "request the pleasure of your company".
+     */
+    invitationLine?: string | null;
+    /**
+     * Button that jumps down to the reply form.
+     */
+    rsvpButton?: string | null;
+  };
+  sections?: {
+    /**
+     * Heading above the countdown timer.
+     */
+    countdownTitle?: string | null;
+    /**
+     * Heading above the ceremony and reception cards.
+     */
+    eventsTitle?: string | null;
+    /**
+     * Link under each venue that opens the map.
+     */
+    viewMap?: string | null;
+    /**
+     * Shown before the dress code, e.g. "Dress code:".
+     */
+    dressCodeLabel?: string | null;
+    /**
+     * Heading above the order of the day.
+     */
+    scheduleTitle?: string | null;
+    /**
+     * Heading above the RSVP form.
+     */
+    rsvpTitle?: string | null;
+    /**
+     * {date} becomes the "RSVP by" date from Wedding details.
+     */
+    respondBy?: string | null;
+  };
+  countdown?: {
+    /**
+     * Label under the days.
+     */
+    days?: string | null;
+    /**
+     * Label under the hours.
+     */
+    hours?: string | null;
+    /**
+     * Label under the minutes.
+     */
+    minutes?: string | null;
+    /**
+     * Label under the seconds.
+     */
+    seconds?: string | null;
+  };
+  rsvpForm?: {
+    /**
+     * Choice for guests who are coming.
+     */
+    accept?: string | null;
+    /**
+     * Choice for guests who can't come.
+     */
+    decline?: string | null;
+    /**
+     * Word after 1, e.g. "1 guest".
+     */
+    guestSingular?: string | null;
+    /**
+     * Word after 2 or more, e.g. "3 guests".
+     */
+    guestPlural?: string | null;
+    /**
+     * Read aloud for the number-of-guests menu.
+     */
+    guestCountLabel?: string | null;
+    /**
+     * Grey hint inside the message box.
+     */
+    messagePlaceholder?: string | null;
+    /**
+     * Button for a first reply.
+     */
+    sendButton?: string | null;
+    /**
+     * Button when changing an earlier reply.
+     */
+    updateButton?: string | null;
+    /**
+     * Button text while the reply is saving.
+     */
+    sendingButton?: string | null;
+  };
+  rsvpMessages?: {
+    /**
+     * Above the form when the guest has replied before.
+     */
+    alreadyReplied?: string | null;
+    /**
+     * After a guest says yes. {name} becomes their name.
+     */
+    thanksAttending?: string | null;
+    /**
+     * After a guest says no. {name} becomes their name.
+     */
+    thanksDeclined?: string | null;
+    /**
+     * Shown instead of the form after the RSVP deadline.
+     */
+    closed?: string | null;
+    /**
+     * After the deadline, for guests who never replied.
+     */
+    noResponse?: string | null;
+    /**
+     * After the deadline. {count} becomes e.g. "2 guests".
+     */
+    recordedAttending?: string | null;
+    /**
+     * After the deadline, for guests who said no.
+     */
+    recordedDeclined?: string | null;
+    /**
+     * If a reply arrives after the RSVP deadline.
+     */
+    errorClosed?: string | null;
+    /**
+     * If the guest's link was replaced or switched off.
+     */
+    errorInvalidLink?: string | null;
+    /**
+     * If the guest didn't pick yes or no.
+     */
+    errorChooseAttendance?: string | null;
+    /**
+     * {max} becomes the guest's limit, e.g. "2 guests".
+     */
+    errorGuestCount?: string | null;
+    /**
+     * If the reply couldn't be saved.
+     */
+    errorGeneric?: string | null;
+  };
+  pages?: {
+    /**
+     * Shown at the main address to visitors without a personal link.
+     */
+    homeMessage?: string | null;
+    /**
+     * Heading when someone opens a wrong or switched-off link.
+     */
+    invalidLinkTitle?: string | null;
+    /**
+     * Explains what to do with a wrong or switched-off link.
+     */
+    invalidLinkMessage?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * How the website appears in browser tabs and when a link is shared in WhatsApp, Messenger, Viber or iMessage. Chat apps can take a while to show changes for links shared before.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo".
+ */
+export interface Seo {
+  id: number;
+  /**
+   * Text on the browser tab. Automatic: "Lorenz and Jenzell". Leave empty to use the automatic wording, which updates with the names and date.
+   */
+  title?: string | null;
+  /**
+   * One sentence about the invitation. No venue details — anyone with the link can see it. Leave empty to use the automatic wording, which updates with the names and date.
+   */
+  description?: string | null;
+  /**
+   * Bold title in the preview. Automatic: "You're invited: Lorenz and Jenzell". Leave empty to use the automatic wording, which updates with the names and date.
+   */
+  shareTitle?: string | null;
+  /**
+   * Text under the title. Uses the page description when empty.
+   */
+  shareDescription?: string | null;
+  /**
+   * Best size: 1200 × 630 pixels (wide), under 300 KB, faces near the middle. Leave empty to use the built-in photo.
+   */
+  shareImage?: (number | null) | Media;
+  /**
+   * Describes the built-in photo. An uploaded image uses its own description instead.
+   */
+  shareImageAlt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "wedding_select".
  */
@@ -354,6 +629,94 @@ export interface WeddingSelect<T extends boolean = true> {
         item?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pageText_select".
+ */
+export interface PageTextSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        greeting?: T;
+        intro?: T;
+        ampersand?: T;
+        invitationLine?: T;
+        rsvpButton?: T;
+      };
+  sections?:
+    | T
+    | {
+        countdownTitle?: T;
+        eventsTitle?: T;
+        viewMap?: T;
+        dressCodeLabel?: T;
+        scheduleTitle?: T;
+        rsvpTitle?: T;
+        respondBy?: T;
+      };
+  countdown?:
+    | T
+    | {
+        days?: T;
+        hours?: T;
+        minutes?: T;
+        seconds?: T;
+      };
+  rsvpForm?:
+    | T
+    | {
+        accept?: T;
+        decline?: T;
+        guestSingular?: T;
+        guestPlural?: T;
+        guestCountLabel?: T;
+        messagePlaceholder?: T;
+        sendButton?: T;
+        updateButton?: T;
+        sendingButton?: T;
+      };
+  rsvpMessages?:
+    | T
+    | {
+        alreadyReplied?: T;
+        thanksAttending?: T;
+        thanksDeclined?: T;
+        closed?: T;
+        noResponse?: T;
+        recordedAttending?: T;
+        recordedDeclined?: T;
+        errorClosed?: T;
+        errorInvalidLink?: T;
+        errorChooseAttendance?: T;
+        errorGuestCount?: T;
+        errorGeneric?: T;
+      };
+  pages?:
+    | T
+    | {
+        homeMessage?: T;
+        invalidLinkTitle?: T;
+        invalidLinkMessage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo_select".
+ */
+export interface SeoSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  shareTitle?: T;
+  shareDescription?: T;
+  shareImage?: T;
+  shareImageAlt?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

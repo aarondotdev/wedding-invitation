@@ -1,8 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-
-const LABELS = ["Days", "Hours", "Minutes", "Seconds"] as const;
+import type { PageText } from "@/lib/site-content-defaults";
 
 function subscribe(onTick: () => void) {
   const id = setInterval(onTick, 1000);
@@ -13,7 +12,13 @@ function subscribe(onTick: () => void) {
 const getNow = () => Math.floor(Date.now() / 1000);
 const getServerNow = () => null;
 
-export default function Countdown({ date }: { date: string }) {
+export default function Countdown({
+  date,
+  labels,
+}: {
+  date: string;
+  labels: PageText["countdown"];
+}) {
   const now = useSyncExternalStore(subscribe, getNow, getServerNow);
   const target = Math.floor(new Date(date).getTime() / 1000);
   const diff = now === null ? null : Math.max(0, target - now);
@@ -30,8 +35,8 @@ export default function Countdown({ date }: { date: string }) {
 
   return (
     <div className="flex justify-center gap-4 sm:gap-8">
-      {LABELS.map((label, i) => (
-        <div key={label} className="flex flex-col items-center">
+      {[labels.days, labels.hours, labels.minutes, labels.seconds].map((label, i) => (
+        <div key={i} className="flex flex-col items-center">
           <span className="text-4xl sm:text-5xl font-light tabular-nums">
             {values ? String(values[i]).padStart(2, "0") : "--"}
           </span>

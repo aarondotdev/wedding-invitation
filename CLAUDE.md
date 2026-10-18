@@ -57,21 +57,20 @@ as a "Theme" global rather than in CSS constants.
    redeploy. A change isn't done until this works.
 9. **Update the editor's guide** in the README ("Editing the website" section): which global/field
    controls what, in plain language.
+10. **Migrations deploy themselves:** `prodMigrations` applies pending migrations when the deployed app
+    starts, so never ask the owner to run database commands.
 
-### Current gaps (still hard-coded; move these into the CMS)
+### Where content lives now
 
-- `src/components/Invitation.tsx`: "Dear …,", "Together with their families", "request the pleasure of
-  your company", "RSVP" button, "Counting down", "The Celebration", "View map", "Dress code:",
-  "Order of the Day", "Kindly Reply", "Please respond by …", the "&" between the names
-- `src/components/RsvpForm.tsx`: "Joyfully accepts", "Regretfully declines", guest-count labels, message
-  placeholder, button labels, thank-you, already-replied and RSVPs-closed messages
-- `src/app/(site)/i/[code]/actions.ts`: guest-facing RSVP error messages
-- `src/app/(site)/page.tsx`: home page message
-- `src/app/(site)/i/[code]/not-found.tsx`: "Oh dear" and the invalid-link message
-- `src/app/(site)/layout.tsx`: page title, meta description, link-preview title/description
-- `src/app/(site)/opengraph-image.jpg` + `.alt.txt`: link-preview banner and alt text (needs an upload field)
-- `src/components/Countdown.tsx`: "Days", "Hours", "Minutes", "Seconds"
-- README: no "Editing the website" guide for the CMS yet
+- `wedding` global: event facts (names, dates, venues, schedule, dress code, hashtag)
+- `pageText` global (`src/payload/globals/PageText.ts`): all other visible wording, defaults in
+  `src/lib/site-content-defaults.ts`, read with `getPageText()`; placeholders filled with `fill()`
+- `seo` global (`src/payload/globals/Seo.ts`): tab title, description, link-preview title/text/image,
+  read with `getSeo()`; empty fields fall back to automatic wording; bundled fallback image is
+  `public/og-default.jpg`
+- `media` collection: uploads in Vercel Blob (unique filenames, direct public URLs)
+
+There are no known hard-coded gaps. Keep it that way: new visible text gets a field in the same change.
 
 ## Other conventions
 
