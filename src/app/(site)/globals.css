@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
+/* Burgundy and gold. All text/background pairs pass WCAG AA (most AAA). */
 :root {
-  --background: #2b2723;
-  --surface: #34302b;
-  --foreground: #f4efe8;
-  --muted: #a8a097;
-  --accent: #c8a46a;
-  --line: rgb(244 239 232 / 0.14);
+  --background: #3b0d18;
+  --surface: #4a1420;
+  --foreground: #f6eee3;
+  --muted: #d4b5ae;
+  --accent: #d4ae62;
+  --line: rgb(212 174 98 / 0.22);
 }
 
 @theme inline {
@@ -43,7 +44,9 @@ body {
 
 /* Hero glow behind the portrait */
 .hero-glow {
-  background: radial-gradient(ellipse 55% 60% at 50% 45%, rgb(122 100 64 / 0.45), transparent 70%),
+  background:
+    radial-gradient(ellipse 55% 60% at 50% 45%, rgb(212 174 98 / 0.16), transparent 70%),
+    radial-gradient(ellipse 80% 80% at 50% 40%, rgb(122 28 46 / 0.6), transparent 75%),
     var(--background);
 }
 

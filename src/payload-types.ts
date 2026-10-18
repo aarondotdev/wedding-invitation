@@ -419,7 +419,7 @@ export interface PageText {
      */
     rsvpButton?: string | null;
     /**
-     * Large portrait behind the names. A tall photo works best. Leave empty to use the built-in photo. Shown in black and white.
+     * Optional large portrait behind the names. A tall photo works best. Leave empty to show just the names. Shown in black and white.
      */
     photo?: (number | null) | Media;
   };
@@ -567,6 +567,14 @@ export interface PageText {
      * Choice for guests who can't come.
      */
     decline?: string | null;
+    /**
+     * Small line under the "yes" option.
+     */
+    acceptNote?: string | null;
+    /**
+     * Small line under the "no" option.
+     */
+    declineNote?: string | null;
     /**
      * Word after 1, e.g. "1 guest".
      */
@@ -950,6 +958,8 @@ export interface PageTextSelect<T extends boolean = true> {
     | {
         accept?: T;
         decline?: T;
+        acceptNote?: T;
+        declineNote?: T;
         guestSingular?: T;
         guestPlural?: T;
         guestCountLabel?: T;

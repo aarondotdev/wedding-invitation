@@ -43,7 +43,9 @@ export const pageTextDefaults = {
   },
   rsvpForm: {
     accept: "Joyfully accepts",
+    acceptNote: "We'll be there to celebrate",
     decline: "Regretfully declines",
+    declineNote: "Sending our love from afar",
     guestSingular: "guest",
     guestPlural: "guests",
     guestCountLabel: "Number of guests attending",
