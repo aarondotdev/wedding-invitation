@@ -19,6 +19,8 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPl
  *   data-parallax     drifts slower than the page (value = strength, e.g. "12")
  *   data-scrub        words light up one by one as the section is scrolled through
  *   data-draw         SVG paths draw themselves
+ *   data-hscroll      section pins and its [data-hscroll-track] scrolls sideways (wide screens only)
+ *   data-colorize     image turns from black-and-white to colour as it comes into view
  * Nothing moves when the visitor prefers reduced motion. Smooth scrolling is desktop-only.
  */
 export default function InvitationMotion({ header, children }: { header: ReactNode; children: ReactNode }) {
@@ -50,11 +52,13 @@ export default function InvitationMotion({ header, children }: { header: ReactNo
         mm.add(
           {
             motion: "(prefers-reduced-motion: no-preference)",
+            wide: "(prefers-reduced-motion: no-preference) and (min-width: 1024px)",
             smooth: "(prefers-reduced-motion: no-preference) and (min-width: 1024px) and (pointer: fine)",
           },
           (ctx) => {
-            const { motion, smooth } = ctx.conditions as { motion: boolean; smooth: boolean };
+            const { motion, wide, smooth } = ctx.conditions as { motion: boolean; wide: boolean; smooth: boolean };
             if (!motion) return;
+            const cleanups: Array<() => void> = [];
 
             if (smooth) {
               ScrollSmoother.create({ wrapper: "#smooth-wrapper", content: "#smooth-content", smooth: 1.1, effects: false });
@@ -134,6 +138,52 @@ export default function InvitationMotion({ header, children }: { header: ReactNo
               );
             });
 
+            // Horizontal gallery: the track becomes one long row and moves sideways while the section is pinned
+            const sidewaysImages = new Set<Element>();
+            if (wide) {
+              q<HTMLElement>("[data-hscroll]").forEach((section) => {
+                const track = section.querySelector<HTMLElement>("[data-hscroll-track]");
+                if (!track) return;
+                track.classList.add("is-hscroll");
+                cleanups.push(() => track.classList.remove("is-hscroll"));
+                const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+                const slide = gsap.to(track, {
+                  x: () => -distance(),
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: section,
+                    start: "top top",
+                    // Scroll ~60% of the track's width so a long gallery doesn't take ages to get through
+                    end: () => `+=${distance() * 0.6}`,
+                    pin: true,
+                    scrub: 1,
+                    invalidateOnRefresh: true,
+                  },
+                });
+                track.querySelectorAll("[data-colorize]").forEach((img) => {
+                  sidewaysImages.add(img);
+                  gsap.fromTo(
+                    img,
+                    { filter: "grayscale(1)" },
+                    {
+                      filter: "grayscale(0)",
+                      ease: "none",
+                      scrollTrigger: { trigger: img, containerAnimation: slide, start: "left 85%", end: "left 35%", scrub: true },
+                    },
+                  );
+                });
+              });
+            }
+
+            q<HTMLElement>("[data-colorize]").forEach((img) => {
+              if (sidewaysImages.has(img)) return;
+              gsap.fromTo(
+                img,
+                { filter: "grayscale(1)" },
+                { filter: "grayscale(0)", ease: "none", scrollTrigger: { trigger: img, start: "top 85%", end: "top 35%", scrub: true } },
+              );
+            });
+
             q<SVGPathElement>("[data-draw] path").forEach((path) => {
               gsap.from(path, {
                 drawSVG: 0,
@@ -142,6 +192,8 @@ export default function InvitationMotion({ header, children }: { header: ReactNo
                 scrollTrigger: { trigger: path.closest("[data-draw]")!, start: "top 85%", once: true },
               });
             });
+
+            return () => cleanups.forEach((fn) => fn());
           },
         );
 

@@ -1,12 +1,13 @@
-import { revalidateTag } from "next/cache";
+import { expireTags } from "@/lib/revalidate";
 import type { CollectionConfig } from "payload";
 import { PAGE_TEXT_CACHE_TAG, SEO_CACHE_TAG } from "@/lib/site-content-defaults";
+import { DETAILS_CACHE_TAG } from "@/lib/details-defaults";
 import { WEDDING_CACHE_TAG } from "@/lib/wedding-defaults";
 
 // Pages cache which photos they show; refresh them when an image is replaced, edited or deleted
 // so a removed photo doesn't leave a broken image behind.
 const refreshPagesUsingImages = () => {
-  for (const tag of [PAGE_TEXT_CACHE_TAG, SEO_CACHE_TAG, WEDDING_CACHE_TAG]) revalidateTag(tag, { expire: 0 });
+  expireTags(PAGE_TEXT_CACHE_TAG, SEO_CACHE_TAG, WEDDING_CACHE_TAG, DETAILS_CACHE_TAG);
 };
 
 // Uploaded images (e.g. the link-preview banner). Stored in Vercel Blob in production.

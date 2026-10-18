@@ -1,6 +1,6 @@
-import { revalidateTag } from "next/cache";
+import { expireTags } from "@/lib/revalidate";
 import type { Field, GlobalConfig } from "payload";
-import { PAGE_TEXT_CACHE_TAG, pageTextDefaults } from "@/lib/site-content-defaults";
+import { PAGE_TEXT_CACHE_TAG, pageTextDefaults, storyChapterDefaults } from "@/lib/site-content-defaults";
 
 type Section = keyof typeof pageTextDefaults;
 
@@ -22,8 +22,8 @@ function text<S extends Section>(
 }
 
 // Optional photo picked from (or uploaded to) Images
-function photo(description: string): Field {
-  return { name: "photo", label: "Photo", type: "upload", relationTo: "media", admin: { description } };
+function photo(description: string, name = "photo", label = "Photo"): Field {
+  return { name, label, type: "upload", relationTo: "media", admin: { description } };
 }
 
 export const PageText: GlobalConfig = {
@@ -37,7 +37,7 @@ export const PageText: GlobalConfig = {
   hooks: {
     afterChange: [
       () => {
-        revalidateTag(PAGE_TEXT_CACHE_TAG, { expire: 0 });
+        expireTags(PAGE_TEXT_CACHE_TAG);
       },
     ],
   },
@@ -67,7 +67,16 @@ export const PageText: GlobalConfig = {
               fields: [
                 text("nav", "story", "Our story", "Link to the story section."),
                 text("nav", "celebration", "Celebration", "Link to the ceremony and reception."),
+                text("nav", "entourage", "Entourage", "Link to the family and entourage."),
+                text("nav", "details", "Details", "Link to the dress code."),
+              ],
+            },
+            {
+              type: "row",
+              fields: [
                 text("nav", "schedule", "Schedule", "Link to the order of the day."),
+                text("nav", "gallery", "Gallery", "Label of the photo gallery."),
+                text("nav", "faq", "FAQ", "Link to the questions and answers."),
                 text("nav", "rsvp", "RSVP", "Link to the reply form."),
               ],
             },
@@ -80,6 +89,22 @@ export const PageText: GlobalConfig = {
             text("story", "title", "Heading", "Large heading of the story section."),
             text("story", "text", "Story", "A few sentences about the two of you.", true),
             photo("Optional photo next to the story. Leave empty for text only. Shown in black and white."),
+            {
+              name: "chapters",
+              type: "array",
+              label: "Chapters",
+              labels: { singular: "Chapter", plural: "Chapters" },
+              defaultValue: storyChapterDefaults,
+              admin: {
+                description:
+                  "Numbered rows under the story, each with a large photo that alternates left and right (01, 02, 03…). Leave empty to hide them.",
+              },
+              fields: [
+                { name: "title", type: "text", required: true, label: "Title", admin: { description: "e.g. \"How we met\"" } },
+                { name: "text", type: "textarea", label: "Text" },
+                { name: "photo", type: "upload", relationTo: "media", label: "Photo", admin: { description: "A tall (portrait) photo works best." } },
+              ],
+            },
           ],
         },
         {
@@ -88,7 +113,9 @@ export const PageText: GlobalConfig = {
           fields: [
             text("statement", "text", "Statement", "One sentence shown in very large letters that light up as guests scroll. Keep it short (about 6–10 words).", true),
             text("statement", "note", "Small note", "Short paragraph beside the statement.", true),
+            photo("Full-width wide photo shown just above the statement. A landscape photo works best. Leave empty to hide it.", "bandPhoto", "Wide photo above"),
             photo("Optional small photo beside the statement. Shown in black and white."),
+            photo("Optional large landscape photo below the statement, on the right.", "secondaryPhoto", "Large photo below"),
           ],
         },
         {
