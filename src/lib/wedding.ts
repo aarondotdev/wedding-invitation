@@ -17,7 +17,9 @@ export async function getWedding(): Promise<Wedding> {
   const doc = await payload.findGlobal({ slug: "wedding" });
 
   // A global that has never been saved has no row yet
-  if (!doc.updatedAt) return weddingDefaults;
+  if (!doc.updatedAt) {
+    return { ...weddingDefaults, events: weddingDefaults.events.map((e) => ({ ...e, photo: null })) };
+  }
 
   return {
     partner1: doc.partner1,
@@ -27,16 +29,25 @@ export async function getWedding(): Promise<Wedding> {
     hashtag: doc.hashtag ?? "",
     rsvpBy: doc.rsvpBy,
     rsvpDeadline: doc.rsvpDeadline,
-    events: doc.events.map(({ title, time, venue, address, mapUrl }) => ({
+    events: doc.events.map(({ title, time, venue, address, mapUrl, photo }) => ({
       title,
       time,
       venue,
       address,
       mapUrl: mapUrl ?? "",
+      photo: toPhoto(photo),
     })),
     schedule: (doc.schedule ?? []).map(({ time, item }) => ({ time, item })),
     dressCode: doc.dressCode ?? "",
   };
+}
+
+// A populated upload field as a plain photo, or null when empty / not populated
+export function toPhoto(value: unknown) {
+  if (!value || typeof value !== "object") return null;
+  const m = value as { url?: string | null; width?: number | null; height?: number | null; alt?: string };
+  if (!m.url) return null;
+  return { url: m.url, width: m.width ?? 1200, height: m.height ?? 1500, alt: m.alt ?? "" };
 }
 
 export async function isRsvpOpen() {

@@ -1,12 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Great_Vibes } from "next/font/google";
+import { Bodoni_Moda, Great_Vibes, Outfit } from "next/font/google";
 import { getSeo } from "@/lib/site-content";
 import "./globals.css";
 
-const serif = Cormorant_Garamond({
-  variable: "--font-serif",
+const display = Bodoni_Moda({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  axes: ["opsz"],
+});
+
+const sans = Outfit({
+  variable: "--font-sans",
+  subsets: ["latin"],
 });
 
 const script = Great_Vibes({
@@ -14,6 +19,10 @@ const script = Great_Vibes({
   subsets: ["latin"],
   weight: "400",
 });
+
+// Hide animated elements until the motion layer has set them up (avoids a flash of content),
+// but never for reduced motion, and never for more than 3 s in case scripts fail to load.
+const MOTION_BOOTSTRAP = `(function(){var d=document.documentElement;if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("motion-pending");setTimeout(function(){d.classList.remove("motion-pending")},3000)})()`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeo();
@@ -42,15 +51,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#faf7f2",
+  themeColor: "#2b2723",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${serif.variable} ${script.variable} h-full antialiased scroll-smooth`}
+      className={`${display.variable} ${sans.variable} ${script.variable} h-full antialiased`}
+      // MOTION_BOOTSTRAP adds a class before hydration
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP }} />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -9,7 +9,7 @@ type Labels = PageText["rsvpForm"];
 type Messages = PageText["rsvpMessages"];
 
 const inputClass =
-  "w-full border-b border-accent/40 bg-transparent px-1 py-2 text-lg outline-none focus:border-accent placeholder:text-foreground/40";
+  "w-full border-b border-line bg-transparent px-1 py-3 text-lg outline-none transition-colors focus:border-accent placeholder:text-muted [&>option]:bg-surface";
 
 const guestCount = (n: number, labels: Labels) =>
   `${n} ${n === 1 ? labels.guestSingular : labels.guestPlural}`;
@@ -40,14 +40,14 @@ export default function RsvpForm({
     return (
       <div className="mx-auto max-w-md space-y-4 text-center text-xl">
         <RecordedResponse guest={guest} labels={labels} messages={messages} />
-        <p className="text-lg italic text-foreground/70">{messages.closed}</p>
+        <p className="text-lg italic text-muted">{messages.closed}</p>
       </div>
     );
   }
 
   if (state.status === "success") {
     return (
-      <p className="text-center text-2xl">
+      <p className="text-center font-display text-3xl leading-snug md:text-4xl">
         {fill(state.attending ? messages.thanksAttending : messages.thanksDeclined, { name: guest.name })}
       </p>
     );
@@ -56,11 +56,11 @@ export default function RsvpForm({
   const defaultAttending = guest.attending === null ? undefined : guest.attending ? "yes" : "no";
 
   return (
-    <form action={formAction} className="mx-auto grid max-w-md gap-6">
+    <form action={formAction} className="mx-auto grid max-w-md gap-8">
       {guest.responded_at && (
-        <p className="text-center italic text-foreground/70">{messages.alreadyReplied}</p>
+        <p className="text-center italic text-muted">{messages.alreadyReplied}</p>
       )}
-      <div className="flex justify-center gap-6 text-lg">
+      <div className="flex flex-col items-center justify-center gap-4 text-lg sm:flex-row sm:gap-8">
         <label className="flex items-center gap-2">
           <input
             type="radio"
@@ -108,14 +108,14 @@ export default function RsvpForm({
         className={inputClass}
       />
       {state.status === "error" && (
-        <p role="alert" className="text-center text-red-700">
+        <p role="alert" className="text-center text-red-300">
           {state.message}
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 rounded-full bg-accent px-8 py-3 text-sm uppercase tracking-[0.25em] text-white transition hover:opacity-90 disabled:opacity-60"
+        className="mt-2 rounded-full bg-accent px-8 py-4 text-xs font-medium uppercase tracking-[0.3em] text-background transition hover:bg-foreground disabled:opacity-60"
       >
         {pending ? labels.sendingButton : guest.responded_at ? labels.updateButton : labels.sendButton}
       </button>

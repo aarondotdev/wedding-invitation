@@ -4,27 +4,29 @@ import config from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import { getPayload } from "payload";
 import {
+  DEFAULT_HERO_PHOTO,
   DEFAULT_SHARE_IMAGE,
   PAGE_TEXT_CACHE_TAG,
   SEO_CACHE_TAG,
   pageTextDefaults,
   seoDefaults,
+  type PagePhotos,
   type PageText,
 } from "@/lib/site-content-defaults";
-import { getWedding } from "@/lib/wedding";
+import { getWedding, toPhoto } from "@/lib/wedding";
 
 // Saved value if it has text, otherwise the default
 const pick = (value: unknown, fallback: string) =>
   typeof value === "string" && value.trim() ? value : fallback;
 
 // Cached until the "Page text" global is saved in the CMS (its afterChange hook expires the tag).
-export async function getPageText(): Promise<PageText> {
+export async function getPageText(): Promise<PageText & { photos: PagePhotos }> {
   "use cache";
   cacheLife("max");
   cacheTag(PAGE_TEXT_CACHE_TAG);
 
   const payload = await getPayload({ config });
-  const doc = (await payload.findGlobal({ slug: "pageText" })) as unknown as Partial<
+  const doc = (await payload.findGlobal({ slug: "pageText", depth: 1 })) as unknown as Partial<
     Record<keyof PageText, Record<string, unknown> | null>
   >;
 
@@ -35,7 +37,12 @@ export async function getPageText(): Promise<PageText> {
       Object.entries(defaults).map(([key, fallback]) => [key, pick(saved[key], fallback)]),
     );
   }
-  return merged as PageText;
+  const photos: PagePhotos = {
+    hero: toPhoto(doc.hero?.photo) ?? DEFAULT_HERO_PHOTO,
+    story: toPhoto(doc.story?.photo),
+    statement: toPhoto(doc.statement?.photo),
+  };
+  return { ...(merged as PageText), photos };
 }
 
 export type Seo = {

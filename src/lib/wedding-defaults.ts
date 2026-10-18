@@ -36,6 +36,10 @@ export const weddingDefaults = {
   dressCode: "Garden formal — soft pastels welcome",
 };
 
-export type Wedding = typeof weddingDefaults;
+type Photo = { url: string; width: number; height: number; alt: string };
+
+export type Wedding = Omit<typeof weddingDefaults, "events"> & {
+  events: Array<(typeof weddingDefaults.events)[number] & { photo: Photo | null }>;
+};
 
 export const WEDDING_CACHE_TAG = "wedding";

@@ -21,6 +21,11 @@ function text<S extends Section>(
   return long ? { ...base, type: "textarea" } : { ...base, type: "text" };
 }
 
+// Optional photo picked from (or uploaded to) Images
+function photo(description: string): Field {
+  return { name: "photo", label: "Photo", type: "upload", relationTo: "media", admin: { description } };
+}
+
 export const PageText: GlobalConfig = {
   slug: "pageText",
   label: "Page text",
@@ -49,6 +54,41 @@ export const PageText: GlobalConfig = {
             text("hero", "ampersand", "Between the names", "Shown between the two names, e.g. \"&\" or \"and\"."),
             text("hero", "invitationLine", "Line below the names", "e.g. \"request the pleasure of your company\"."),
             text("hero", "rsvpButton", "RSVP button", "Button that jumps down to the reply form."),
+            photo("Large portrait behind the names. A tall photo works best. Leave empty to use the built-in photo. Shown in black and white."),
+          ],
+        },
+        {
+          name: "nav",
+          label: "Menu",
+          description: "Links at the top of the page. They also label each section, e.g. \"01 — Our story\".",
+          fields: [
+            {
+              type: "row",
+              fields: [
+                text("nav", "story", "Our story", "Link to the story section."),
+                text("nav", "celebration", "Celebration", "Link to the ceremony and reception."),
+                text("nav", "schedule", "Schedule", "Link to the order of the day."),
+                text("nav", "rsvp", "RSVP", "Link to the reply form."),
+              ],
+            },
+          ],
+        },
+        {
+          name: "story",
+          label: "Our story",
+          fields: [
+            text("story", "title", "Heading", "Large heading of the story section."),
+            text("story", "text", "Story", "A few sentences about the two of you.", true),
+            photo("Optional photo next to the story. Leave empty for text only. Shown in black and white."),
+          ],
+        },
+        {
+          name: "statement",
+          label: "Big statement",
+          fields: [
+            text("statement", "text", "Statement", "One sentence shown in very large letters that light up as guests scroll. Keep it short (about 6–10 words).", true),
+            text("statement", "note", "Small note", "Short paragraph beside the statement.", true),
+            photo("Optional small photo beside the statement. Shown in black and white."),
           ],
         },
         {

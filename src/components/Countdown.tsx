@@ -34,13 +34,13 @@ export default function Countdown({
         ];
 
   return (
-    <div className="flex justify-center gap-4 sm:gap-8">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-4 sm:gap-8">
       {[labels.days, labels.hours, labels.minutes, labels.seconds].map((label, i) => (
-        <div key={i} className="flex flex-col items-center">
-          <span className="text-4xl sm:text-5xl font-light tabular-nums">
+        <div key={i} className="flex flex-col items-start border-l border-line pl-4 sm:pl-6">
+          <span className="font-display text-6xl tabular-nums md:text-8xl">
             {values ? String(values[i]).padStart(2, "0") : "--"}
           </span>
-          <span className="mt-1 text-xs uppercase tracking-[0.25em] text-accent">
+          <span className="mt-3 text-[0.65rem] font-medium uppercase tracking-[0.3em] text-accent sm:text-xs">
             {label}
           </span>
         </div>
