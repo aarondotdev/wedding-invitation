@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
     "src/app/(payload)/**",
     // Claude Code worktrees are separate checkouts, not part of this project
     ".claude/**",
+    // Minified React Grab build copied by `npm run dev` (local development only)
+    "public/react-grab.js",
   ]),
 ]);
 
