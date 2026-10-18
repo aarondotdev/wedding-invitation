@@ -149,6 +149,14 @@ html.motion-pending [data-reveal] {
   display: inline-flex;
 }
 
+/* The names' letter masks clip to the tight line box (leading 0.82), which cut off descenders and tall
+   letters in fonts with deeper metrics (e.g. the "J" in Cormorant and Playfair). Give each mask room
+   above and below, and cancel it with negative margins so the layout doesn't move. */
+.hero-char-mask {
+  padding-block: 0.15em 0.35em;
+  margin-block: -0.15em -0.35em;
+}
+
 /* centered layout (also "split" when there is no hero photo): everything stacked and centred */
 :is([data-layout="centered"] [data-hero], [data-layout="split"] [data-hero]:not([data-has-photo]))
   :is([data-hero-greeting], [data-hero-info]) {

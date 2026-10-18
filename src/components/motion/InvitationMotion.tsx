@@ -83,8 +83,9 @@ export default function InvitationMotion({
             const intro = gsap.timeline({ defaults: { ease: "expo.out" } });
             q<HTMLElement>("[data-hero-title]").forEach((el) => {
               // Split into words first so the browser never wraps a name between two letters
-              const split = SplitText.create(el, { type: "words,chars", mask: "chars" });
-              intro.from(split.chars, { yPercent: 115, duration: 1.4, stagger: 0.035 }, 0.2);
+              const split = SplitText.create(el, { type: "words,chars", mask: "chars", charsClass: "hero-char" });
+              // Start low enough to clear the extra room under each mask (.hero-char-mask in globals.css)
+              intro.from(split.chars, { yPercent: 160, duration: 1.4, stagger: 0.035 }, 0.2);
             });
 
             q<HTMLElement>("[data-split]").forEach((el) => {
