@@ -160,6 +160,13 @@ export const PageText: GlobalConfig = {
             {
               type: "row",
               fields: [
+                text("rsvpForm", "acceptNote", "\"Yes\" card line", "Small line under the \"yes\" option."),
+                text("rsvpForm", "declineNote", "\"No\" card line", "Small line under the \"no\" option."),
+              ],
+            },
+            {
+              type: "row",
+              fields: [
                 text("rsvpForm", "guestSingular", "One guest", "Word after 1, e.g. \"1 guest\"."),
                 text("rsvpForm", "guestPlural", "Several guests", "Word after 2 or more, e.g. \"3 guests\"."),
               ],

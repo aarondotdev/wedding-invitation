@@ -20,6 +20,34 @@ function RecordedResponse({ guest, labels, messages }: { guest: Guest; labels: L
   return <p>{fill(messages.recordedAttending, { count: guestCount(guest.guest_count ?? 0, labels) })}</p>;
 }
 
+// A large selectable card around a real (visually hidden) radio button, so keyboard and screen
+// readers work as normal; the selected card gets a gold border and dot.
+function ChoiceCard({
+  value,
+  label,
+  note,
+  required,
+  defaultChecked,
+}: {
+  value: "yes" | "no";
+  label: string;
+  note: string;
+  required?: boolean;
+  defaultChecked: boolean;
+}) {
+  return (
+    <label className="group relative flex min-h-40 cursor-pointer flex-col justify-between gap-6 border border-line p-5 text-left transition-colors duration-300 hover:border-accent/60 has-checked:border-accent has-checked:bg-accent/10 has-focus-visible:ring-2 has-focus-visible:ring-accent has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background sm:p-7">
+      <input type="radio" name="attending" value={value} required={required} defaultChecked={defaultChecked} className="sr-only" />
+      <span
+        aria-hidden
+        className="absolute right-4 top-4 h-3.5 w-3.5 rounded-full border border-line transition-colors group-has-checked:border-accent group-has-checked:bg-accent sm:right-5 sm:top-5"
+      />
+      <span className="pr-6 font-display text-2xl leading-tight sm:text-3xl">{label}</span>
+      {note && <span className="text-sm leading-snug text-muted group-has-checked:text-foreground/80">{note}</span>}
+    </label>
+  );
+}
+
 export default function RsvpForm({
   guest,
   open,
@@ -56,32 +84,19 @@ export default function RsvpForm({
   const defaultAttending = guest.attending === null ? undefined : guest.attending ? "yes" : "no";
 
   return (
-    <form action={formAction} className="mx-auto grid max-w-md gap-8">
+    <form action={formAction} className="mx-auto grid max-w-xl gap-8">
       {guest.responded_at && (
         <p className="text-center italic text-muted">{messages.alreadyReplied}</p>
       )}
-      <div className="flex flex-col items-center justify-center gap-4 text-lg sm:flex-row sm:gap-8">
-        <label className="flex items-center gap-2">
-          <input
-            type="radio"
-            name="attending"
-            value="yes"
-            required
-            defaultChecked={defaultAttending === "yes"}
-            className="accent-accent"
-          />
-          {labels.accept}
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="radio"
-            name="attending"
-            value="no"
-            defaultChecked={defaultAttending === "no"}
-            className="accent-accent"
-          />
-          {labels.decline}
-        </label>
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <ChoiceCard
+          value="yes"
+          label={labels.accept}
+          note={labels.acceptNote}
+          required
+          defaultChecked={defaultAttending === "yes"}
+        />
+        <ChoiceCard value="no" label={labels.decline} note={labels.declineNote} defaultChecked={defaultAttending === "no"} />
       </div>
       {guest.party_size > 1 ? (
         <select
