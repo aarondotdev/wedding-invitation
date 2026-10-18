@@ -16,7 +16,7 @@ const script = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: `${wedding.partner1} & ${wedding.partner2} — Wedding Invitation`,
+  title: `${wedding.partner1} and ${wedding.partner2}`,
   description: `Join us on ${wedding.displayDate}.`,
 };
 

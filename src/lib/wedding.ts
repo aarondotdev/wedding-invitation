@@ -1,7 +1,7 @@
 // Edit this file to customize the invitation.
 export const wedding = {
-  partner1: "Aaron",
-  partner2: "Partner",
+  partner1: "Lorenz",
+  partner2: "Jenzell",
   // ISO string with timezone offset so the countdown is accurate everywhere
   date: "2027-06-12T16:00:00-07:00",
   displayDate: "Saturday, June 12, 2027",
