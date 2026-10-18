@@ -30,8 +30,7 @@ export async function proxy(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
 
   const { pathname } = request.nextUrl;
-  const isPublic = pathname === "/admin/login" || pathname.startsWith("/auth/");
-  if (!data?.claims && !isPublic) {
+  if (!data?.claims && pathname !== "/admin/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     url.search = "";
@@ -44,5 +43,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/auth/:path*"],
+  matcher: ["/admin/:path*"],
 };
