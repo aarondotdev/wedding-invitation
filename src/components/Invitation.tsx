@@ -193,22 +193,24 @@ export default function Invitation({
         <section id="top" className="hero-glow relative isolate flex min-h-svh flex-col overflow-hidden px-6 pb-12 pt-28 md:px-12">
           <Flourish className="pointer-events-none absolute left-[30%] top-0 -z-10 h-full w-auto text-accent/70" />
 
-          <div data-fade className="relative z-10 max-w-[16rem] text-lg leading-snug md:absolute md:left-12 md:top-[26%]">
+          <div data-fade className="relative z-10 max-w-[16rem] text-lg leading-snug">
             <p className="mb-3 font-display text-2xl italic">{fill(hero.greeting, { name: guest.name })}</p>
             <p className="text-sm uppercase tracking-[0.3em] text-accent">{hero.intro}</p>
           </div>
 
           <div className="relative flex min-h-[26rem] flex-1 items-center justify-center py-10 md:min-h-0">
             {/* Centred with flexbox, not translate: GSAP animates this element and would fight a CSS translate */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Photo
-                photo={photos.hero}
-                priority
-                dim
-                sizes="(min-width: 768px) 32vw, 70vw"
-                className="aspect-[4/5] w-[min(58vw,25rem)] rounded-t-full"
-              />
-            </div>
+            {photos.hero && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Photo
+                  photo={photos.hero}
+                  priority
+                  dim
+                  sizes="(min-width: 768px) 32vw, 70vw"
+                  className="aspect-[4/5] w-[min(58vw,25rem)] rounded-t-full"
+                />
+              </div>
+            )}
             <h1 className="relative z-10 text-center font-display text-[clamp(4rem,14vw,12rem)] leading-[0.82]">
               <span data-hero-title className="block whitespace-nowrap md:-translate-x-[14%]">
                 {wedding.partner1}
@@ -220,7 +222,7 @@ export default function Invitation({
             </h1>
           </div>
 
-          <div data-fade="0.6" className="relative z-10 max-w-sm md:absolute md:bottom-12 md:left-12">
+          <div data-fade="0.6" className="relative z-10 ml-auto max-w-sm text-right">
             <p className="text-lg italic text-foreground/80">{hero.invitationLine}</p>
             <p className="mt-4 font-display text-3xl">{wedding.displayDate}</p>
             {wedding.events[0]?.venue && <p className="mt-1 text-muted">{wedding.events[0].venue}</p>}

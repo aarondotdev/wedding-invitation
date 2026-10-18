@@ -4,7 +4,6 @@ import config from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import { getPayload } from "payload";
 import {
-  DEFAULT_HERO_PHOTO,
   DEFAULT_SHARE_IMAGE,
   PAGE_TEXT_CACHE_TAG,
   SEO_CACHE_TAG,
@@ -50,7 +49,7 @@ export async function getPageText(): Promise<PageText & { photos: PagePhotos; ch
     );
   }
   const photos: PagePhotos = {
-    hero: toPhoto(doc.hero?.photo) ?? DEFAULT_HERO_PHOTO,
+    hero: toPhoto(doc.hero?.photo),
     story: toPhoto(doc.story?.photo),
     statement: toPhoto(doc.statement?.photo),
     statementBand: toPhoto(doc.statement?.bandPhoto),

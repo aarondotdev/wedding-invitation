@@ -79,9 +79,9 @@ export type PageText = typeof pageTextDefaults;
 
 export type SitePhoto = { url: string; width: number; height: number; alt: string };
 
-// Photos chosen in "Page text". Only the hero has a bundled fallback; the others are hidden when empty.
+// Photos chosen in "Page text". Each is optional and its block is hidden when empty.
 export type PagePhotos = {
-  hero: SitePhoto;
+  hero: SitePhoto | null;
   story: SitePhoto | null;
   statement: SitePhoto | null;
   statementBand: SitePhoto | null;
@@ -97,12 +97,6 @@ export const storyChapterDefaults = [
 
 export type StoryChapter = { title: string; text: string; photo: SitePhoto | null };
 
-export const DEFAULT_HERO_PHOTO: SitePhoto = {
-  url: "/couple-hero.jpg",
-  width: 1200,
-  height: 1534,
-  alt: "Lorenz and Jenzell embracing under a glowing crescent moon",
-};
 
 // Empty strings mean "use the automatic wording" (built from the names and date in getSeo()).
 export const seoDefaults = {

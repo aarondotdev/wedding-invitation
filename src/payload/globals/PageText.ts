@@ -54,7 +54,7 @@ export const PageText: GlobalConfig = {
             text("hero", "ampersand", "Between the names", "Shown between the two names, e.g. \"&\" or \"and\"."),
             text("hero", "invitationLine", "Line below the names", "e.g. \"request the pleasure of your company\"."),
             text("hero", "rsvpButton", "RSVP button", "Button that jumps down to the reply form."),
-            photo("Large portrait behind the names. A tall photo works best. Leave empty to use the built-in photo. Shown in black and white."),
+            photo("Optional large portrait behind the names. A tall photo works best. Leave empty to show just the names. Shown in black and white."),
           ],
         },
         {
