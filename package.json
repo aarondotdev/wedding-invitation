@@ -2,23 +2,33 @@
   "name": "wedding-invitation",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "payload": "payload",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
     "guests": "node --env-file=.env.local scripts/guests.mjs",
     "admins": "node --env-file=.env.local scripts/admins.mjs"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.91.0",
+    "@payloadcms/next": "3.91.0",
+    "@payloadcms/ui": "3.91.0",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "^2.118.0",
+    "graphql": "^16.14.2",
     "next": "16.4.2",
+    "payload": "3.91.0",
     "qrcode": "1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "read-excel-file": "9.3.12",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

@@ -1,40 +1,45 @@
-// Edit this file to customize the invitation.
-export const wedding = {
-  partner1: "Lorenz",
-  partner2: "Jenzell",
-  // ISO string with timezone offset so the countdown is accurate everywhere
-  date: "2027-06-12T16:00:00-07:00",
-  displayDate: "Saturday, June 12, 2027",
-  hashtag: "#ForeverStartsHere",
-  rsvpBy: "May 1, 2027",
-  // RSVPs are accepted until this moment (end of the rsvpBy day)
-  rsvpDeadline: "2027-05-01T23:59:59-07:00",
-  events: [
-    {
-      title: "Ceremony",
-      time: "4:00 PM",
-      venue: "St. Mary's Chapel",
-      address: "123 Garden Lane, Napa, CA",
-      mapUrl: "https://maps.google.com/?q=123+Garden+Lane+Napa+CA",
-    },
-    {
-      title: "Reception",
-      time: "6:00 PM",
-      venue: "The Vineyard Estate",
-      address: "456 Vine Road, Napa, CA",
-      mapUrl: "https://maps.google.com/?q=456+Vine+Road+Napa+CA",
-    },
-  ],
-  schedule: [
-    { time: "3:30 PM", item: "Guest arrival" },
-    { time: "4:00 PM", item: "Ceremony" },
-    { time: "5:00 PM", item: "Cocktail hour" },
-    { time: "6:00 PM", item: "Dinner & toasts" },
-    { time: "8:00 PM", item: "Dancing" },
-  ],
-  dressCode: "Garden formal — soft pastels welcome",
-};
+import "server-only";
 
-export function isRsvpOpen() {
-  return Date.now() <= new Date(wedding.rsvpDeadline).getTime();
+import config from "@payload-config";
+import { cacheLife, cacheTag } from "next/cache";
+import { getPayload } from "payload";
+import { WEDDING_CACHE_TAG, weddingDefaults, type Wedding } from "@/lib/wedding-defaults";
+
+export type { Wedding };
+
+// Cached until the Wedding global is saved in the CMS (its afterChange hook expires the tag).
+export async function getWedding(): Promise<Wedding> {
+  "use cache";
+  cacheLife("max");
+  cacheTag(WEDDING_CACHE_TAG);
+
+  const payload = await getPayload({ config });
+  const doc = await payload.findGlobal({ slug: "wedding" });
+
+  // A global that has never been saved has no row yet
+  if (!doc.updatedAt) return weddingDefaults;
+
+  return {
+    partner1: doc.partner1,
+    partner2: doc.partner2,
+    date: doc.date,
+    displayDate: doc.displayDate,
+    hashtag: doc.hashtag ?? "",
+    rsvpBy: doc.rsvpBy,
+    rsvpDeadline: doc.rsvpDeadline,
+    events: doc.events.map(({ title, time, venue, address, mapUrl }) => ({
+      title,
+      time,
+      venue,
+      address,
+      mapUrl: mapUrl ?? "",
+    })),
+    schedule: (doc.schedule ?? []).map(({ time, item }) => ({ time, item })),
+    dressCode: doc.dressCode ?? "",
+  };
+}
+
+export async function isRsvpOpen() {
+  const { rsvpDeadline } = await getWedding();
+  return Date.now() <= new Date(rsvpDeadline).getTime();
 }

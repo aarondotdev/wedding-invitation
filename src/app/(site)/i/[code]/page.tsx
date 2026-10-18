@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { after } from "next/server";
 import Invitation from "@/components/Invitation";
 import { getGuestByCode, markOpened } from "@/lib/supabase";
-import { isRsvpOpen } from "@/lib/wedding";
+import { getWedding, isRsvpOpen } from "@/lib/wedding";
 
 // Allowed to block on the code lookup: there is no useful loading UI to show before the
 // guest is verified. Invalid codes render not-found.tsx (noindex; status stays 200 once
@@ -21,5 +21,7 @@ export default async function InvitePage({ params }: PageProps<"/i/[code]">) {
 
   after(() => markOpened(guest));
 
-  return <Invitation guest={guest} rsvpOpen={isRsvpOpen()} />;
+  const [wedding, rsvpOpen] = await Promise.all([getWedding(), isRsvpOpen()]);
+
+  return <Invitation wedding={wedding} guest={guest} rsvpOpen={rsvpOpen} />;
 }
