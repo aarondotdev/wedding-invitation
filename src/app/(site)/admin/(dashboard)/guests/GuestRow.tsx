@@ -9,7 +9,7 @@ import GuestFields, { primaryButton } from "./GuestFields";
 const smallButton = "rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-50 disabled:opacity-50";
 
 function RsvpBadge({ guest }: { guest: AdminGuest }) {
-  if (guest.attending === null) return <span className="text-neutral-500">No reply</span>;
+  if (guest.attending === null) return <span className="text-black">No reply</span>;
   if (!guest.attending) return <span className="text-red-700">Declined</span>;
   return <span className="text-green-700">Attending · {guest.guest_count}</span>;
 }
@@ -35,23 +35,23 @@ export default function GuestRow({ guest, url }: { guest: AdminGuest; url: strin
 
   return (
     <>
-      <tr className={`border-t border-neutral-200 align-top ${revoked ? "bg-neutral-50 text-neutral-400" : ""}`}>
+      <tr className={`border-t border-neutral-200 align-top ${revoked ? "bg-neutral-50 text-black" : ""}`}>
         <td className="px-3 py-3">
-          <p className="font-medium text-neutral-900">{guest.name}</p>
-          <p className="text-xs text-neutral-500">
+          <p className="font-medium text-black">{guest.name}</p>
+          <p className="text-xs text-black">
             {[guest.phone, guest.email].filter(Boolean).join(" · ")}
           </p>
-          {guest.notes && <p className="text-xs italic text-neutral-500">{guest.notes}</p>}
-          {guest.message && <p className="mt-1 text-xs text-neutral-700">“{guest.message}”</p>}
+          {guest.notes && <p className="text-xs italic text-black">{guest.notes}</p>}
+          {guest.message && <p className="mt-1 text-xs text-black">“{guest.message}”</p>}
         </td>
         <td className="px-3 py-3">{guest.party_size}</td>
         <td className="px-3 py-3">
           <RsvpBadge guest={guest} />
-          <p className="text-xs text-neutral-500">{guest.opened_at ? "Opened link" : "Not opened yet"}</p>
+          <p className="text-xs text-black">{guest.opened_at ? "Opened link" : "Not opened yet"}</p>
         </td>
         <td className="px-3 py-3">
           {revoked ? (
-            <span className="text-xs font-medium uppercase text-neutral-500">Revoked</span>
+            <span className="text-xs font-medium uppercase text-black">Revoked</span>
           ) : (
             <div className="flex flex-wrap gap-1">
               <CopyButton text={url} />

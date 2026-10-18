@@ -10,7 +10,7 @@ function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-neutral-200 p-4">
       <p className="text-2xl font-semibold">{value}</p>
-      <p className="text-sm text-neutral-500">{label}</p>
+      <p className="text-sm text-black">{label}</p>
     </div>
   );
 }
@@ -49,13 +49,13 @@ export default async function AdminGuestsPage() {
 
       <section>
         {guests.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-neutral-500">
+          <p className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-black">
             No guests yet. Add one above or import your list.
           </p>
         ) : (
           <div className="overflow-x-auto rounded-lg border border-neutral-200">
             <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-600">
+              <thead className="bg-neutral-50 text-black">
                 <tr>
                   <th className="px-3 py-2 font-medium">Guest</th>
                   <th className="px-3 py-2 font-medium">Party</th>

@@ -15,9 +15,9 @@ export default async function DashboardLayout({ children }: LayoutProps<"/admin"
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-3">
           <p className="font-semibold">
             {wedding.partner1} &amp; {wedding.partner2}{" "}
-            <span className="font-normal text-neutral-500">· Guest admin</span>
+            <span className="font-normal text-black">· Guest admin</span>
           </p>
-          <form action={signOut} className="flex items-center gap-3 text-sm text-neutral-600">
+          <form action={signOut} className="flex items-center gap-3 text-sm text-black">
             <span className="hidden sm:inline">{email}</span>
             <button type="submit" className="rounded-md border border-neutral-300 px-3 py-1 hover:bg-neutral-50">
               Sign out
