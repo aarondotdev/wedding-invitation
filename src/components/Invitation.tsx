@@ -1,18 +1,20 @@
 import Image from "next/image";
 import Countdown from "@/components/Countdown";
+import HeaderMenu from "@/components/HeaderMenu";
 import InvitationMotion from "@/components/motion/InvitationMotion";
 import RsvpForm from "@/components/RsvpForm";
 import type { Details, Entourage, GalleryPhoto, NameGroup } from "@/lib/details-defaults";
-import { fill, type PagePhotos, type PageText, type SitePhoto, type StoryChapter } from "@/lib/site-content-defaults";
+import { fill, focalPosition, type PagePhotos, type PageText, type SitePhoto, type StoryChapter } from "@/lib/site-content-defaults";
 import type { Guest } from "@/lib/supabase";
 import type { Wedding } from "@/lib/wedding-defaults";
+import { themeScopeProps } from "@/theme/apply";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
 // "01 — Our story" with a hairline, as in an editorial spread
 function SectionLabel({ index, children }: { index: number; children: React.ReactNode }) {
   return (
-    <div data-fade className="border-b border-line pb-4 text-xs font-medium uppercase tracking-[0.3em] text-foreground">
+    <div data-fade className="border-b border-line pb-4 text-xs font-medium uppercase tracking-[0.3em] text-accent-ink">
       {pad(index)} — {children}
     </div>
   );
@@ -43,6 +45,7 @@ function Photo({
           sizes={sizes}
           priority={priority}
           className={`object-cover grayscale ${dim ? "brightness-[0.72]" : ""}`}
+          style={{ objectPosition: focalPosition(photo) }}
         />
       </div>
     </div>
@@ -108,7 +111,7 @@ function FeatureRow({
         }
       >
         <div>
-          <p data-fade className="text-sm font-medium text-muted">{pad(index)}</p>
+          <p data-fade className="text-sm font-medium text-accent-ink">{pad(index)}</p>
           <h3 data-split className="mt-8 font-display text-[clamp(2.75rem,6vw,5.5rem)] leading-[0.95]">
             {title}
           </h3>
@@ -121,10 +124,32 @@ function FeatureRow({
   );
 }
 
+// Bento tile sizes on phones. A block of five tiles fills a 2-column grid exactly:
+//   [big 2x2] / [tall][small] / [ ... ][small] / [wide 2x1]
+// A shorter final block uses a pattern that still ends flush, so the grid never has holes.
+// Tablet and desktop ignore these spans.
+const BENTO = {
+  big: "max-md:col-span-2 max-md:row-span-2",
+  tall: "max-md:row-span-2",
+  wide: "max-md:col-span-2",
+  small: "",
+};
+const BENTO_BLOCK = [BENTO.big, BENTO.tall, BENTO.small, BENTO.small, BENTO.wide];
+const BENTO_TAIL: Record<number, string[]> = {
+  1: [BENTO.big],
+  2: [BENTO.big, BENTO.wide],
+  3: [BENTO.big, BENTO.small, BENTO.small],
+  4: [BENTO.big, BENTO.tall, BENTO.small, BENTO.small],
+};
+function bentoTile(index: number, total: number) {
+  const tailStart = total - (total % 5);
+  return index >= tailStart ? BENTO_TAIL[total % 5][index - tailStart] : BENTO_BLOCK[index % 5];
+}
+
 function Names({ group, className }: { group: NameGroup; className?: string }) {
   return (
     <div data-fade className={className}>
-      <h4 className="text-xs font-medium uppercase tracking-[0.3em] text-accent">{group.title}</h4>
+      <h4 className="text-xs font-medium uppercase tracking-[0.3em] text-accent-ink">{group.title}</h4>
       <ul className="mt-4 space-y-1.5">
         {group.names.map((name, i) => (
           <li key={`${name}-${i}`} className="font-display text-2xl leading-snug">
@@ -145,23 +170,42 @@ function Header({ wedding, text }: { wedding: Wedding; text: PageText }) {
     ["#schedule", text.nav.schedule, "lg:inline"],
     ["#faq", text.nav.faq, "lg:inline"],
   ];
+  // One markup tree for every header variant; globals.css arranges it per `data-header`
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-line bg-background/75 px-6 py-4 backdrop-blur-md md:px-12">
-      <a href="#top" className="font-display text-2xl" aria-label={`${wedding.partner1} ${text.hero.ampersand} ${wedding.partner2}`}>
+    <header
+      data-hdr
+      className="fixed inset-x-0 top-0 z-50 flex items-center gap-7 border-b border-line bg-background/75 px-6 py-4 backdrop-blur-md md:px-12"
+    >
+      <a
+        href="#top"
+        data-hdr-monogram
+        className="mr-auto font-display text-2xl"
+        aria-label={`${wedding.partner1} ${text.hero.ampersand} ${wedding.partner2}`}
+      >
         {wedding.partner1.charAt(0)}
-        <span className="font-script text-accent"> {text.hero.ampersand} </span>
+        <span className="font-script text-accent-ink"> {text.hero.ampersand} </span>
         {wedding.partner2.charAt(0)}
       </a>
-      <nav className="flex items-center gap-7 text-xs font-medium uppercase tracking-[0.25em]">
+      <nav data-hdr-links className="flex items-center gap-7 text-xs font-medium uppercase tracking-[0.25em]">
         {links.map(([href, label, show]) => (
-          <a key={href} href={href} className={`hidden transition-colors hover:text-accent ${show}`}>
+          <a key={href} href={href} className={`hidden transition-colors hover:text-accent-ink ${show}`}>
             {label}
           </a>
         ))}
-        <a href="#rsvp" className="rounded-full border border-accent px-5 py-2 text-accent transition-colors hover:bg-accent hover:text-background">
-          {text.nav.rsvp}
-        </a>
       </nav>
+      <a
+        href="#rsvp"
+        data-hdr-rsvp
+        className="rounded-full border border-accent px-5 py-2 text-xs font-medium uppercase tracking-[0.25em] text-accent-ink transition-colors hover:bg-accent-ink hover:text-background"
+      >
+        {text.nav.rsvp}
+      </a>
+      <HeaderMenu
+        links={links.map(([href, label]) => [href, label])}
+        rsvp={["#rsvp", text.nav.rsvp]}
+        menuLabel={text.nav.menu}
+        closeLabel={text.nav.close}
+      />
     </header>
   );
 }
@@ -187,21 +231,26 @@ export default function Invitation({
   let section = 0;
 
   return (
-    <InvitationMotion header={<Header wedding={wedding} text={text} />}>
+    <InvitationMotion scope={themeScopeProps()} header={<Header wedding={wedding} text={text} />}>
       <main>
         {/* Hero: giant names over an arched portrait */}
-        <section id="top" className="hero-glow relative isolate flex min-h-svh flex-col overflow-hidden px-6 pb-12 pt-28 md:px-12">
-          <Flourish className="pointer-events-none absolute left-[30%] top-0 -z-10 h-full w-auto text-accent/70" />
+        <section
+          id="top"
+          data-hero
+          data-has-photo={photos.hero ? "" : undefined}
+          className="hero-glow relative isolate flex min-h-svh flex-col overflow-hidden px-6 pb-12 pt-28 md:px-12"
+        >
+          <Flourish className="pointer-events-none absolute left-[30%] top-0 -z-10 h-full w-auto text-accent" />
 
-          <div data-fade className="relative z-10 max-w-[16rem] text-lg leading-snug">
+          <div data-fade data-hero-greeting className="relative z-10 max-w-[16rem] text-lg leading-snug">
             <p className="mb-3 font-display text-2xl italic">{fill(hero.greeting, { name: guest.name })}</p>
-            <p className="text-sm uppercase tracking-[0.3em] text-accent">{hero.intro}</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-accent-ink">{hero.intro}</p>
           </div>
 
-          <div className="relative flex min-h-[26rem] flex-1 items-center justify-center py-10 md:min-h-0">
+          <div data-hero-stage className="relative flex min-h-[26rem] flex-1 items-center justify-center py-10 md:min-h-0">
             {/* Centred with flexbox, not translate: GSAP animates this element and would fight a CSS translate */}
             {photos.hero && (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div data-hero-photo className="absolute inset-0 flex items-center justify-center">
                 <Photo
                   photo={photos.hero}
                   priority
@@ -211,24 +260,24 @@ export default function Invitation({
                 />
               </div>
             )}
-            <h1 className="relative z-10 text-center font-display text-[clamp(4rem,14vw,12rem)] leading-[0.82]">
+            <h1 data-hero-names className="relative z-10 text-center font-display text-[clamp(4rem,14vw,12rem)] leading-[0.82]">
               <span data-hero-title className="block whitespace-nowrap md:-translate-x-[14%]">
                 {wedding.partner1}
               </span>
-              <span className="my-2 block font-script text-[0.32em] leading-none text-accent md:-translate-x-[36%]">{hero.ampersand}</span>
+              <span data-hero-amp className="my-2 block font-script text-[0.32em] leading-none text-accent-ink md:-translate-x-[36%]">{hero.ampersand}</span>
               <span data-hero-title className="block whitespace-nowrap md:translate-x-[12%]">
                 {wedding.partner2}
               </span>
             </h1>
           </div>
 
-          <div data-fade="0.6" className="relative z-10 ml-auto max-w-sm text-right">
+          <div data-fade="0.6" data-hero-info className="relative z-10 ml-auto max-w-sm text-right">
             <p className="text-lg italic text-foreground/80">{hero.invitationLine}</p>
             <p className="mt-4 font-display text-3xl">{wedding.displayDate}</p>
             {wedding.events[0]?.venue && <p className="mt-1 text-muted">{wedding.events[0].venue}</p>}
             <a
               href="#rsvp"
-              className="mt-6 inline-block rounded-full border border-foreground/40 px-8 py-3 text-xs font-medium uppercase tracking-[0.3em] transition-colors hover:border-accent hover:text-accent"
+              className="mt-6 inline-block rounded-full border border-foreground/40 px-8 py-3 text-xs font-medium uppercase tracking-[0.3em] transition-colors hover:border-accent hover:text-accent-ink"
             >
               {hero.rsvpButton}
             </a>
@@ -251,7 +300,7 @@ export default function Invitation({
               <p data-fade className="max-w-xl text-lg leading-relaxed text-muted">
                 {story.text}
               </p>
-              <p data-fade className="mt-10 font-script text-6xl text-accent">
+              <p data-fade className="mt-10 font-script text-6xl text-accent-ink">
                 {wedding.partner1} {hero.ampersand} {wedding.partner2}
               </p>
             </div>
@@ -292,7 +341,7 @@ export default function Invitation({
                     href={event.mapUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-6 inline-block border-b border-accent pb-1 text-xs font-medium uppercase tracking-[0.3em] text-accent"
+                    className="mt-6 inline-block border-b border-accent pb-1 text-xs font-medium uppercase tracking-[0.3em] text-accent-ink"
                   >
                     {sections.viewMap}
                   </a>
@@ -302,7 +351,7 @@ export default function Invitation({
           </div>
           {wedding.dressCode && (
             <p data-fade className="mt-24 border-t border-line pt-8 text-lg">
-              <span className="text-xs font-medium uppercase tracking-[0.3em] text-accent">{sections.dressCodeLabel}</span>{" "}
+              <span className="text-xs font-medium uppercase tracking-[0.3em] text-accent-ink">{sections.dressCodeLabel}</span>{" "}
               <span className="font-display text-2xl italic">{wedding.dressCode}</span>
             </p>
           )}
@@ -312,7 +361,7 @@ export default function Invitation({
         {photos.statementBand && (
           <div className="relative">
             <Photo photo={photos.statementBand} sizes="100vw" className="h-[60vh] w-full md:h-[85vh]" />
-            <div aria-hidden className="absolute bottom-0 left-1/2 z-10 h-24 w-px translate-y-1/2 bg-foreground" />
+            <div aria-hidden className="absolute bottom-0 left-1/2 z-10 h-24 w-px translate-y-1/2 bg-accent" />
           </div>
         )}
 
@@ -371,7 +420,7 @@ export default function Invitation({
             )}
             {entourage.sponsors.names.length > 0 && (
               <div data-fade className="mt-20 border-t border-line pt-12">
-                <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-accent">{entourage.sponsors.title}</h3>
+                <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-accent-ink">{entourage.sponsors.title}</h3>
                 <ul className="mt-6 columns-1 gap-12 sm:columns-2">
                   {entourage.sponsors.names.map((name, i) => (
                     <li key={`${name}-${i}`} className="break-inside-avoid py-1.5 font-display text-2xl">
@@ -442,7 +491,7 @@ export default function Invitation({
                 data-fade
                 className="grid grid-cols-[3rem_1fr] items-baseline gap-x-6 gap-y-1 border-t border-line py-8 md:grid-cols-[6rem_16rem_1fr]"
               >
-                <span className="text-sm text-muted">{pad(i + 1)}</span>
+                <span className="text-sm text-accent-ink">{pad(i + 1)}</span>
                 <span className="font-display text-4xl md:text-5xl">{s.time}</span>
                 <span className="col-start-2 text-xl md:col-start-3">{s.item}</span>
               </li>
@@ -462,9 +511,13 @@ export default function Invitation({
                 {gallery.intro && <p data-fade className="max-w-sm text-lg text-muted">{gallery.intro}</p>}
               </div>
             </div>
-            <div data-hscroll-track className="group/track mt-12 grid grid-cols-2 gap-3 px-6 md:grid-cols-3 md:gap-4 md:px-12">
+            {/* Phones: bento grid (mixed tile sizes, densely packed). Tablet: 3 columns. Wide screens: sideways scroll. */}
+            <div
+              data-hscroll-track
+              className="group/track mt-12 grid grid-cols-2 gap-2 px-6 max-md:auto-rows-[8.5rem] max-md:grid-flow-dense md:grid-cols-3 md:gap-4 md:px-12"
+            >
               {galleryPhotos.map((p, i) => (
-                <figure key={`${p.url}-${i}`} className="overflow-hidden group-[.is-hscroll]/track:shrink-0">
+                <figure key={`${p.url}-${i}`} className={`overflow-hidden group-[.is-hscroll]/track:shrink-0 ${bentoTile(i, galleryPhotos.length)}`}>
                   <Image
                     data-colorize
                     src={p.url}
@@ -473,6 +526,7 @@ export default function Invitation({
                     height={p.height}
                     sizes="(min-width: 1024px) 45vw, 50vw"
                     className="h-full w-full object-cover grayscale group-[.is-hscroll]/track:h-[min(55vh,34rem)] group-[.is-hscroll]/track:w-auto"
+                    style={{ objectPosition: focalPosition(p) }}
                   />
                 </figure>
               ))}
@@ -486,7 +540,7 @@ export default function Invitation({
             <SectionLabel index={++section}>{text.nav.faq}</SectionLabel>
             <div className="mt-16 grid gap-12 md:grid-cols-12">
               <div className="md:col-span-5">
-                {faq.intro && <p data-fade className="text-xs font-medium uppercase tracking-[0.3em] text-accent">{faq.intro}</p>}
+                {faq.intro && <p data-fade className="text-xs font-medium uppercase tracking-[0.3em] text-accent-ink">{faq.intro}</p>}
                 <h2 data-split className="mt-6 font-display text-[clamp(3rem,6vw,5.5rem)] leading-[0.95]">
                   {faq.title}
                 </h2>
@@ -496,7 +550,7 @@ export default function Invitation({
                   <details key={`${item.question}-${i}`} data-fade className="group border-t border-line py-6 last:border-b">
                     <summary className="flex cursor-pointer list-none items-start justify-between gap-6 font-display text-2xl leading-snug [&::-webkit-details-marker]:hidden">
                       {item.question}
-                      <span aria-hidden className="mt-1 text-accent transition-transform duration-300 group-open:rotate-45">
+                      <span aria-hidden className="mt-1 text-accent-ink transition-transform duration-300 group-open:rotate-45">
                         +
                       </span>
                     </summary>
@@ -525,7 +579,7 @@ export default function Invitation({
         </section>
 
         <footer className="border-t border-line px-6 py-16 text-center md:px-12">
-          <p className="font-script text-6xl text-accent md:text-7xl">
+          <p className="font-script text-6xl text-accent-ink md:text-7xl">
             {wedding.partner1} {hero.ampersand} {wedding.partner2}
           </p>
           <p className="mt-4 font-display text-xl">{wedding.displayDate}</p>

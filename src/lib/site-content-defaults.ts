@@ -10,6 +10,8 @@ export const pageTextDefaults = {
     gallery: "Gallery",
     faq: "FAQ",
     rsvp: "RSVP",
+    menu: "Menu",
+    close: "Close",
   },
   hero: {
     greeting: "Dear {name},",
@@ -79,7 +81,12 @@ export const pageTextDefaults = {
 
 export type PageText = typeof pageTextDefaults;
 
-export type SitePhoto = { url: string; width: number; height: number; alt: string };
+// focalX/focalY: the point to keep in view when the photo is cropped, in % from the left/top
+// (set with the focal-point picker in /cms; 50/50 is the centre)
+export type SitePhoto = { url: string; width: number; height: number; alt: string; focalX: number; focalY: number };
+
+// CSS object-position for a photo, so cropping keeps its focal point (e.g. the couple's faces) in view
+export const focalPosition = (photo: Pick<SitePhoto, "focalX" | "focalY">) => `${photo.focalX}% ${photo.focalY}%`;
 
 // Photos chosen in "Page text". Each is optional and its block is hidden when empty.
 export type PagePhotos = {

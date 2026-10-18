@@ -80,14 +80,28 @@ as a "Theme" global rather than in CSS constants.
   `statement.photo`, `statement.bandPhoto`, `statement.secondaryPhoto`, and `story.chapters[].photo`;
   wedding events have an optional `photo`. Read via `photos` from `getPageText()` and
   `event.photo` from `getWedding()`; empty optional photos hide that block.
+- Every photo (`toPhoto` in `src/lib/wedding.ts`) carries the media's `focalX`/`focalY` (Payload's
+  focal-point picker, % from left/top). Any cropped `object-cover` image must set
+  `style={{ objectPosition: focalPosition(photo) }}` so the couple's faces stay in view.
 
 There are no known hard-coded gaps. Keep it that way: new visible text gets a field in the same change.
 
 ## Design and animation
 
-- Guest pages use the editorial design: CSS tokens in `src/app/(site)/globals.css` (`background`, `surface`,
-  `foreground`, `muted`, `accent`, `line`), `font-display` (Bodoni Moda) for headings, Outfit for body,
-  `font-script` (Great Vibes) for signatures, numbered `SectionLabel`s with hairline rules.
+- Guest pages use the editorial design with colour tokens (`background`, `surface`, `foreground`, `muted`,
+  `accent` = decorative gold, `accent-ink` = gold for text/buttons) and font roles (`font-display`,
+  `font-sans`, `font-script`), numbered `SectionLabel`s with hairline rules.
+- **Theme presets** (`src/theme/`): `config.ts` declares themes, font pairings, header and hero layout
+  variants plus the live `defaults`. Guest page roots spread `themeScopeProps()`, which sets the palette and
+  font roles as inline CSS variables and `data-theme`/`data-font`/`data-header`/`data-layout`. The `:root`
+  tokens in globals.css are what the guest admin and CMS use; never move theme values to `:root`.
+- Header variants hook into `data-hdr-*` elements and hero layouts into `data-hero-*` elements; their CSS is
+  in globals.css. Keep one markup tree and switch variants with CSS only (no per-variant components).
+- Fonts are self-hosted in `src/theme/fonts/` via `next/font/local` (Google downloads timed out in dev);
+  only the default pairing is preloaded.
+- The theme switcher (`src/components/dev/ThemeSwitcher.tsx`) is development-only: loaded with a dynamic
+  import behind `NODE_ENV === "development"` and never shipped. The owner chose code defaults over a CMS
+  Theme global for now; if the look ever needs to be owner-editable, move `defaults` into the CMS.
 - Animation is GSAP, driven by `src/components/motion/InvitationMotion.tsx`. Keep pages as Server Components
   and opt elements in with data attributes instead of writing per-component GSAP:
   `data-hero-title`, `data-split`, `data-fade`, `data-reveal`, `data-parallax`, `data-scrub`, `data-draw`,

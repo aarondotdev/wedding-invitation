@@ -456,6 +456,14 @@ export interface PageText {
      * Link to the reply form.
      */
     rsvp?: string | null;
+    /**
+     * Read aloud for the menu button (shown with some header styles).
+     */
+    menu?: string | null;
+    /**
+     * Read aloud for the button that closes the menu.
+     */
+    close?: string | null;
   };
   story?: {
     /**
@@ -909,6 +917,8 @@ export interface PageTextSelect<T extends boolean = true> {
         gallery?: T;
         faq?: T;
         rsvp?: T;
+        menu?: T;
+        close?: T;
       };
   story?:
     | T

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useRef, type HTMLAttributes, type ReactNode } from "react";
 import gsap from "gsap";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
@@ -23,12 +23,21 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPl
  *   data-colorize     image turns from black-and-white to colour as it comes into view
  * Nothing moves when the visitor prefers reduced motion. Smooth scrolling is desktop-only.
  */
-export default function InvitationMotion({ header, children }: { header: ReactNode; children: ReactNode }) {
-  const scope = useRef<HTMLDivElement>(null);
+export default function InvitationMotion({
+  header,
+  scope,
+  children,
+}: {
+  header: ReactNode;
+  // Theme scope props from themeScopeProps(): palette, fonts, header and layout for this page
+  scope: HTMLAttributes<HTMLDivElement> & Record<`data-${string}`, string>;
+  children: ReactNode;
+}) {
+  const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
     (_, contextSafe) => {
-      const root = document.documentElement;
+      const html = document.documentElement;
       let mm: gsap.MatchMedia | undefined;
       let cancelled = false;
 
@@ -42,7 +51,11 @@ export default function InvitationMotion({ header, children }: { header: ReactNo
         if (smoother) smoother.scrollTo(target, true, "top 72px");
         else target.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       });
-      scope.current!.addEventListener("click", onClick);
+      root.current!.addEventListener("click", onClick);
+
+      // The dev theme switcher changed fonts or layout: re-measure every scroll animation
+      const onThemeChange = () => ScrollTrigger.refresh();
+      window.addEventListener("themechange", onThemeChange);
 
       // SplitText must measure the real fonts, so wait for them before building anything
       document.fonts.ready.then(() => {
@@ -64,7 +77,7 @@ export default function InvitationMotion({ header, children }: { header: ReactNo
               ScrollSmoother.create({ wrapper: "#smooth-wrapper", content: "#smooth-content", smooth: 1.1, effects: false });
             }
 
-            const q = gsap.utils.selector(scope);
+            const q = gsap.utils.selector(root);
 
             // Hero: names rise letter by letter, then the supporting text and portrait settle in
             const intro = gsap.timeline({ defaults: { ease: "expo.out" } });
@@ -103,12 +116,14 @@ export default function InvitationMotion({ header, children }: { header: ReactNo
 
             q<HTMLElement>("[data-reveal]").forEach((el) => {
               const img = el.querySelector("img");
-              const tl = gsap.timeline({
-                scrollTrigger: { trigger: el, start: "top 85%", once: true },
-                defaults: { duration: 1.6, ease: "expo.inOut" },
-              });
+              const tl = gsap.timeline({ paused: true, defaults: { duration: 1.6, ease: "expo.inOut" } });
               tl.from(el, { clipPath: "inset(100% 0% 0% 0%)" });
               if (img) tl.from(img, { scale: 1.3, duration: 2, ease: "expo.out" }, 0.2);
+              // Play from a callback rather than attaching the timeline to the trigger. ScrollTrigger delays
+              // the first measurement of timeline-attached triggers by a tick; when the page loads scrolled
+              // past them, the next trigger created force-measures them, these `once` triggers finish and
+              // remove themselves mid-loop, and ScrollTrigger crashes ("reading 'end'").
+              ScrollTrigger.create({ trigger: el, start: "top 85%", once: true, onEnter: () => tl.play() });
             });
 
             q<HTMLElement>("[data-parallax]").forEach((el) => {
@@ -198,21 +213,22 @@ export default function InvitationMotion({ header, children }: { header: ReactNo
         );
 
         // Starting states are set, so hidden elements can be shown without a flash
-        root.classList.remove("motion-pending");
+        html.classList.remove("motion-pending");
         ScrollTrigger.refresh();
       });
 
       return () => {
         cancelled = true;
-        scope.current?.removeEventListener("click", onClick);
+        root.current?.removeEventListener("click", onClick);
+        window.removeEventListener("themechange", onThemeChange);
         mm?.revert();
       };
     },
-    { scope },
+    { scope: root },
   );
 
   return (
-    <div ref={scope} className="flex flex-1 flex-col">
+    <div ref={root} {...scope} className="flex flex-1 flex-col bg-background font-sans text-foreground">
       {header}
       <div id="smooth-wrapper">
         <div id="smooth-content">{children}</div>

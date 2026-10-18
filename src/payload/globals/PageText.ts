@@ -80,6 +80,13 @@ export const PageText: GlobalConfig = {
                 text("nav", "rsvp", "RSVP", "Link to the reply form."),
               ],
             },
+            {
+              type: "row",
+              fields: [
+                text("nav", "menu", "Menu button", "Read aloud for the menu button (shown with some header styles)."),
+                text("nav", "close", "Close button", "Read aloud for the button that closes the menu."),
+              ],
+            },
           ],
         },
         {
