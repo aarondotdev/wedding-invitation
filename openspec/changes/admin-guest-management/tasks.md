@@ -2,15 +2,15 @@
 
 - [x] 1.1 Install `@supabase/ssr` and `read-excel-file` (exact versions); move `qrcode` to dependencies
 - [x] 1.2 Add `SUPABASE_PUBLISHABLE_KEY` and `ADMIN_EMAILS` to `.env.local` and `.env.example`
-- [ ] 1.3 Add `scripts/admins.mjs` + `npm run admins` to create Supabase Auth users for every `ADMIN_EMAILS` address (email confirmed); run it
+- [x] 1.3 Add `scripts/admins.mjs` + `npm run admins` to create Supabase Auth users for every `ADMIN_EMAILS` address with `ADMIN_DEFAULT_PASSWORD`, plus `set-password <email>`; run it
 
 ## 2. Auth
 
 - [x] 2.1 `src/lib/supabase-server.ts`: cookie-based `createServerClient` (publishable key, server-only)
-- [x] 2.2 `src/proxy.ts`: session refresh via `getClaims()` for `/admin/:path*` and `/auth/:path*`; redirect signed-out users to `/admin/login`
+- [x] 2.2 `src/proxy.ts`: session refresh via `getClaims()` for `/admin/:path*`; redirect signed-out users to `/admin/login`
 - [x] 2.3 `src/lib/auth.ts`: `isAdminEmail()`, `requireAdmin()` (verifies claims + allowlist, signs out and redirects otherwise)
-- [x] 2.4 `/admin/login` page with two-step form (email → code) and Server Actions `sendCode`, `verifyCode`; uniform response for non-allowlisted emails
-- [x] 2.5 `/auth/confirm` route handler for the email link (`token_hash`)
+- [x] 2.4 `/admin/login` page with email + password form and `signIn` Server Action; same error for wrong password and non-allowlisted email
+- [x] 2.5 Remove the email-code flow (`/auth/confirm`, OTP actions) after switching to passwords
 - [x] 2.6 Admin layout with noindex metadata, header showing signed-in email and sign-out action; `/admin` redirects to `/admin/guests`
 
 ## 3. Guest management
@@ -32,7 +32,7 @@
 
 - [x] 5.1 `npm run lint` and `npm run build` pass
 - [x] 5.2 Signed-out requests: `/admin/guests` redirects to login; export/QR routes and actions reject
-- [ ] 5.3 Sign in end-to-end with an allowlisted email (code entered by the user); non-allowlisted email gets the uniform message and no email
+- [x] 5.3 Sign in end-to-end with password; wrong password and non-allowlisted email get the same message
 - [x] 5.4 Exercise add/edit/revoke/restore/reissue/delete, QR, export, and an `.xlsx` import with ready/duplicate/invalid rows
 - [x] 5.5 No Supabase keys or client code in `.next/static`
-- [x] 5.6 README: admin setup (env, `npm run admins`, email template) and usage
+- [x] 5.6 README: admin setup (env, `npm run admins`, `set-password`) and usage

@@ -19,32 +19,36 @@ Add guests, copy their links, download QR codes, import a list from Excel, and t
 
 ### One-time setup
 
-1. In `.env.local`, set `SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys → Publishable key) and `ADMIN_EMAILS`, the comma-separated emails allowed to sign in:
+1. In `.env.local`, set:
+   - `SUPABASE_PUBLISHABLE_KEY`: Project Settings → API Keys → Publishable key
+   - `ADMIN_EMAILS`: the comma-separated emails allowed to sign in
+   - `ADMIN_DEFAULT_PASSWORD`: the starting password for admin accounts. Keep it in `.env.local` only; this repo is public.
 
    ```
    ADMIN_EMAILS=you@example.com,partner@example.com
    ```
 
-2. Create the admin accounts. Re-run this after changing `ADMIN_EMAILS`:
+2. Create the admin accounts. They get the default password. Re-run this after adding emails to `ADMIN_EMAILS`:
 
    ```bash
    npm run admins
    ```
 
-3. In the Supabase dashboard, open **Authentication → Email Templates → Magic Link** and replace the body with the following. It sends both a code and a link:
+3. Recommended: in the Supabase dashboard, open **Authentication → Sign In / Providers** and turn off **Allow new users to sign up**.
 
-   ```html
-   <h2>Sign in to the guest admin</h2>
-   <p>Your sign-in code is: <strong>{{ .Token }}</strong></p>
-   <p>Or, on this device, <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">click here to sign in</a>.</p>
-   ```
-
-4. In **Authentication → URL Configuration**, set **Site URL** to your site's address (`http://localhost:3000` while developing).
-5. Recommended: in **Authentication → Sign In / Providers**, turn off **Allow new users to sign up**. Admin accounts come from `npm run admins`, so nobody else needs to sign up.
+No email setup is needed; sign-in doesn't send any email.
 
 ### Signing in
 
-Go to `/admin`, enter your email, then type the code from the email or click its link. Only emails in `ADMIN_EMAILS` receive a code. Anyone else sees the same screen, but no email is sent. Supabase's built-in email sender allows only a few emails per hour, which is fine for two admins. Add custom SMTP in Supabase if you need more.
+Go to `/admin` and sign in with your email and password. Only emails in `ADMIN_EMAILS` can sign in. Wrong passwords and non-admin emails get the same "Incorrect email or password" message.
+
+To change or reset a password, run:
+
+```bash
+npm run admins -- set-password you@example.com
+```
+
+Leave the password empty to reset it to `ADMIN_DEFAULT_PASSWORD`. Change the default after your first sign-in. Passwords must be at least 12 characters.
 
 ### Importing from Excel
 
@@ -109,4 +113,4 @@ A guest can still forward their own link. The party-size cap limits the impact, 
 
 ## Deploying
 
-Deploy anywhere that runs Next.js (e.g. Vercel). Add the environment variables from `.env.local` (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAILS`, `NEXT_PUBLIC_SITE_URL`) to the host's settings, and set the Supabase **Site URL** to your production domain.
+Deploy anywhere that runs Next.js (e.g. Vercel). Add the environment variables from `.env.local` (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAILS`, `NEXT_PUBLIC_SITE_URL`) to the host's settings. `ADMIN_DEFAULT_PASSWORD` is only used by the local `npm run admins` script and isn't needed there.

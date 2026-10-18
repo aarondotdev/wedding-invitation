@@ -17,22 +17,22 @@ Guest data lives in `public.guests`, which has RLS on with no policies and no `a
 
 ## Decisions
 
-### 1. Email one-time code, with the link as a convenience
-`signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: <site>/auth/confirm } })` sends one email containing both a 6-digit code (`{{ .Token }}`) and a `token_hash` link. The login page asks for the code with `verifyOtp({ email, token, type: 'email' })`. `/auth/confirm` handles the link with `verifyOtp({ token_hash, type })`.
-- *Why:* PKCE magic links fail across devices, for example when the email is opened on a phone but the admin page is on a laptop. Codes always work.
-- *Alternative:* a shared password. Rejected by the user in favour of per-person email login.
+### 1. Email and password, managed from the CLI
+`signInWithPassword({ email, password })` runs in a Server Action. Admin accounts are created by `npm run admins` with `ADMIN_DEFAULT_PASSWORD` (kept only in `.env.local`, because the repo is public) and changed with `npm run admins -- set-password <email>`. Passwords must be at least 12 characters.
+- *Why:* it needs no email template, no Site URL setup and no email delivery, so it works right after deploy. The admins are two people who can run a terminal command to reset a password.
+- *Superseded:* email one-time codes plus a `/auth/confirm` link. They needed a custom Magic Link template and depended on Supabase's rate-limited default email sender.
+- *Trade-off:* a shared default password is guessable, so admins should change it after the first sign-in. Supabase rate-limits sign-in attempts.
 
 ### 2. Allowlist in env, checked on the verified email
 `ADMIN_EMAILS` is a comma-separated, case-insensitive list. Authorization reads `email` from `getClaims()`, which validates the JWT signature. It never uses `user_metadata`.
-- `sendCode` returns the same "if this email is allowed, a code has been sent" message for every email, so the allowlist can't be probed. It only calls Supabase for allowlisted emails.
-- `shouldCreateUser: false` plus pre-created users (`npm run admins`) means nobody else can get an account through this form.
+- Sign-in returns the same "Incorrect email or password." for a wrong password and for a non-allowlisted email, and skips the Supabase call for non-allowlisted emails, so the form can't be used to discover admins.
 - *Alternative:* `app_metadata.role = 'admin'`. This is more flexible, but an env list is simpler for two people and needs no claim-freshness handling.
 
 ### 3. All Supabase calls stay server-side, with no browser client
 The auth client (`createServerClient` from `@supabase/ssr`) uses `SUPABASE_URL` + `SUPABASE_PUBLISHABLE_KEY` with **no** `NEXT_PUBLIC_` prefix, because login runs entirely in Server Actions. Nothing Supabase-related ships to the browser.
 
 ### 4. Proxy for session refresh and optimistic redirect; DAL for authorization
-`src/proxy.ts` matches only `/admin/:path*` and `/auth/:path*`. Guest pages don't pay the cost. It follows the official `updateSession` pattern: `getClaims()` refreshes tokens and copies the cookies and cache headers onto the response. It redirects to `/admin/login` when there are no claims.
+`src/proxy.ts` matches only `/admin/:path*`. Guest pages don't pay the cost. It follows the official `updateSession` pattern: `getClaims()` refreshes tokens and copies the cookies and cache headers onto the response. It redirects to `/admin/login` when there are no claims.
 `requireAdmin()` in `src/lib/auth.ts` re-checks claims and the allowlist. It's called at the top of every admin page, Server Action and route handler, because Proxy is not an authorization boundary (Next and Supabase docs).
 - An authenticated user who isn't on the allowlist (for example, someone removed from it) is signed out and sent to the login page with an error.
 
@@ -59,19 +59,17 @@ Delete and reissue ask for confirmation in the browser (`confirm()`) before subm
 
 ## Risks / Trade-offs
 
-- [The email template isn't updated, so the email has a link but no code] → The `/auth/confirm` link still works on the same device. The README and login page explain the template change.
-- [Supabase's default email sender is rate-limited, a few emails per hour] → Fine for two admins. The README notes that custom SMTP can be added later.
+- [The default password is guessable] → It's kept out of the repo, the minimum length is 12 characters, and the README says to change it after the first sign-in.
 - [An admin removed from `ADMIN_EMAILS` still has a session] → `requireAdmin()` rejects them on the next request, because the allowlist is checked every time.
 - [Public sign-ups stay enabled in Supabase] → Accounts created outside the app gain nothing: no grants and not on the allowlist. Turning off sign-ups is still recommended.
 - [A large Excel file] → 2 MB / 1000-row limits, enforced server-side.
 
 ## Migration Plan
 
-1. Install the dependencies and add the env vars: `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAILS`.
-2. Run `npm run admins` to create the auth users.
-3. Update the Magic Link email template in the Supabase dashboard.
-4. Deploy. Rollback: remove `/admin`, `/auth` and `proxy.ts`. Guest-facing pages are unaffected.
+1. Install the dependencies and add the env vars: `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAILS`, `ADMIN_DEFAULT_PASSWORD`.
+2. Run `npm run admins` to create the auth users with the default password.
+3. Deploy. Rollback: remove `/admin` and `proxy.ts`. Guest-facing pages are unaffected.
 
 ## Open Questions
 
-- None blocking. A custom SMTP sender can come later if the default email limits become a problem.
+- None blocking.

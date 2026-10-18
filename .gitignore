@@ -43,3 +43,5 @@ next-env.d.ts
 
 # generated guest links and QR codes (contain private invite codes)
 /invites/
+
+.vercel
