@@ -13,6 +13,8 @@ A Next.js wedding invitation where every guest gets a personal link (`/i/<code>`
 2. `npm install`
 3. `npm run dev`, then open a guest link such as `http://localhost:3000/i/<code>`
 
+**React Grab** (local development only): hover any element on the site and press **Ctrl+C** (⌘+C on Mac) to copy its React component, file and HTML, ready to paste into a coding agent. It's a pinned dev dependency; `npm run dev` copies it to `public/react-grab.js` (gitignored), and it never loads in production.
+
 ## Editing the website (`/cms`)
 
 Everything visitors read or see is changed here. You don't need to touch any code.

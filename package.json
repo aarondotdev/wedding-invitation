@@ -12,7 +12,8 @@
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
     "guests": "node --env-file=.env.local scripts/guests.mjs",
-    "admins": "node --env-file=.env.local scripts/admins.mjs"
+    "admins": "node --env-file=.env.local scripts/admins.mjs",
+    "predev": "node -e \"require('fs').copyFileSync(require.resolve('react-grab/dist/index.global.js'),'public/react-grab.js')\""
   },
   "dependencies": {
     "@gsap/react": "2.1.2",
@@ -42,6 +43,7 @@
     "csv-parse": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "react-grab": "0.2.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
