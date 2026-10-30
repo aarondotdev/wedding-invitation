@@ -15,7 +15,7 @@ export const pageTextDefaults = {
   },
   hero: {
     greeting: "Dear {name},",
-    intro: "Together with their families",
+    intro: "our very special guest",
     ampersand: "&",
     invitationLine: "request the pleasure of your company",
     rsvpButton: "RSVP",

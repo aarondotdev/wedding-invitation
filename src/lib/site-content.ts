@@ -45,7 +45,14 @@ export async function getPageText(): Promise<PageText & { photos: PagePhotos; ch
   for (const [section, defaults] of Object.entries(pageTextDefaults)) {
     const saved = doc[section as keyof PageText] ?? {};
     merged[section] = Object.fromEntries(
-      Object.entries(defaults).map(([key, fallback]) => [key, pick(saved[key], fallback)]),
+      Object.entries(defaults).map(([key, fallback]) => {
+        const value = pick(saved[key], fallback);
+        // Replace the previous hero copy even when it was already saved in Payload.
+        if (section === "hero" && key === "intro" && value.toLowerCase() === "together with their families") {
+          return [key, pageTextDefaults.hero.intro];
+        }
+        return [key, value];
+      }),
     );
   }
   const photos: PagePhotos = {
