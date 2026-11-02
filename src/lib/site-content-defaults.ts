@@ -90,8 +90,7 @@ export const pageTextDefaults = {
     errorGeneric: "Something went wrong saving your message. Please try again.",
   },
   pages: {
-    homeMessage:
-      "This celebration is by invitation. Please open the personal link we sent you to view your invitation.",
+    homeMessage: "Page not found",
     invalidLinkTitle: "Invalid code",
     invalidLinkMessage:
       "This invitation link isn't valid. Please check the link you received, or reach out to the couple for a new one.",
