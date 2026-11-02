@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    wishes: Wish;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    wishes: WishesSelect<false> | WishesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -182,6 +184,33 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Messages guests have left in the "Well wishes" section. Everyone with an invitation can read them. To take one down without deleting it, tick "Hide from the invitation".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wishes".
+ */
+export interface Wish {
+  id: number;
+  /**
+   * The guest's name as it appears on the invitation.
+   */
+  name: string;
+  /**
+   * What the guest wrote. You can tidy a typo here; the guest can also post again to replace it.
+   */
+  message: string;
+  /**
+   * Tick to stop showing this message on the website. Untick to show it again.
+   */
+  hidden?: boolean | null;
+  /**
+   * Links the message to the guest list (one message per guest).
+   */
+  guestId: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -212,6 +241,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'wishes';
+        value: number | Wish;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -297,6 +330,18 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wishes_select".
+ */
+export interface WishesSelect<T extends boolean = true> {
+  name?: T;
+  message?: T;
+  hidden?: T;
+  guestId?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -448,6 +493,10 @@ export interface PageText {
      * Label of the photo gallery.
      */
     gallery?: string | null;
+    /**
+     * Label of the guest message board (well wishes).
+     */
+    wishes?: string | null;
     /**
      * Link to the questions and answers.
      */
@@ -659,6 +708,66 @@ export interface PageText {
     errorGuestCount?: string | null;
     /**
      * If the reply couldn't be saved.
+     */
+    errorGeneric?: string | null;
+  };
+  customSection?: {
+    /**
+     * Large heading for this section. Leave empty to hide it.
+     */
+    title?: string | null;
+    /**
+     * Paragraph shown below the heading. Leave empty to hide it.
+     */
+    body?: string | null;
+  };
+  wishes?: {
+    /**
+     * Large heading for the section, e.g. "Well Wishes".
+     */
+    title?: string | null;
+    /**
+     * Short line under the heading explaining what the section is.
+     */
+    intro?: string | null;
+    /**
+     * Grey hint text inside the empty message box.
+     */
+    placeholder?: string | null;
+    /**
+     * Button for a guest's first message.
+     */
+    sendButton?: string | null;
+    /**
+     * Button when the guest already left a message.
+     */
+    updateButton?: string | null;
+    /**
+     * Button label while the message is being saved.
+     */
+    sendingButton?: string | null;
+    /**
+     * Shown after posting. {name} becomes the guest's name.
+     */
+    thanks?: string | null;
+    /**
+     * Shown above the box to a guest who already left a message.
+     */
+    alreadyPosted?: string | null;
+    /**
+     * Shown in the list before anyone has posted.
+     */
+    empty?: string | null;
+    /**
+     * If the guest posts without writing anything.
+     */
+    errorEmpty?: string | null;
+    /**
+     * If the guest's link was replaced or switched off.
+     */
+    errorInvalidLink?: string | null;
+    /**
+     * If the message couldn't be saved.
      */
     errorGeneric?: string | null;
   };
@@ -915,6 +1024,7 @@ export interface PageTextSelect<T extends boolean = true> {
         details?: T;
         schedule?: T;
         gallery?: T;
+        wishes?: T;
         faq?: T;
         rsvp?: T;
         menu?: T;
@@ -992,6 +1102,28 @@ export interface PageTextSelect<T extends boolean = true> {
         errorInvalidLink?: T;
         errorChooseAttendance?: T;
         errorGuestCount?: T;
+        errorGeneric?: T;
+      };
+  customSection?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+      };
+  wishes?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        placeholder?: T;
+        sendButton?: T;
+        updateButton?: T;
+        sendingButton?: T;
+        thanks?: T;
+        alreadyPosted?: T;
+        empty?: T;
+        errorEmpty?: T;
+        errorInvalidLink?: T;
         errorGeneric?: T;
       };
   pages?:

@@ -10,7 +10,7 @@ import type { ThemeConfig } from "./types";
  *   together with its CSS.
  */
 export const themeConfig = {
-  defaults: { theme: "white-burgundy-gold", font: "bodoni-outfit", header: "bar", layout: "editorial" },
+  defaults: { theme: "burgundy-gold", font: "bodoni-inter", header: "bar", layout: "editorial" },
 
   themes: [
     {
@@ -61,6 +61,7 @@ export const themeConfig = {
   ],
 
   fonts: [
+    { id: "bodoni-inter", label: "Bodoni Moda + Inter", display: "bodoniModa", sans: "inter", script: "greatVibes" },
     { id: "bodoni-outfit", label: "Bodoni Moda + Outfit", display: "bodoniModa", sans: "outfit", script: "greatVibes" },
     { id: "cormorant-jost", label: "Cormorant + Jost", display: "cormorant", sans: "jost", script: "parisienne" },
     { id: "playfair-montserrat", label: "Playfair + Montserrat", display: "playfair", sans: "montserrat", script: "greatVibes" },

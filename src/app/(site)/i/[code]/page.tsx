@@ -6,6 +6,7 @@ import Invitation from "@/components/Invitation";
 import { getDetails, getEntourage, getPageText } from "@/lib/site-content";
 import { getGuestByCode, markOpened } from "@/lib/supabase";
 import { getWedding, isRsvpOpen } from "@/lib/wedding";
+import { listWishes } from "@/lib/wishes";
 
 // Allowed to block on the code lookup: there is no useful loading UI to show before the
 // guest is verified. Invalid codes render not-found.tsx (noindex; status stays 200 once
@@ -33,15 +34,16 @@ export default async function InvitePage({ params }: PageProps<"/i/[code]">) {
     after(() => markOpened(guest));
   }
 
-  const [wedding, text, entourage, details, rsvpOpen] = await Promise.all([
+  const [wedding, text, entourage, details, rsvpOpen, wishes] = await Promise.all([
     getWedding(),
     getPageText(),
     getEntourage(),
     getDetails(),
     isRsvpOpen(),
+    listWishes(),
   ]);
 
   return (
-    <Invitation wedding={wedding} text={text} entourage={entourage} details={details} guest={guest} rsvpOpen={rsvpOpen} />
+    <Invitation wedding={wedding} text={text} entourage={entourage} details={details} guest={guest} rsvpOpen={rsvpOpen} wishes={wishes} />
   );
 }

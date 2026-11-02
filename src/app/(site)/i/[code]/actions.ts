@@ -4,6 +4,7 @@ import { getPageText } from "@/lib/site-content";
 import { fill } from "@/lib/site-content-defaults";
 import { getGuestByCode, supabaseAdmin } from "@/lib/supabase";
 import { isRsvpOpen } from "@/lib/wedding";
+import { MAX_WISH_LENGTH, saveWish } from "@/lib/wishes";
 
 export type RsvpState =
   | { status: "idle" }
@@ -67,4 +68,26 @@ export async function submitRsvp(
   }
 
   return { status: "success", attending };
+}
+
+export type WishState = { status: "idle" } | { status: "success" } | { status: "error"; message: string };
+
+// Saves (or replaces) the guest's congratulations message. The code is bound by WishesForm and
+// re-checked here since requests can be forged.
+export async function submitWish(code: string, _prev: WishState, formData: FormData): Promise<WishState> {
+  const { wishes: t } = await getPageText();
+
+  const guest = await getGuestByCode(code);
+  if (!guest) return { status: "error", message: t.errorInvalidLink };
+
+  const message = String(formData.get("message") ?? "").trim().slice(0, MAX_WISH_LENGTH);
+  if (!message) return { status: "error", message: t.errorEmpty };
+
+  try {
+    await saveWish(guest, message);
+  } catch (error) {
+    console.error("Wish save failed", error);
+    return { status: "error", message: t.errorGeneric };
+  }
+  return { status: "success" };
 }

@@ -76,6 +76,7 @@ export const PageText: GlobalConfig = {
               fields: [
                 text("nav", "schedule", "Schedule", "Link to the order of the day."),
                 text("nav", "gallery", "Gallery", "Label of the photo gallery."),
+                text("nav", "wishes", "Wishes", "Label of the guest message board (well wishes)."),
                 text("nav", "faq", "FAQ", "Link to the questions and answers."),
                 text("nav", "rsvp", "RSVP", "Link to the reply form."),
               ],
@@ -211,6 +212,46 @@ export const PageText: GlobalConfig = {
                 text("rsvpMessages", "errorChooseAttendance", "Nothing chosen", "If the guest didn't pick yes or no."),
                 text("rsvpMessages", "errorGuestCount", "Too many guests", "{max} becomes the guest's limit, e.g. \"2 guests\"."),
                 text("rsvpMessages", "errorGeneric", "Something went wrong", "If the reply couldn't be saved."),
+              ],
+            },
+          ],
+        },
+        {
+          name: "customSection",
+          label: "Custom section (after entourage)",
+          description: "An extra section between the entourage and the dress code. Leave both fields empty to hide it.",
+          fields: [
+            text("customSection", "title", "Heading", "Large heading for this section. Leave empty to hide it."),
+            text("customSection", "body", "Body text", "Paragraph shown below the heading. Leave empty to hide it.", true),
+          ],
+        },
+        {
+          name: "wishes",
+          label: "Well wishes (guest messages)",
+          description: "The section after the gallery where guests leave a congratulations message that everyone can read.",
+          fields: [
+            text("wishes", "title", "Heading", "Large heading for the section, e.g. \"Well Wishes\"."),
+            text("wishes", "intro", "Intro", "Short line under the heading explaining what the section is.", true),
+            text("wishes", "placeholder", "Message box hint", "Grey hint text inside the empty message box."),
+            {
+              type: "row",
+              fields: [
+                text("wishes", "sendButton", "Post button", "Button for a guest's first message."),
+                text("wishes", "updateButton", "Update button", "Button when the guest already left a message."),
+                text("wishes", "sendingButton", "While sending", "Button label while the message is being saved."),
+              ],
+            },
+            text("wishes", "thanks", "Thank-you line", "Shown after posting. {name} becomes the guest's name."),
+            text("wishes", "alreadyPosted", "Already posted", "Shown above the box to a guest who already left a message."),
+            text("wishes", "empty", "No messages yet", "Shown in the list before anyone has posted."),
+            {
+              type: "collapsible",
+              label: "Error messages",
+              admin: { initCollapsed: true },
+              fields: [
+                text("wishes", "errorEmpty", "Empty message", "If the guest posts without writing anything."),
+                text("wishes", "errorInvalidLink", "Link no longer valid", "If the guest's link was replaced or switched off."),
+                text("wishes", "errorGeneric", "Something went wrong", "If the message couldn't be saved."),
               ],
             },
           ],

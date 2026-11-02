@@ -19,6 +19,7 @@ import {
   ENTOURAGE_CACHE_TAG,
   detailsDefaults,
   entourageDefaults,
+  groomsmenNames,
   type Details,
   type Entourage,
   type GalleryPhoto,
@@ -51,6 +52,9 @@ export async function getPageText(): Promise<PageText & { photos: PagePhotos; ch
         if (section === "hero" && key === "intro" && value.toLowerCase() === "together with their families") {
           return [key, pageTextDefaults.hero.intro];
         }
+        if (section === "story" && key === "text" && value.startsWith("Every love story is beautiful, but ours is our favourite.")) {
+          return [key, pageTextDefaults.story.text];
+        }
         return [key, value];
       }),
     );
@@ -62,10 +66,12 @@ export async function getPageText(): Promise<PageText & { photos: PagePhotos; ch
     statementBand: toPhoto(doc.statement?.bandPhoto),
     statementSecondary: toPhoto(doc.statement?.secondaryPhoto),
   };
-  // Never saved: show the placeholder chapters. Saved: show exactly what the editor kept (may be none).
+  // Only show authored chapters; legacy CMS placeholder copy is hidden.
   const savedChapters = doc.story?.chapters as Array<{ title?: string; text?: string | null; photo?: unknown }> | undefined;
   const chapters: StoryChapter[] = Array.isArray(savedChapters)
-    ? savedChapters.map((c) => ({ title: c.title ?? "", text: c.text ?? "", photo: toPhoto(c.photo) }))
+    ? savedChapters
+        .filter((c) => !c.text?.includes("Edit this in the CMS."))
+        .map((c) => ({ title: c.title ?? "", text: c.text ?? "", photo: toPhoto(c.photo) }))
     : storyChapterDefaults.map((c) => ({ ...c, photo: null }));
   return { ...(merged as PageText), photos, chapters };
 }
@@ -93,12 +99,45 @@ export async function getEntourage(): Promise<Entourage> {
   };
   if (!doc.updatedAt) return entourageDefaults;
 
+  const groups = (doc.entourage ?? []).map(toGroup);
+  const bestManIndex = groups.findIndex((group) => group.title.trim().toLowerCase() === "best man");
+  if (bestManIndex >= 0) {
+    const currentNames = groups[bestManIndex].names;
+    if (currentNames.length === 0) {
+      groups[bestManIndex] = { ...groups[bestManIndex], names: ["Mr. Dave Malabanan"] };
+    } else {
+      groups[bestManIndex] = {
+        ...groups[bestManIndex],
+        names: currentNames.map((name) =>
+          ["mr. dave", "best man name"].includes(name.trim().toLowerCase()) ? "Mr. Dave Malabanan" : name,
+        ),
+      };
+    }
+  }
+  const ringBearerIndex = groups.findIndex((group) => group.title.trim().toLowerCase() === "ring bearer");
+  if (ringBearerIndex >= 0) {
+    const currentNames = groups[ringBearerIndex].names;
+    const isPlaceholder = currentNames.length === 0 || currentNames.every((name) => /^ring bearer(?:\s+\d+|\s+name)?$/i.test(name.trim()));
+    if (isPlaceholder) groups[ringBearerIndex] = { ...groups[ringBearerIndex], names: ["Caleb Alvarez"] };
+  }
+  const groomsmenIndex = groups.findIndex((group) => group.title.trim().toLowerCase() === "groomsmen");
+  if (groomsmenIndex < 0) {
+    groups.push({ title: "Groomsmen", names: groomsmenNames });
+  } else {
+    const currentNames = groups[groomsmenIndex].names;
+    const isPlaceholder = currentNames.length === 0 || currentNames.every((name) => /^\d+$/.test(name.trim()) || /^groomsman(?:\s+name)?$/i.test(name.trim()));
+    groups[groomsmenIndex] = {
+      ...groups[groomsmenIndex],
+      names: isPlaceholder ? groomsmenNames : currentNames,
+    };
+  }
+
   return {
-    title: pick(doc.title, entourageDefaults.title),
+    title: doc.title?.trim() === "Family & Entourage" ? entourageDefaults.title : pick(doc.title, entourageDefaults.title),
     intro: doc.intro ?? "",
     parents: (doc.parents ?? []).map(toGroup),
     sponsors: toGroup({ title: pick(doc.sponsors?.title, entourageDefaults.sponsors.title), names: doc.sponsors?.names }),
-    entourage: (doc.entourage ?? []).map(toGroup),
+    entourage: groups,
   };
 }
 

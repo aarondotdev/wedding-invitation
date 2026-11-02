@@ -37,7 +37,7 @@ export async function getWedding(): Promise<Wedding> {
       mapUrl: mapUrl ?? "",
       photo: toPhoto(photo),
     })),
-    schedule: (doc.schedule ?? []).map(({ time, item }) => ({ time, item })),
+    schedule: weddingDefaults.schedule,
     dressCode: doc.dressCode ?? "",
   };
 }

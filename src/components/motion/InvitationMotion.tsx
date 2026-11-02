@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type HTMLAttributes, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 import gsap from "gsap";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
@@ -12,11 +12,12 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPl
 
 /**
  * Animates server-rendered markup by data attributes, so all text stays in the HTML and the CMS:
- *   data-hero-title   names rise in letter by letter on load
  *   data-split        lines slide up from a mask when scrolled into view
  *   data-fade         fades and rises into view
  *   data-reveal       image unmasks from the bottom while its photo settles from a zoom
  *   data-parallax     drifts slower than the page (value = strength, e.g. "12")
+ *   data-drift        collage tile floats against the scroll, wide screens only (value = strength, sign = direction)
+ *   data-timeline     its [data-timeline-fill] line grows with the scroll; [data-timeline-dot]s fill gold as it passes
  *   data-scrub        words light up one by one as the section is scrolled through
  *   data-draw         SVG paths draw themselves
  *   data-hscroll      section pins and its [data-hscroll-track] scrolls sideways (wide screens only)
@@ -25,15 +26,62 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPl
  */
 export default function InvitationMotion({
   header,
+  cover,
+  backdrop,
   scope,
   children,
 }: {
-  header: ReactNode;
+  header?: ReactNode;
+  cover?: ReactNode;
+  // Fixed decoration behind the page (e.g. drifting dust); sections with their own background cover it
+  backdrop?: ReactNode;
   // Theme scope props from themeScopeProps(): palette, fonts, header and layout for this page
   scope: HTMLAttributes<HTMLDivElement> & Record<`data-${string}`, string>;
   children: ReactNode;
 }) {
   const root = useRef<HTMLDivElement>(null);
+  const [coverOpen, setCoverOpen] = useState(!cover);
+
+  // Behind a cover the page must always open from the top: stop the browser restoring the
+  // previous scroll position on refresh, and reset it when the cover is opened.
+  useEffect(() => {
+    if (!cover) return;
+    const previous = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+    return () => {
+      history.scrollRestoration = previous;
+    };
+  }, [cover]);
+
+  // While the cover is shown nothing scrolls: not the cover itself, and not the page behind it
+  useEffect(() => {
+    if (!cover || coverOpen) return;
+    const html = document.documentElement;
+    const previous = html.style.overflow;
+    html.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = previous;
+    };
+  }, [cover, coverOpen]);
+
+  const pageScope = coverOpen
+    ? {
+        ...scope,
+        style: {
+          ...scope.style,
+          "--background": "#35090d",
+          "--surface": "#451118",
+          "--foreground": "#f6eee3",
+          "--muted": "#d4b5ae",
+          "--accent": "#d4ae62",
+          "--accent-ink": "#d4ae62",
+          "--line": "rgb(212 174 98 / 0.22)",
+          "--glow-inner": "rgb(212 174 98 / 0.16)",
+          "--glow-outer": "transparent",
+        } as CSSProperties,
+      }
+    : scope;
 
   useGSAP(
     (_, contextSafe) => {
@@ -43,6 +91,15 @@ export default function InvitationMotion({
 
       // Anchor links scroll smoothly; with ScrollSmoother they must go through it
       const onClick = contextSafe!((event: MouseEvent) => {
+        const openButton = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-cover-open]");
+        if (openButton) {
+          ScrollSmoother.get()?.scrollTop(0);
+          window.scrollTo(0, 0);
+          setCoverOpen(true);
+          document.dispatchEvent(new CustomEvent("invitation-opened"));
+          return;
+        }
+
         const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
         const target = link && document.querySelector(link.getAttribute("href")!);
         if (!target) return;
@@ -78,15 +135,6 @@ export default function InvitationMotion({
             }
 
             const q = gsap.utils.selector(root);
-
-            // Hero: names rise letter by letter, then the supporting text and portrait settle in
-            const intro = gsap.timeline({ defaults: { ease: "expo.out" } });
-            q<HTMLElement>("[data-hero-title]").forEach((el) => {
-              // Split into words first so the browser never wraps a name between two letters
-              const split = SplitText.create(el, { type: "words,chars", mask: "chars", charsClass: "hero-char" });
-              // Start low enough to clear the extra room under each mask (.hero-char-mask in globals.css)
-              intro.from(split.chars, { yPercent: 160, duration: 1.4, stagger: 0.035 }, 0.2);
-            });
 
             q<HTMLElement>("[data-split]").forEach((el) => {
               SplitText.create(el, {
@@ -136,6 +184,64 @@ export default function InvitationMotion({
                   yPercent: amount,
                   ease: "none",
                   scrollTrigger: { trigger: el.parentElement ?? el, start: "top bottom", end: "bottom top", scrub: true },
+                },
+              );
+            });
+
+            // Collage tiles float at different speeds against the scroll (wide screens only, where the
+            // tiles have room; on phones the bento grid is tight and would overlap)
+            if (wide) {
+              q<HTMLElement>("[data-drift]").forEach((el) => {
+                const amount = Number(el.dataset.drift) || 0;
+                if (!amount) return;
+                gsap.fromTo(
+                  el,
+                  { yPercent: amount },
+                  {
+                    yPercent: -amount,
+                    ease: "none",
+                    scrollTrigger: { trigger: el.parentElement ?? el, start: "top bottom", end: "bottom top", scrub: true },
+                  },
+                );
+              });
+            }
+
+            // Timeline: the line's gold fill grows with the scroll, and each dot fills once the line reaches it
+            q<HTMLElement>("[data-timeline]").forEach((tl) => {
+              const fill = tl.querySelector<HTMLElement>("[data-timeline-fill]");
+              const dots = Array.from(tl.querySelectorAll<HTMLElement>("[data-timeline-dot]"));
+              if (!fill) return;
+              // Dots are gold by default (no JS / reduced motion); here the ones the line hasn't reached are
+              // emptied with inline styles, so no stylesheet rule is involved
+              const setEmpty = (dot: HTMLElement, empty: boolean) => {
+                dot.style.backgroundColor = empty ? "var(--background)" : "";
+                dot.style.boxShadow = empty ? "none" : "";
+              };
+              dots.forEach((dot) => setEmpty(dot, true));
+              cleanups.push(() => dots.forEach((dot) => setEmpty(dot, false)));
+              gsap.fromTo(
+                fill,
+                { scaleY: 0 },
+                {
+                  scaleY: 1,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: tl,
+                    start: "top 70%",
+                    end: "bottom 70%",
+                    scrub: 0.4,
+                    onUpdate: (self) => {
+                      // Layout positions (offsetTop summed up to the timeline), not bounding boxes: the rows slide
+                      // up while fading in, which would misplace the dots mid-animation. +2px so the last dot, at
+                      // the very end of the line, fills too.
+                      const reached = tl.offsetHeight * self.progress + 2;
+                      dots.forEach((dot) => {
+                        let mid = dot.offsetHeight / 2;
+                        for (let el: HTMLElement | null = dot; el && el !== tl; el = el.offsetParent as HTMLElement | null) mid += el.offsetTop;
+                        setEmpty(dot, mid > reached);
+                      });
+                    },
+                  },
                 },
               );
             });
@@ -229,10 +335,25 @@ export default function InvitationMotion({
   );
 
   return (
-    <div ref={root} {...scope} className="flex flex-1 flex-col bg-background font-sans text-foreground">
-      {header}
-      <div id="smooth-wrapper">
-        <div id="smooth-content">{children}</div>
+    // `isolate` keeps the backdrop (z -10) above this element's own background but below the page
+    <div ref={root} {...pageScope} className="isolate flex flex-1 flex-col bg-background font-sans text-foreground">
+      {backdrop}
+      {cover && !coverOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Wedding invitation"
+          className="paper-texture fixed inset-0 z-[100] overflow-hidden overscroll-none"
+          style={{ backgroundColor: "#3b0d18" }}
+        >
+          {cover}
+        </div>
+      )}
+      <div inert={!coverOpen} aria-hidden={!coverOpen}>
+        {header}
+        <div id="smooth-wrapper">
+          <div id="smooth-content">{children}</div>
+        </div>
       </div>
     </div>
   );

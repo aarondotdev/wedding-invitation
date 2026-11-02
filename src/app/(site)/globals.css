@@ -62,6 +62,16 @@ body {
     var(--background);
 }
 
+/* Soft ivory paper grain for the invitation cover, created without a raster background image. */
+.paper-texture {
+  background-color: #efe5d5;
+  background-image:
+    radial-gradient(ellipse at 18% 12%, rgb(255 255 255 / 36%), transparent 48%),
+    radial-gradient(ellipse at 86% 82%, rgb(163 137 94 / 12%), transparent 56%),
+    repeating-linear-gradient(0deg, rgb(92 65 38 / 2%) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(90deg, rgb(92 65 38 / 1.5%) 0 1px, transparent 1px 6px);
+}
+
 /* While the motion layer starts, keep animated elements hidden so they don't flash. The class is
    removed by InvitationMotion, or after 3 s by the inline fallback if scripts never run. */
 html.motion-pending [data-split],
@@ -149,29 +159,14 @@ html.motion-pending [data-reveal] {
   display: inline-flex;
 }
 
-/* The names' letter masks clip to the tight line box (leading 0.82), which cut off descenders and tall
-   letters in fonts with deeper metrics (e.g. the "J" in Cormorant and Playfair). Give each mask room
-   above and below, and cancel it with negative margins so the layout doesn't move. */
-.hero-char-mask {
-  padding-block: 0.15em 0.35em;
-  margin-block: -0.15em -0.35em;
-}
-
 /* centered layout (also "split" when there is no hero photo): everything stacked and centred */
 :is([data-layout="centered"] [data-hero], [data-layout="split"] [data-hero]:not([data-has-photo]))
   :is([data-hero-greeting], [data-hero-info]) {
   margin-inline: auto;
   text-align: center;
 }
-:is([data-layout="centered"] [data-hero], [data-layout="split"] [data-hero]:not([data-has-photo]))
-  :is([data-hero-title], [data-hero-amp]) {
-  translate: none;
-}
 
-/* split layout with a photo: photo on the left, names and details on the right (desktop) */
-[data-layout="split"] [data-hero][data-has-photo] :is([data-hero-title], [data-hero-amp]) {
-  translate: none;
-}
+/* split layout with a photo: photo on the left, invitation text on the right (desktop) */
 @media (max-width: 1023px) {
   [data-layout="split"] [data-hero][data-has-photo] :is([data-hero-greeting], [data-hero-info]) {
     margin-inline: auto;
@@ -182,7 +177,7 @@ html.motion-pending [data-reveal] {
   [data-layout="split"] [data-hero][data-has-photo] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: 1fr auto auto auto 1fr;
+    grid-template-rows: 1fr auto auto 1fr;
     column-gap: 4rem;
   }
   [data-layout="split"] [data-hero][data-has-photo] [data-hero-stage] {
@@ -201,16 +196,9 @@ html.motion-pending [data-reveal] {
     grid-column: 2;
     grid-row: 2;
   }
-  [data-layout="split"] [data-hero][data-has-photo] [data-hero-names] {
-    grid-column: 2;
-    grid-row: 3;
-    margin-block: 2.5rem;
-    text-align: left;
-    font-size: clamp(3.5rem, 7vw, 7.5rem);
-  }
   [data-layout="split"] [data-hero][data-has-photo] [data-hero-info] {
     grid-column: 2;
-    grid-row: 4;
+    grid-row: 3;
     margin-left: 0;
     text-align: left;
   }
