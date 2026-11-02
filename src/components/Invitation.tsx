@@ -306,34 +306,25 @@ export default function Invitation({
         <div className="relative isolate flex h-svh w-full flex-col items-center justify-center overflow-hidden px-6 text-center text-[#f6eee3]">
           {/* Textured maroon behind the cover */}
           <div className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center" aria-hidden="true" style={{ backgroundImage: "url(/images/cover-bg-maroon.jpg)" }} />
-          <p className="text-xs font-medium uppercase tracking-[0.35em] text-[#d4ae62]">You are invited</p>
+          <p className="font-script text-4xl text-[#d4ae62] sm:text-5xl">You are invited!</p>
           <button
             data-cover-open
             type="button"
             className="group mt-5 flex w-full flex-col items-center gap-2 rounded-xl p-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4ae62]"
             aria-label="Open the wedding invitation"
           >
-            {/* Couple photo inside a floral hexagon frame: the photo is clipped to the hexagon's inside and
-                the frame (transparent PNG) sits on top */}
-            <span aria-hidden className="relative block aspect-square w-full max-w-[34rem] transition-transform duration-500 group-hover:-translate-y-1">
-              <span
-                className="absolute inset-0"
-                style={{ clipPath: "polygon(17% 49%, 31% 22%, 66% 15%, 83% 48%, 70% 76%, 34% 81%)" }}
-              >
-                <Image
-                  src="/images/cover-photo.jpg"
-                  alt=""
-                  fill
-                  priority
-                  unoptimized
-                  sizes="(min-width: 640px) 34rem, 90vw"
-                  className="object-cover"
-                  style={{ objectPosition: "50% 40%" }}
-                />
+            {/* Floral medallion with the envelope on top of it */}
+            <span aria-hidden className="relative my-6 block" style={{ width: "min(26rem, 92vw)", aspectRatio: "717 / 703" }}>
+            <Image src="/images/cover-medallion-v7.png" alt="" fill priority unoptimized className="pointer-events-none object-contain" />
+            <span className="absolute block drop-shadow-2xl" style={{ left: "19%", top: "-11.5%", width: "62%", aspectRatio: "375 / 666" }}>
+              {/* Couple photo where the letter paper was; the envelope (paper keyed out) sits on top */}
+              <span className="absolute overflow-hidden" style={{ left: "23%", top: "37.5%", width: "54.5%", height: "21.5%" }}>
+                <Image src="/images/cover-envelope-photo-v2.jpg" alt="" fill priority unoptimized className="object-cover" style={{ objectPosition: "55% 47%" }} />
               </span>
-              <Image src="/images/cover-frame.png" alt="" fill priority unoptimized sizes="(min-width: 640px) 34rem, 90vw" className="pointer-events-none object-contain drop-shadow-xl" />
+              <Image src="/images/cover-envelope-open-v2.png" alt="" fill priority unoptimized sizes="20rem" className="object-contain" />
             </span>
-            <span className="mt-6 text-xs font-medium uppercase tracking-[0.3em] text-[#d4ae62] transition-colors group-hover:text-[#f6eee3]">Tap to open your invitation</span>
+            </span>
+            <span className="text-xs font-medium uppercase tracking-[0.3em] text-[#d4ae62] transition-colors group-hover:text-[#f6eee3]">Tap to open your invitation</span>
           </button>
         </div>
       }
@@ -388,7 +379,7 @@ export default function Invitation({
                   fill
                   priority
                   sizes="(min-width: 768px) 50rem, 110vw"
-                  className="object-contain"
+                  className="object-contain object-[34%_50%]"
                 />
               </div>
             </div>
@@ -808,7 +799,7 @@ export default function Invitation({
         <section className="scroll-mt-24 px-6 py-24 text-center md:px-12 md:py-36">
           <div data-fade className="border-t-2 border-line pt-12" />
           <h2 data-fade className="text-center text-[clamp(3rem,7vw,6.5rem)] capitalize leading-[1.3] text-accent-ink" style={{ fontFamily: "var(--ff-eyesome)", textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>
-            Reminders To Our Dear Guests
+            Reminders
           </h2>
           <div data-fade className="mx-auto mt-4 w-48">
             <Image src="/images/gold-ornament.png" alt="" width={450} height={106} className="w-full" aria-hidden="true" />
@@ -860,7 +851,6 @@ export default function Invitation({
 
         {/* RSVP */}
         <section id="rsvp" className="scroll-mt-24 px-6 py-24 md:px-12 md:py-36">
-          <SectionLabel index={++section}>{text.nav.rsvp}</SectionLabel>
           <h2 data-fade className="mt-16 text-center text-[clamp(3rem,7vw,6.5rem)] capitalize leading-[1.3] text-accent-ink" style={{ fontFamily: "var(--ff-eyesome)", textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>
             {sections.rsvpTitle.toLowerCase()}
           </h2>
@@ -878,7 +868,6 @@ export default function Invitation({
         {galleryPhotos.length > 0 && (
           <section id="gallery" className="scroll-mt-24 overflow-hidden py-24 md:py-36">
             <div className="px-6 md:px-12">
-              <SectionLabel index={++section}>{text.nav.gallery}</SectionLabel>
               {/* Centred on phones; title left and intro right from md up */}
               <div className="mt-12 flex flex-col items-center gap-6 text-center md:flex-row md:flex-wrap md:items-end md:justify-between md:text-left">
                 <h2 data-fade className="text-[clamp(3rem,7vw,6.5rem)] capitalize leading-[1.3] text-accent-ink" style={{ fontFamily: "var(--ff-eyesome)", textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>
@@ -916,7 +905,6 @@ export default function Invitation({
 
         {/* Well wishes: guests leave a message everyone can read (one per guest, newest first) */}
         <section id="wishes" className="scroll-mt-24 px-6 py-24 md:px-12 md:py-36">
-          <SectionLabel index={++section}>{text.nav.wishes}</SectionLabel>
           <div className="mt-24 flex flex-col items-center gap-6 text-center">
             <h2 data-fade className="text-[clamp(3rem,7vw,6.5rem)] capitalize leading-[1.3] text-accent-ink" style={{ fontFamily: "var(--ff-eyesome)", textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>
               {text.wishes.title.toLowerCase()}
