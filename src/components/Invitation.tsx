@@ -380,14 +380,13 @@ export default function Invitation({
             <p data-fade="0.24" className="mt-2 text-sm font-bold uppercase tracking-[0.35em] text-[#d4b5ae] md:text-base">01. 17. 27</p>
           </div>
           <div data-hero-stage className="relative z-10 -mt-6 flex min-h-[min(80svh,48rem)] flex-1 items-end justify-center">
-            <div data-hero-photo className="absolute inset-0 flex translate-y-10 items-center justify-center">
-              <div data-reveal className="relative h-[min(95svh,65rem)] aspect-square w-auto max-w-[110vw] sm:max-w-[95vw] md:max-w-[50rem]">
+            <div data-hero-photo className="absolute inset-0 flex translate-y-10 pt-10 items-center justify-center">
+              <div data-reveal className="relative h-[calc(min(90svh,62rem)-5px)] aspect-square w-auto max-w-[110vw] sm:max-w-[95vw] md:max-w-[50rem]">
                 <Image
-                  src="/images/couple-hero.svg"
+                  src="/images/couple-hero-v2.png"
                   alt="Lorenz and Jenzell"
                   fill
                   priority
-                  unoptimized
                   sizes="(min-width: 768px) 50rem, 110vw"
                   className="object-contain"
                 />
