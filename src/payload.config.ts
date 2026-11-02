@@ -45,9 +45,10 @@ export default buildConfig({
   // In dev, uploads go to the local filesystem instead.
   plugins: await (async (): Promise<Plugin[]> => {
     if (!process.env.BLOB_READ_WRITE_TOKEN) return [];
-    // String concatenation hides the specifier from Turbopack's static analysis
-    const pkg = "@payloadcms/" + "storage-vercel-blob";
-    const { vercelBlobStorage } = await import(/* webpackIgnore: true */ pkg);
+    // A plain import Vercel can see, so the package is shipped with the deployed functions.
+    // (Hiding it left it out of the deploy and blanked every page.) The client upload handler
+    // is aliased to a stub in next.config.ts, which keeps it out of the page bundles.
+    const { vercelBlobStorage } = await import("@payloadcms/storage-vercel-blob");
     return [vercelBlobStorage({
       enabled: true,
       alwaysInsertFields: true,
