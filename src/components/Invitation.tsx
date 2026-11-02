@@ -314,9 +314,9 @@ export default function Invitation({
             aria-label="Open the wedding invitation"
           >
             {/* Envelope beats like a heart while hovered or pressed */}
-            <style>{`@keyframes envelope-beat { 0%, 40%, 100% { transform: scale(1); } 10% { transform: scale(1.08); } 20% { transform: scale(0.98); } 30% { transform: scale(1.06); } }
-            @media (prefers-reduced-motion: no-preference) { .group:hover .envelope-beat, .group:focus-visible .envelope-beat { animation: envelope-beat 1.8s ease-in-out infinite; } .group[data-beating] .envelope-beat { animation: envelope-beat-once 1s ease-in-out 1; } }
-            @keyframes envelope-beat-once { 0%, 100% { transform: scale(1); } 20% { transform: scale(1.1); } 40% { transform: scale(0.98); } 60% { transform: scale(1.07); } 80% { transform: scale(1); } }`}</style>
+            <style>{`@keyframes envelope-beat { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.08); } }
+            @media (prefers-reduced-motion: no-preference) { .group:hover .envelope-beat, .group:focus-visible .envelope-beat { animation: envelope-beat 0.7s ease-in-out 1; } .group[data-beating] .envelope-beat { animation: envelope-beat-once 1s ease-in-out 1; } }
+            @keyframes envelope-beat-once { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.1); } }`}</style>
             {/* Floral medallion with the envelope on top of it */}
             <span aria-hidden className="relative my-6 block" style={{ width: "min(26rem, 92vw)", aspectRatio: "717 / 703" }}>
             <Image src="/images/cover-medallion-v7.png" alt="" fill priority unoptimized className="pointer-events-none object-contain" style={{ filter: "drop-shadow(0 3px 3px rgba(15, 0, 3, 0.8)) drop-shadow(0 14px 18px rgba(15, 0, 3, 0.7))" }} />
