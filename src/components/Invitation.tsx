@@ -652,11 +652,11 @@ export default function Invitation({
                 </div>
                 <div data-fade className="mt-8 text-center">
                   <h3 className="text-sm font-medium uppercase tracking-[0.2em] text-[#3b0d18]">The Ceremony</h3>
-                  <p className="mt-3 font-sans text-2xl leading-snug text-[#3b0d18]">Our Mother of Perpetual Help</p>
+                  <p className="mt-3 font-sans text-2xl leading-snug text-[#3b0d18]"><a href="https://www.google.com/maps/search/?api=1&query=13.935823%2C120.928066" target="_blank" rel="noopener noreferrer" className="underline decoration-[#3b0d18]/30 underline-offset-4">Our Mother of Perpetual Help</a></p>
                   <p className="mt-2 font-sans text-sm text-[#3b0d18]/70 sm:text-lg">Poblacion, Agoncillo, Batangas</p>
                   <p className="mt-6 font-sans text-sm italic text-[#3b0d18]/70">Scan to locate</p>
-                  <div className="mx-auto mt-3 w-32">
-                    <Image src="/images/venue-qr-ceremony.png" alt="QR code to locate Our Mother of Perpetual Help Parish" width={200} height={200} className="w-full" />
+                  <div className="mx-auto mt-3" style={{ width: "12rem" }}>
+                    <Image src="/images/venue-qr-ceremony-v4.png" alt="QR code to locate Our Mother of Perpetual Help Parish" width={400} height={400} className="w-full" />
                   </div>
                 </div>
                 <div data-fade className="mx-auto mt-10 flex justify-center">
@@ -664,11 +664,11 @@ export default function Invitation({
                 </div>
                 <div data-fade className="mt-8 text-center">
                   <h3 className="text-sm font-medium uppercase tracking-[0.2em] text-[#3b0d18]">The Reception</h3>
-                  <p className="mt-3 font-display text-2xl leading-snug text-[#3b0d18]">La Casa Eduardo&apos;s Event Center</p>
+                  <p className="mt-3 font-display text-2xl leading-snug text-[#3b0d18]"><a href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x33bd0b003448d9b1:0x5615d1d65f175ebc?hl=en" target="_blank" rel="noopener noreferrer" className="underline decoration-[#3b0d18]/30 underline-offset-4">La Casa Eduardo&apos;s Event Center</a></p>
                   <p className="mt-2 font-sans text-sm italic text-[#3b0d18]/70 sm:text-lg">Halang, Taal, Batangas</p>
                   <p className="mt-6 font-sans text-sm italic text-[#3b0d18]/70">Scan to locate</p>
-                  <div className="mx-auto mt-3 w-32">
-                    <Image src="/images/venue-qr-reception.png" alt="QR code to locate La Casa Eduardo&apos;s Event Center" width={200} height={200} className="w-full" />
+                  <div className="mx-auto mt-3" style={{ width: "12rem" }}>
+                    <Image src="/images/venue-qr-reception-v2.png" alt="QR code to locate La Casa Eduardo&apos;s Event Center" width={400} height={400} className="w-full" />
                   </div>
                 </div>
                 {dressCode.palette.length > 0 && (

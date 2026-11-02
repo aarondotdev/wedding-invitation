@@ -92,7 +92,7 @@ export const pageTextDefaults = {
   pages: {
     homeMessage:
       "This celebration is by invitation. Please open the personal link we sent you to view your invitation.",
-    invalidLinkTitle: "Oh dear",
+    invalidLinkTitle: "Invalid code",
     invalidLinkMessage:
       "This invitation link isn't valid. Please check the link you received, or reach out to the couple for a new one.",
   },
