@@ -93,10 +93,18 @@ export default function InvitationMotion({
       const onClick = contextSafe!((event: MouseEvent) => {
         const openButton = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-cover-open]");
         if (openButton) {
-          ScrollSmoother.get()?.scrollTop(0);
-          window.scrollTo(0, 0);
-          setCoverOpen(true);
-          document.dispatchEvent(new CustomEvent("invitation-opened"));
+          const open = () => {
+            ScrollSmoother.get()?.scrollTop(0);
+            window.scrollTo(0, 0);
+            setCoverOpen(true);
+            document.dispatchEvent(new CustomEvent("invitation-opened"));
+          };
+          // Let the envelope beat once (see the cover's data-beating styles) before the page opens
+          if (matchMedia("(prefers-reduced-motion: reduce)").matches) open();
+          else if (!openButton.hasAttribute("data-beating")) {
+            openButton.setAttribute("data-beating", "");
+            window.setTimeout(open, 1000);
+          }
           return;
         }
 

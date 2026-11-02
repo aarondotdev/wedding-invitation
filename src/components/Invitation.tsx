@@ -313,10 +313,14 @@ export default function Invitation({
             className="group mt-5 flex w-full flex-col items-center gap-2 rounded-xl p-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4ae62]"
             aria-label="Open the wedding invitation"
           >
+            {/* Envelope beats like a heart while hovered or pressed */}
+            <style>{`@keyframes envelope-beat { 0%, 40%, 100% { transform: scale(1); } 10% { transform: scale(1.08); } 20% { transform: scale(0.98); } 30% { transform: scale(1.06); } }
+            @media (prefers-reduced-motion: no-preference) { .group:hover .envelope-beat, .group:focus-visible .envelope-beat { animation: envelope-beat 1.8s ease-in-out infinite; } .group[data-beating] .envelope-beat { animation: envelope-beat-once 1s ease-in-out 1; } }
+            @keyframes envelope-beat-once { 0%, 100% { transform: scale(1); } 20% { transform: scale(1.1); } 40% { transform: scale(0.98); } 60% { transform: scale(1.07); } 80% { transform: scale(1); } }`}</style>
             {/* Floral medallion with the envelope on top of it */}
             <span aria-hidden className="relative my-6 block" style={{ width: "min(26rem, 92vw)", aspectRatio: "717 / 703" }}>
-            <Image src="/images/cover-medallion-v7.png" alt="" fill priority unoptimized className="pointer-events-none object-contain" />
-            <span className="absolute block drop-shadow-2xl" style={{ left: "19%", top: "-11.5%", width: "62%", aspectRatio: "375 / 666" }}>
+            <Image src="/images/cover-medallion-v7.png" alt="" fill priority unoptimized className="pointer-events-none object-contain" style={{ filter: "drop-shadow(0 3px 3px rgba(15, 0, 3, 0.8)) drop-shadow(0 14px 18px rgba(15, 0, 3, 0.7))" }} />
+            <span className="envelope-beat absolute block drop-shadow-2xl" style={{ left: "19%", top: "-11.5%", width: "62%", aspectRatio: "375 / 666" }}>
               {/* Couple photo where the letter paper was; the envelope (paper keyed out) sits on top */}
               <span className="absolute overflow-hidden" style={{ left: "23%", top: "37.5%", width: "54.5%", height: "21.5%" }}>
                 <Image src="/images/cover-envelope-photo-v2.jpg" alt="" fill priority unoptimized className="object-cover" style={{ objectPosition: "55% 47%" }} />
