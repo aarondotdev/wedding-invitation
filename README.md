@@ -34,11 +34,12 @@ Everything visitors read or see is changed here. You don't need to touch any cod
 | Section | What it controls |
 | --- | --- |
 | **Wedding details** | The couple's names, wedding date and time (drives the countdown), how the date is written, the RSVP deadline, hashtag, dress code, the ceremony and reception (time, venue, address, map link, optional photo), and the order of the day |
-| **Page text** | All other wording and the main photos, in tabs that follow the page from top to bottom: **Top of the invitation** (greeting, lines around the names, an optional large photo behind the names), **Menu** (the links at the top, which also label each section), **Our story** (heading, text, and numbered **chapters** with a photo each that alternate left and right), **Big statement** (the large sentence that lights up as guests scroll, a short note, a full-width photo above it, a small photo beside it and a large photo below), section headings, countdown labels, the reply form, reply messages, the home page and the "invalid link" page |
+| **Page text** | All other wording and the main photos, in tabs that follow the page from top to bottom: **Top of the invitation** (greeting, lines around the names, an optional large photo behind the names), **Menu** (the links at the top, which also label each section), **Our story** (heading, text, and numbered **chapters** with a photo each that alternate left and right), **Big statement** (the large sentence that lights up as guests scroll, a short note, a full-width photo above it, a small photo beside it and a large photo below), section headings, countdown labels, the reply form, reply messages, **Well wishes** (the heading, hint and buttons of the guest message board), the home page and the "invalid link" page |
 | **Family & entourage** | Parents, principal sponsors and the entourage (best man, maid of honour, groomsmen, bridesmaids, veil/cord/candle sponsors, bearers, flower girls). Each is a group with a heading and a list of names; add, remove or drag to reorder. |
 | **Guest details** | **Dress code** (what to wear, colour swatches with name and hex code like `#A3B18A`, optional attire photo), **Questions & answers**, and the **Gallery** (photos shown in order; on computers they scroll sideways and turn from black-and-white to colour) |
 | **Sharing & SEO** | The browser-tab title and the preview shown when a link is pasted into WhatsApp, Messenger, Viber or iMessage: title, text and image |
 | **Images** | Photos you've uploaded. Each needs a short description. |
+| **Well wishes** | The congratulations messages guests have left. Hide, delete or tidy them here; the wording of the section itself is in *Page text → Well wishes*. |
 
 **Photos** appear in black and white on the invitation (gallery photos turn to colour as guests scroll); the originals you upload stay in colour. Tall (portrait) photos work best for chapters and venues, wide ones for the full-width photo and the gallery. Any photo can be left empty, and that part of the page simply shows text (with no photo behind the names, the top of the invitation shows just the names). **Emptying a list** (e.g. all questions, or all gallery photos) hides that section.
 
@@ -49,6 +50,8 @@ Everything visitors read or see is changed here. You don't need to touch any cod
 **Empty fields** go back to the original wording. In *Sharing & SEO*, an empty title or description uses automatic text built from the names and date, so it stays correct if the date changes.
 
 **Changing the link-preview photo:** in *Sharing & SEO*, click **Preview image**, upload a photo and give it a description. A wide photo works best (1200 × 630 pixels, faces near the middle). Chat apps keep old previews for links shared before, so new links show the new photo right away and older ones may take a while.
+
+**Guest messages (Well wishes):** guests can leave a congratulations message on their invitation, and every guest sees the messages (newest first, with the guest's name). Each guest has one message; posting again replaces it. The wording of the section is in *Page text → Well wishes*. The messages themselves are listed in `/cms` under **Well wishes**: open one and tick **Hide from the invitation** to take it down (or delete it). You can also fix a typo there.
 
 **Adding someone who can edit:** in `/cms`, open **Users** and click **Create New**. This is separate from the guest admin login.
 

@@ -4,6 +4,8 @@ import * as migration_20261018_140226_editorial_redesign from './20261018_140226
 import * as migration_20261018_144910_invitation_details from './20261018_144910_invitation_details';
 import * as migration_20261018_155456_rsvp_choice_cards from './20261018_155456_rsvp_choice_cards';
 import * as migration_20261018_164253_header_menu_labels from './20261018_164253_header_menu_labels';
+import * as migration_20261031_091101_add_custom_section from './20261031_091101_add_custom_section';
+import * as migration_20261102_010150_add_wishes from './20261102_010150_add_wishes';
 
 export const migrations = [
   {
@@ -34,6 +36,16 @@ export const migrations = [
   {
     up: migration_20261018_164253_header_menu_labels.up,
     down: migration_20261018_164253_header_menu_labels.down,
-    name: '20261018_164253_header_menu_labels'
+    name: '20261018_164253_header_menu_labels',
+  },
+  {
+    up: migration_20261031_091101_add_custom_section.up,
+    down: migration_20261031_091101_add_custom_section.down,
+    name: '20261031_091101_add_custom_section',
+  },
+  {
+    up: migration_20261102_010150_add_wishes.up,
+    down: migration_20261102_010150_add_wishes.down,
+    name: '20261102_010150_add_wishes'
   },
 ];

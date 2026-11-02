@@ -25,11 +25,17 @@ const nextConfig: NextConfig = {
   turbopack: {
     rules: {
       "*.css": {
+        condition: { not: "foreign" },
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },
     },
+    resolveAlias: {
+      // Redirect the blob client handler to a stub so Turbopack doesn't pull the real
+      // module (which has CSS and client component issues) into the RSC bundle.
+      "@payloadcms/storage-vercel-blob/client": "./src/lib/blob-client-stub.js",
+    },
   },
 };
 
-export default withPayload(nextConfig, { devBundleServerPackages: false });
+export default withPayload(nextConfig, { devBundleServerPackages: true });

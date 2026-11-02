@@ -8,6 +8,7 @@ export const pageTextDefaults = {
     details: "Details",
     schedule: "Schedule",
     gallery: "Gallery",
+    wishes: "Wishes",
     faq: "FAQ",
     rsvp: "RSVP",
     menu: "Menu",
@@ -22,7 +23,7 @@ export const pageTextDefaults = {
   },
   story: {
     title: "Two hearts under one moon",
-    text: "Every love story is beautiful, but ours is our favourite. After years of laughter, adventures and quiet moments together, we're ready to begin our next chapter, and we would love for you to be there.",
+    text: "You didn't receive this invitation by chance. On this special day, we truly hope you'll be with us.",
   },
   statement: {
     text: "We would be honoured to celebrate this day with you",
@@ -33,7 +34,7 @@ export const pageTextDefaults = {
     eventsTitle: "The Celebration",
     viewMap: "View map",
     dressCodeLabel: "Dress code:",
-    scheduleTitle: "Order of the Day",
+    scheduleTitle: "Wedding Timeline",
     rsvpTitle: "Kindly Reply",
     respondBy: "Please respond by {date}",
   },
@@ -70,6 +71,24 @@ export const pageTextDefaults = {
     errorGuestCount: "Please choose between 1 and {max}.",
     errorGeneric: "Something went wrong saving your RSVP. Please try again.",
   },
+  customSection: {
+    title: "",
+    body: "",
+  },
+  wishes: {
+    title: "Well Wishes",
+    intro: "Leave a message for the couple. Everyone who opens their invitation can read it.",
+    placeholder: "Write your congratulations here…",
+    sendButton: "Post message",
+    updateButton: "Update message",
+    sendingButton: "Posting…",
+    thanks: "Thank you, {name}! Your message is up.",
+    alreadyPosted: "You've left a message. You can change it below.",
+    empty: "Be the first to leave a message.",
+    errorEmpty: "Please write a message first.",
+    errorInvalidLink: "This invitation link is no longer valid.",
+    errorGeneric: "Something went wrong saving your message. Please try again.",
+  },
   pages: {
     homeMessage:
       "This celebration is by invitation. Please open the personal link we sent you to view your invitation.",
@@ -97,12 +116,8 @@ export type PagePhotos = {
   statementSecondary: SitePhoto | null;
 };
 
-// Numbered story rows (placeholders; edit them in the CMS)
-export const storyChapterDefaults = [
-  { title: "How we met", text: "A few lines about where your story began. Edit this in the CMS." },
-  { title: "Falling in love", text: "A few lines about the moments that brought you closer. Edit this in the CMS." },
-  { title: "Forever starts here", text: "A few lines about the proposal and what comes next. Edit this in the CMS." },
-];
+// Numbered story rows are optional and start empty until added in the CMS.
+export const storyChapterDefaults: Array<{ title: string; text: string }> = [];
 
 export type StoryChapter = { title: string; text: string; photo: SitePhoto | null };
 

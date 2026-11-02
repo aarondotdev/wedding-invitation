@@ -6,8 +6,17 @@ import type { SitePhoto } from "@/lib/site-content-defaults";
 
 export type NameGroup = { title: string; names: string[] };
 
+export const groomsmenNames = [
+  "Ralph Russel Ballesteros",
+  "Engr. John Angelo Garque",
+  "Niño Jericho Bonsol",
+  "Engr. Niño Tenorio",
+  "Bryan Andal",
+  "Jake Malabanan",
+];
+
 export const entourageDefaults = {
-  title: "Family & Entourage",
+  title: "THE ENTOURAGE",
   intro: "With grateful hearts, we honour the people who guide us and stand beside us on our wedding day.",
   parents: [
     { title: "Parents of the Groom", names: ["Mr. Father of the Groom", "Mrs. Mother of the Groom"] },
@@ -27,16 +36,16 @@ export const entourageDefaults = {
     ],
   } as NameGroup,
   entourage: [
-    { title: "Best Man", names: ["Best Man Name"] },
+    { title: "Best Man", names: ["Mr. David Andrew Malabanan"] },
     { title: "Maid of Honour", names: ["Maid of Honour Name"] },
-    { title: "Groomsmen", names: ["Groomsman Name", "Groomsman Name", "Groomsman Name"] },
+    { title: "Groomsmen", names: groomsmenNames },
     { title: "Bridesmaids", names: ["Bridesmaid Name", "Bridesmaid Name", "Bridesmaid Name"] },
     { title: "To clothe us as one (Veil)", names: ["Veil Sponsor Name", "Veil Sponsor Name"] },
     { title: "To bind us together (Cord)", names: ["Cord Sponsor Name", "Cord Sponsor Name"] },
     { title: "To light our path (Candle)", names: ["Candle Sponsor Name", "Candle Sponsor Name"] },
-    { title: "Ring Bearer", names: ["Ring Bearer Name"] },
-    { title: "Bible Bearer", names: ["Bible Bearer Name"] },
-    { title: "Coin Bearer", names: ["Coin Bearer Name"] },
+    { title: "Ring Bearer", names: ["Caleb Alvarez"] },
+    { title: "Bible Bearer", names: ["Christian Andaya"] },
+    { title: "Coin Bearer", names: ["Rhian Kay Sarmiento"] },
     { title: "Flower Girls", names: ["Flower Girl Name", "Flower Girl Name"] },
   ] as NameGroup[],
 };
@@ -45,7 +54,7 @@ export type Entourage = typeof entourageDefaults;
 
 export const detailsDefaults = {
   dressCode: {
-    title: "Dress Code",
+    title: "THE VENUES",
     description:
       "We kindly ask our guests to come in formal or semi-formal attire. Please avoid wearing white, which we're saving for the bride, and very bright neon colours.",
     note: "If you'd like to match our day, here are a few colours we love.",

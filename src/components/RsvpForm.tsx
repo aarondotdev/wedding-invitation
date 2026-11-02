@@ -21,7 +21,7 @@ function RecordedResponse({ guest, labels, messages }: { guest: Guest; labels: L
 }
 
 // A large selectable card around a real (visually hidden) radio button, so keyboard and screen
-// readers work as normal; the selected card gets a gold border and dot.
+// readers work as normal; the selected card gets a gold background.
 function ChoiceCard({
   value,
   label,
@@ -36,13 +36,9 @@ function ChoiceCard({
   defaultChecked: boolean;
 }) {
   return (
-    <label className="group relative flex min-h-40 cursor-pointer flex-col justify-between gap-6 border border-line p-5 text-left transition-colors duration-300 hover:border-accent/60 has-checked:border-accent-ink has-checked:bg-accent/10 has-focus-visible:ring-2 has-focus-visible:ring-accent-ink has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background sm:p-7">
+    <label className="group flex cursor-pointer flex-col items-center gap-2 border border-line p-5 text-center transition-colors duration-300 hover:bg-accent/5 has-checked:bg-accent/25 has-focus-visible:ring-2 has-focus-visible:ring-accent-ink has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background sm:p-6">
       <input type="radio" name="attending" value={value} required={required} defaultChecked={defaultChecked} className="sr-only" />
-      <span
-        aria-hidden
-        className="absolute right-4 top-4 h-3.5 w-3.5 rounded-full border border-line transition-colors group-has-checked:border-accent-ink group-has-checked:bg-accent-ink sm:right-5 sm:top-5"
-      />
-      <span className="pr-6 font-display text-2xl leading-tight sm:text-3xl">{label}</span>
+      <span className="font-sans text-xl font-medium leading-tight sm:text-2xl">{label}</span>
       {note && <span className="text-sm leading-snug text-muted group-has-checked:text-foreground/80">{note}</span>}
     </label>
   );
@@ -88,7 +84,7 @@ export default function RsvpForm({
       {guest.responded_at && (
         <p className="text-center italic text-muted">{messages.alreadyReplied}</p>
       )}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4">
         <ChoiceCard
           value="yes"
           label={labels.accept}
@@ -130,7 +126,7 @@ export default function RsvpForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 rounded-full bg-accent-ink px-8 py-4 text-xs font-medium uppercase tracking-[0.3em] text-background transition hover:bg-foreground disabled:opacity-60"
+        className="mt-2 rounded-full bg-linear-to-b from-[#f3d58d] via-[#d4ae62] to-[#a8822e] px-8 py-4 text-xs font-semibold uppercase tracking-[0.3em] text-[#3b0d18] shadow-[0_0_14px_rgba(230,190,98,0.35)] transition hover:brightness-110 hover:shadow-[0_0_22px_rgba(230,190,98,0.5)] disabled:opacity-60"
       >
         {pending ? labels.sendingButton : guest.responded_at ? labels.updateButton : labels.sendButton}
       </button>

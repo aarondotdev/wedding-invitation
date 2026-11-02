@@ -1,13 +1,13 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import path from "path";
-import { buildConfig } from "payload";
+import { buildConfig, type Plugin } from "payload";
 import sharp from "sharp";
 import { fileURLToPath } from "url";
 
 import { migrations } from "./migrations";
 import { Media } from "./payload/collections/Media";
 import { Users } from "./payload/collections/Users";
+import { Wishes } from "./payload/collections/Wishes";
 import { Details } from "./payload/globals/Details";
 import { Entourage } from "./payload/globals/Entourage";
 import { PageText } from "./payload/globals/PageText";
@@ -24,7 +24,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: " · Wedding CMS" },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Wishes],
   globals: [Wedding, PageText, Entourage, Details, Seo],
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
@@ -39,20 +39,22 @@ export default buildConfig({
     prodMigrations: migrations,
   }),
   sharp,
-  plugins: [
-    // Vercel's filesystem is read-only, so uploads go to Vercel Blob. Without a token (local dev)
-    // files are stored on disk; alwaysInsertFields keeps the DB schema the same either way.
-    vercelBlobStorage({
-      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+  // The blob storage plugin is only loaded in production (when the token exists).
+  // Importing it at all in dev causes Turbopack to pull its client upload handler
+  // into the site pages' RSC bundle, triggering a "module factory not available" error.
+  // In dev, uploads go to the local filesystem instead.
+  plugins: await (async (): Promise<Plugin[]> => {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) return [];
+    // String concatenation hides the specifier from Turbopack's static analysis
+    const pkg = "@payloadcms/" + "storage-vercel-blob";
+    const { vercelBlobStorage } = await import(/* webpackIgnore: true */ pkg);
+    return [vercelBlobStorage({
+      enabled: true,
       alwaysInsertFields: true,
-      // Serve images straight from Blob (public URLs work in link previews without hitting the app)
       collections: { media: { disablePayloadAccessControl: true } },
       token: process.env.BLOB_READ_WRITE_TOKEN,
-      // Upload straight from the browser; Vercel limits server request bodies to 4.5 MB
-      clientUploads: true,
-      // Blob files are cached for a year, so give every upload a unique name; a replaced photo
-      // with the same filename would otherwise keep showing the old one
+      clientUploads: false,
       addRandomSuffix: true,
-    }),
-  ],
+    })];
+  })(),
 });

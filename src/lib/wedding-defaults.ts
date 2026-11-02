@@ -29,11 +29,12 @@ export const weddingDefaults = {
     },
   ],
   schedule: [
-    { time: "3:30 PM", item: "Guest arrival" },
-    { time: "4:00 PM", item: "Ceremony" },
-    { time: "5:00 PM", item: "Cocktail hour" },
-    { time: "6:00 PM", item: "Dinner & toasts" },
-    { time: "8:00 PM", item: "Dancing" },
+    { time: "1:30 PM", item: "Arrival" },
+    { time: "2:00 PM", item: "Ceremony" },
+    { time: "4:00 PM", item: "Reception" },
+    { time: "5:00 PM", item: "Start of the Program" },
+    { time: "7:00 PM", item: "Dinner" },
+    { time: "8:00 PM", item: "End of the Program" },
   ],
   dressCode: "Garden formal — soft pastels welcome",
 };

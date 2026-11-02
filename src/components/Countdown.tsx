@@ -33,18 +33,27 @@ export default function Countdown({
           diff % 60,
         ];
 
+  const nums = [labels.days, labels.hours, labels.minutes, labels.seconds];
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-4 sm:gap-8">
-      {[labels.days, labels.hours, labels.minutes, labels.seconds].map((label, i) => (
-        <div key={i} className="flex flex-col items-start border-l border-line pl-4 sm:pl-6">
-          <span className="font-display text-6xl tabular-nums md:text-8xl">
-            {values ? String(values[i]).padStart(2, "0") : "--"}
-          </span>
-          <span className="mt-3 text-[0.65rem] font-medium uppercase tracking-[0.3em] text-accent-ink sm:text-xs">
-            {label}
-          </span>
-        </div>
-      ))}
+    <div className="text-center">
+      <p className="font-sans text-base sm:text-lg" style={{ color: "#3b0d18" }}>
+        Days left before we say <span className="font-script text-2xl sm:text-3xl" style={{ color: "#3b0d18" }}>&ldquo;I do&rdquo;</span>
+      </p>
+      <div className="mt-6 flex items-baseline justify-center gap-1 sm:gap-2">
+        {nums.map((label, i) => (
+          <div key={i} className="flex items-baseline">
+            {i > 0 && <span className="mx-1 font-sans text-3xl font-bold sm:mx-2 sm:text-5xl md:text-6xl" style={{ color: "#3b0d18" }}>:</span>}
+            <div className="flex flex-col items-center">
+              <span className="font-sans text-4xl font-bold tabular-nums sm:text-5xl md:text-6xl" style={{ color: "#3b0d18" }}>
+                {values ? String(values[i]).padStart(2, "0") : "--"}
+              </span>
+              <span className="mt-1 text-[0.5rem] font-medium uppercase tracking-[0.25em] sm:text-[0.65rem]" style={{ color: "#8a6516" }}>
+                {label}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
