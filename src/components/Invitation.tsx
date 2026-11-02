@@ -315,7 +315,7 @@ export default function Invitation({
           >
             {/* Envelope beats like a heart while hovered or pressed */}
             <style>{`@keyframes envelope-beat { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.08); } }
-            @media (prefers-reduced-motion: no-preference) { .group:hover .envelope-beat, .group:focus-visible .envelope-beat { animation: envelope-beat 0.7s ease-in-out 1; } .group[data-beating] .envelope-beat { animation: envelope-beat-once 1s ease-in-out 1; } }
+            @media (prefers-reduced-motion: no-preference) { .envelope-beat:hover, .group:focus-visible .envelope-beat { animation: envelope-beat 0.7s ease-in-out 1; } .group[data-beating] .envelope-beat { animation: envelope-beat-once 1s ease-in-out 1; } }
             @keyframes envelope-beat-once { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.1); } }`}</style>
             {/* Floral medallion with the envelope on top of it */}
             <span aria-hidden className="relative my-6 block" style={{ width: "min(26rem, 92vw)", aspectRatio: "717 / 703" }}>
