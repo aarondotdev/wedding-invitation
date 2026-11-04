@@ -123,7 +123,7 @@ export async function getEntourage(): Promise<Entourage> {
   if (ringBearerIndex >= 0) {
     const currentNames = groups[ringBearerIndex].names;
     const isPlaceholder = currentNames.length === 0 || currentNames.every((name) => /^ring bearer(?:\s+\d+|\s+name)?$/i.test(name.trim()));
-    if (isPlaceholder) groups[ringBearerIndex] = { ...groups[ringBearerIndex], names: ["Caleb Alvarez"] };
+    if (isPlaceholder) groups[ringBearerIndex] = { ...groups[ringBearerIndex], names: ["Luis Caleb Alvarez"] };
   }
   const groomsmenIndex = groups.findIndex((group) => group.title.trim().toLowerCase() === "groomsmen");
   if (groomsmenIndex < 0) {

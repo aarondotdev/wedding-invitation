@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import Image from "next/image";
 import Countdown from "@/components/Countdown";
 import InvitationMotion from "@/components/motion/InvitationMotion";
@@ -180,97 +179,20 @@ const nameFixes: Record<string, string> = {
 };
 function fixName(name: string) { return nameFixes[name] ?? name; }
 
-// Rough width in em of the longest name, in Inria Serif with 0.02em tracking. 0.54em per character
-// covers the widest real names (measured: "Mr. David Andrew Malabanan" is 13.9em over 26 characters).
-function fitWidthEm(...groups: (NameGroup | undefined)[]) {
-  const longest = Math.max(0, ...groups.flatMap((g) => g?.names ?? []).map((n) => fixName(n).length));
-  return Math.max(longest * 0.54, 1);
-}
+// Every name in the entourage section uses this one size (the Bible Bearer style)
+const NAME_CLASS = "font-(family-name:--ff-inria-serif) text-sm leading-snug tracking-[0.02em] sm:text-lg sm:tracking-[0.06em]";
 
-function PairedNames({
-  left,
-  right,
-  subtitle,
-  dense = false,
-  fitEm,
-}: {
-  left: NameGroup;
-  right: NameGroup;
-  subtitle?: string;
-  // Tighter rows for long lists (groomsmen and bridesmaids)
-  dense?: boolean;
-  // Phones: width of the longest name in em (see fitWidthEm). Names shrink so each stays on one line.
-  fitEm?: number;
-}) {
-  const nameSize = fitEm
-    ? "text-[min(0.875rem,calc((50vw_-_1.125rem)/var(--fit-em)))] max-sm:whitespace-nowrap"
-    : "text-sm";
-  const maxLen = Math.max(left.names.length, right.names.length);
-  const pairs: [string, string][] = [];
-  for (let i = 0; i < maxLen; i++) {
-    pairs.push([left.names[i] ?? "", right.names[i] ?? ""]);
-  }
-  return (
-    <div data-fade className="text-center">
-      {right.title ? (
-        <div className="grid grid-cols-2 gap-x-4 sm:gap-x-12">
-          <h4 className="text-right whitespace-nowrap font-(family-name:--ff-inria-serif) text-sm font-medium uppercase tracking-[0.12em] text-accent-ink sm:text-base sm:tracking-[0.2em]">{left.title}</h4>
-          <h4 className="text-left whitespace-nowrap font-(family-name:--ff-inria-serif) text-sm font-medium uppercase tracking-[0.12em] text-accent-ink sm:text-base sm:tracking-[0.2em]">{right.title}</h4>
-        </div>
-      ) : (
-        <h4 className="font-(family-name:--ff-inria-serif) text-sm font-medium uppercase tracking-[0.2em] text-accent-ink sm:text-base">{left.title}</h4>
-      )}
-      {subtitle && (
-        <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted sm:text-lg">{subtitle}</p>
-      )}
-      {/* With fitEm the list reaches 12px into the side padding on phones and the column gap shrinks */}
-      <ul
-        className={`mx-auto mt-6 grid max-w-5xl grid-cols-2 gap-x-4 sm:gap-x-12 ${dense ? "gap-y-0" : "gap-y-2"} ${fitEm ? "max-sm:-mx-3 max-sm:gap-x-3" : ""}`}
-        style={fitEm ? ({ "--fit-em": fitEm } as React.CSSProperties) : undefined}
-      >
-        {pairs.map(([l, r], i) => (
-          <Fragment key={i}>
-            <li className={`${dense ? "py-0.5" : "py-1.5"} text-right font-(family-name:--ff-inria-serif) ${nameSize} leading-snug tracking-[0.02em] sm:text-lg sm:tracking-[0.06em]`}>{fixName(l)}</li>
-            <li className={`${dense ? "py-0.5" : "py-1.5"} text-left font-(family-name:--ff-inria-serif) ${nameSize} leading-snug tracking-[0.02em] sm:text-lg sm:tracking-[0.06em]`}>{fixName(r)}</li>
-          </Fragment>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function Names({
-  group,
-  className,
-  formalNames = false,
-  compactNames = false,
-  subtitle,
-}: {
-  group: NameGroup;
-  className?: string;
-  formalNames?: boolean;
-  compactNames?: boolean;
-  subtitle?: string;
-}) {
+// One centred column: optional title, then the names
+function Names({ group, className }: { group: NameGroup; className?: string }) {
   return (
     <div data-fade className={className}>
-      <h4 className="font-(family-name:--ff-inria-serif) text-sm font-medium uppercase tracking-[0.2em] text-accent-ink sm:text-base">{group.title}</h4>
-      {subtitle && (
-        <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted sm:text-lg">{subtitle}</p>
+      {group.title && (
+        <h4 className="font-(family-name:--ff-inria-serif) text-sm font-medium uppercase tracking-[0.2em] text-accent-ink sm:text-base">{group.title}</h4>
       )}
-      <ul className="mt-4 space-y-1.5">
+      <ul className={`${group.title ? "mt-4 " : ""}space-y-1.5`}>
         {group.names.map((name, i) => (
-          <li
-            key={`${name}-${i}`}
-            className={
-              compactNames
-                ? "font-(family-name:--ff-inria-serif) text-sm leading-snug tracking-[0.02em] sm:text-lg sm:tracking-[0.06em]"
-                : formalNames
-                  ? "font-(family-name:--ff-inria-serif) text-lg leading-snug tracking-[0.06em] sm:text-xl"
-                  : "font-(family-name:--ff-inria-serif) text-2xl leading-snug"
-            }
-          >
-            {name}
+          <li key={`${name}-${i}`} className={NAME_CLASS}>
+            {fixName(name)}
           </li>
         ))}
       </ul>
@@ -302,8 +224,6 @@ export default function Invitation({
   const maidOfHonor = entourage.entourage.find((group) => /^maid of honou?r$/i.test(group.title));
   const groomsmen = entourage.entourage.find((group) => /^groomsmen$/i.test(group.title));
   const bridesmaids = entourage.entourage.find((group) => /^bridesmaids?$/i.test(group.title));
-  // One shared phone size so the best man / maid of honour and groomsmen / bridesmaids lists match
-  const partyFitEm = fitWidthEm(bestMan, maidOfHonor, groomsmen, bridesmaids);
   const veilSponsors = entourage.entourage.find((group) => /^to clothe us as one/i.test(group.title));
   const cordSponsors = entourage.entourage.find((group) => /^to bind us together/i.test(group.title));
   const candleSponsors = entourage.entourage.find((group) => /^to light our path/i.test(group.title));
@@ -432,11 +352,11 @@ export default function Invitation({
             } as React.CSSProperties
           }
         >
-          {/* Gold silk, faint, like the venues section */}
+          {/* White marble, like the venues section */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-10 mix-blend-multiply"
-            style={{ backgroundImage: "url(/images/details-silk-v1.webp)" }}
+            className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center"
+            style={{ backgroundImage: "url(/images/marble-bg-v1.jpg)" }}
           />
           <div className="flex flex-col items-center text-center">
             <div data-fade data-hero-greeting className="mx-auto max-w-3xl text-center text-lg leading-snug">
@@ -490,11 +410,11 @@ export default function Invitation({
         {/* Dress code */}
         {(dressCode.title || dressCode.description || dressCode.palette.length > 0) && (
           <section id="details" className="relative isolate scroll-mt-24 overflow-hidden bg-[#e8ddd0] px-6 pt-16 pb-24 text-[#3b0d18] md:px-12 md:pt-24 md:pb-36">
-            {/* Gold silk, faint: multiply lets its folds shade the beige without washing it yellow */}
+            {/* White marble background */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-10 mix-blend-multiply"
-              style={{ backgroundImage: "url(/images/details-silk-v1.webp)" }}
+              className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center"
+              style={{ backgroundImage: "url(/images/marble-bg-v1.jpg)" }}
             />
             {/* Soft burgundy glow from the corners, fading to clear beige in the middle */}
             <div
@@ -585,14 +505,12 @@ export default function Invitation({
                 </p>
               )}
             </div>
-            {entourage.parents.length >= 2 && (
-              <div className="mx-auto mt-20 max-w-5xl border-t-2 border-line pt-12">
-                <PairedNames left={entourage.parents[0]} right={entourage.parents[1]} dense />
-              </div>
-            )}
-            {entourage.parents.length === 1 && (
-              <div className="mx-auto mt-20 max-w-2xl border-t-2 border-line pt-12">
-                <Names group={entourage.parents[0]} className="text-center" compactNames />
+            {/* Parents: one centred column, groom's parents above the bride's */}
+            {entourage.parents.length > 0 && (
+              <div className="mx-auto mt-20 max-w-5xl space-y-10 border-t-2 border-line pt-12">
+                {entourage.parents.map((group, i) => (
+                  <Names key={`${group.title}-${i}`} group={group} className="text-center" />
+                ))}
               </div>
             )}
             {entourage.sponsors.names.length > 0 && (
@@ -600,8 +518,9 @@ export default function Invitation({
                 <h3 className="text-[clamp(2.25rem,5vw,3.5rem)] capitalize leading-[1.3] text-accent-ink" style={{ fontFamily: "var(--ff-eyesome)", textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>
                   {entourage.sponsors.title.toLowerCase()}
                 </h3>
-                <ul className="mx-auto mt-6 grid max-w-5xl grid-cols-2 gap-x-4 gap-y-0 max-sm:-mx-3 max-sm:gap-x-3 sm:gap-x-12">
+                <ul className="mx-auto mt-6 max-w-2xl space-y-1.5">
                   {(() => {
+                    // Order kept from the two-column layout: alternate the remaining names with these
                     const names = [...entourage.sponsors.names];
                     const rightKeys = ["chona", "christian", "dennis", "michael", "danny", "eduardo", "aristotle"];
                     const remaining = [...names];
@@ -618,19 +537,11 @@ export default function Invitation({
                       if (right[i]) merged.push(right[i]);
                     }
                     return merged;
-                  })().map((name, i) => {
-                    const display = fixName(name);
-                    return (
-                    <li
-                      key={`${name}-${i}`}
-                      // Phones: sized to the column so the longest name (about 17.7em wide) stays on one line; the list
-                      // reaches 12px into the side padding and the column gap shrinks to make room
-                      className={`py-0.5 font-(family-name:--ff-inria-serif) text-[min(0.875rem,calc((50vw_-_1.125rem)/18.1))] leading-snug max-sm:whitespace-nowrap sm:text-lg sm:tracking-[0.06em] ${i % 2 === 0 ? "text-right" : "text-left"}`}
-                    >
-                      {display}
+                  })().map((name, i) => (
+                    <li key={`${name}-${i}`} className={NAME_CLASS}>
+                      {fixName(name)}
                     </li>
-                    );
-                  })}
+                  ))}
                 </ul>
               </div>
             )}
@@ -640,41 +551,20 @@ export default function Invitation({
                 {entourage.secondaryTitle.toLowerCase()}
               </h3>
             )}
-            {bestMan && maidOfHonor && (
-              <div className="mx-auto mt-10 max-w-5xl">
-                <PairedNames left={bestMan} right={maidOfHonor} fitEm={partyFitEm} />
+            {/* Secondary sponsors: one centred column, each group under its own title */}
+            {[bestMan, maidOfHonor].some(Boolean) && (
+              <div className="mx-auto mt-10 max-w-2xl space-y-10 text-center">
+                {[bestMan, maidOfHonor].map((group) => group && <Names key={group.title} group={group} />)}
               </div>
             )}
             {((groomsmen && bridesmaids) || otherEntourage.length > 0) && (
               <div data-fade className="mt-20 border-t-2 border-line" />
             )}
-            {groomsmen && bridesmaids && (
-              <div className="mx-auto mt-10 max-w-5xl">
-                <PairedNames left={groomsmen} right={bridesmaids} dense fitEm={partyFitEm} />
-              </div>
-            )}
-            {veilSponsors && (
-              <div className="mx-auto mt-16 max-w-5xl">
-                <PairedNames
-                  left={{ title: veilSponsors.title, names: veilSponsors.names.filter((_, i) => i % 2 === 0) }}
-                  right={{ title: "", names: veilSponsors.names.filter((_, i) => i % 2 === 1) }}
-                />
-              </div>
-            )}
-            {cordSponsors && (
-              <div className="mx-auto mt-10 max-w-5xl">
-                <PairedNames
-                  left={{ title: cordSponsors.title, names: cordSponsors.names.filter((_, i) => i % 2 === 0) }}
-                  right={{ title: "", names: cordSponsors.names.filter((_, i) => i % 2 === 1) }}
-                />
-              </div>
-            )}
-            {candleSponsors && (
-              <div className="mx-auto mt-10 max-w-5xl">
-                <PairedNames
-                  left={{ title: candleSponsors.title, names: candleSponsors.names.filter((_, i) => i % 2 === 0) }}
-                  right={{ title: "", names: candleSponsors.names.filter((_, i) => i % 2 === 1) }}
-                />
+            {[groomsmen, bridesmaids, veilSponsors, cordSponsors, candleSponsors].some(Boolean) && (
+              <div className="mx-auto mt-10 max-w-2xl space-y-10 text-center">
+                {[groomsmen, bridesmaids, veilSponsors, cordSponsors, candleSponsors].map(
+                  (group) => group && <Names key={group.title} group={group} />,
+                )}
               </div>
             )}
             {otherEntourage.length > 0 && (
@@ -688,25 +578,34 @@ export default function Invitation({
                 {otherEntourage.map((group) => {
                   return (
                     <div key={group.title} className="mx-auto mt-10 max-w-2xl text-center">
-                      <Names group={group} className="text-center" compactNames />
+                      <Names group={group} className="text-center" />
                     </div>
                   );
                 })}
               </>
             )}
             {/* Closing photo after the little ones, in colour: a full-bleed banner (negative margins cancel the
-                section's side and bottom padding). On phones the photo is 120% of the figure's height, so the
-                bottom sixth (the couple's feet) is clipped */}
+                section's side and bottom padding). Phones show the whole photo uncropped (portrait); from md up it is
+                a wide band cropped around the focal point. The overlay fades the top and bottom edges into the page
+                background and softens the corners. */}
             {entourage.photo && (
-              <figure data-fade className="-mx-6 -mb-24 mt-20 overflow-hidden max-md:h-[calc(100svh-11rem)] md:-mx-12 md:-mb-36">
+              <figure data-fade className="relative -mx-6 -mb-24 mt-20 overflow-hidden md:-mx-12 md:-mb-36">
                 <Image
                   src={entourage.photo.url}
                   alt={entourage.photo.alt}
                   width={entourage.photo.width}
                   height={entourage.photo.height}
                   sizes="100vw"
-                  className="h-[120%] w-full object-cover md:h-auto md:max-h-[85svh]"
+                  className="h-auto w-full md:max-h-[70svh] md:object-cover"
                   style={{ objectPosition: focalPosition(entourage.photo) }}
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to bottom, var(--color-background) 0%, transparent 22%, transparent 76%, var(--color-background) 100%), radial-gradient(ellipse at 55% 50%, transparent 55%, color-mix(in srgb, var(--color-background) 55%, transparent) 100%)",
+                  }}
                 />
               </figure>
             )}

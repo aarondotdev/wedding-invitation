@@ -47,7 +47,7 @@ export const entourageDefaults = {
     { title: "To clothe us as one (Veil)", names: ["Veil Sponsor Name", "Veil Sponsor Name"] },
     { title: "To bind us together (Cord)", names: ["Cord Sponsor Name", "Cord Sponsor Name"] },
     { title: "To light our path (Candle)", names: ["Candle Sponsor Name", "Candle Sponsor Name"] },
-    { title: "Ring Bearer", names: ["Caleb Alvarez"] },
+    { title: "Ring Bearer", names: ["Luis Caleb Alvarez"] },
     { title: "Bible Bearer", names: ["Christian Andaya"] },
     { title: "Coin Bearer", names: ["Rhian Kay Sarmiento"] },
     { title: "Flower Girls", names: ["Flower Girl Name", "Flower Girl Name"] },
