@@ -14,7 +14,20 @@ const bodoniModa = localFont({
   adjustFontFallback: "Times New Roman",
 });
 const outfit = localFont({ src: "./fonts/outfit.woff2", weight: "100 900", variable: "--ff-outfit" });
-const inter = localFont({ src: "./fonts/inter.woff2", weight: "100 900", variable: "--ff-inter" });
+const oswald = localFont({ src: "./fonts/oswald.ttf", weight: "200 700", variable: "--ff-oswald" });
+// Inria Serif (SIL OFL): six static faces, no variable font
+const inriaSerif = localFont({
+  src: [
+    { path: "./fonts/inria-serif/InriaSerif-Light.ttf", weight: "300", style: "normal" },
+    { path: "./fonts/inria-serif/InriaSerif-LightItalic.ttf", weight: "300", style: "italic" },
+    { path: "./fonts/inria-serif/InriaSerif-Regular.ttf", weight: "400", style: "normal" },
+    { path: "./fonts/inria-serif/InriaSerif-Italic.ttf", weight: "400", style: "italic" },
+    { path: "./fonts/inria-serif/InriaSerif-Bold.ttf", weight: "700", style: "normal" },
+    { path: "./fonts/inria-serif/InriaSerif-BoldItalic.ttf", weight: "700", style: "italic" },
+  ],
+  variable: "--ff-inria-serif",
+  adjustFontFallback: "Times New Roman",
+});
 const rusticRoadway = localFont({ src: "./fonts/rustic-roadway.otf", weight: "400", variable: "--ff-rustic-roadway" });
 const greatVibes = localFont({
   src: "./fonts/great-vibes.woff2",
@@ -67,7 +80,8 @@ const newIconScript = localFont({
 export const families = {
   bodoniModa: { font: bodoniModa, cssVar: "--ff-bodoni-moda" },
   outfit: { font: outfit, cssVar: "--ff-outfit" },
-  inter: { font: inter, cssVar: "--ff-inter" },
+  oswald: { font: oswald, cssVar: "--ff-oswald" },
+  inriaSerif: { font: inriaSerif, cssVar: "--ff-inria-serif" },
   rusticRoadway: { font: rusticRoadway, cssVar: "--ff-rustic-roadway" },
   greatVibes: { font: greatVibes, cssVar: "--ff-great-vibes" },
   cormorant: { font: cormorant, cssVar: "--ff-cormorant" },

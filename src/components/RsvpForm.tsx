@@ -36,10 +36,16 @@ function ChoiceCard({
   defaultChecked: boolean;
 }) {
   return (
-    <label className="group flex cursor-pointer flex-col items-center gap-2 border border-line p-5 text-center transition-colors duration-300 hover:bg-accent/5 has-checked:bg-accent/25 has-focus-visible:ring-2 has-focus-visible:ring-accent-ink has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background sm:p-6">
+    // Same cream and gold silk background as The Venues section
+    <label className="group relative isolate flex cursor-pointer flex-col items-center gap-2 overflow-hidden border border-line bg-[#e8ddd0] p-5 text-center text-[#3b0d18] transition-colors duration-300 hover:bg-[#e2d4c3] has-checked:bg-[#d8c3a5] has-focus-visible:ring-2 has-focus-visible:ring-accent-ink has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background sm:p-6">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-10 mix-blend-multiply"
+        style={{ backgroundImage: "url(/images/details-silk-v1.webp)" }}
+      />
       <input type="radio" name="attending" value={value} required={required} defaultChecked={defaultChecked} className="sr-only" />
-      <span className="font-sans text-xl font-medium leading-tight sm:text-2xl">{label}</span>
-      {note && <span className="text-sm leading-snug text-muted group-has-checked:text-foreground/80">{note}</span>}
+      <span className="font-(family-name:--ff-inria-serif) text-xl font-medium leading-tight sm:text-2xl">{label}</span>
+      {note && <span className="font-(family-name:--ff-inria-serif) text-sm leading-snug text-[#3b0d18]/80">{note}</span>}
     </label>
   );
 }
@@ -81,9 +87,6 @@ export default function RsvpForm({
 
   return (
     <form action={formAction} className="mx-auto grid max-w-xl gap-8">
-      {guest.responded_at && (
-        <p className="text-center italic text-muted">{messages.alreadyReplied}</p>
-      )}
       <div className="grid grid-cols-1 gap-3 sm:gap-4">
         <ChoiceCard
           value="yes"

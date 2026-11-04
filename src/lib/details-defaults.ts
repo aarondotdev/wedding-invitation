@@ -22,6 +22,10 @@ export const entourageDefaults = {
     { title: "Parents of the Groom", names: ["Mr. Father of the Groom", "Mrs. Mother of the Groom"] },
     { title: "Parents of the Bride", names: ["Mr. Father of the Bride", "Mrs. Mother of the Bride"] },
   ] as NameGroup[],
+  secondaryTitle: "Secondary Sponsors",
+  littleOnesTitle: "The Little Ones",
+  // Optional closing photo, chosen in the CMS
+  photo: null as SitePhoto | null,
   sponsors: {
     title: "Principal Sponsors",
     names: [
@@ -97,7 +101,7 @@ export const detailsDefaults = {
     ],
   },
   gallery: {
-    title: "Moments",
+    title: "Gallery",
     intro: "A few of our favourite memories so far.",
   },
 };

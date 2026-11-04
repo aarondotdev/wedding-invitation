@@ -80,5 +80,29 @@ export const Entourage: GlobalConfig = {
       "Best man, maid of honour, groomsmen, bridesmaids, secondary sponsors, bearers and flower girls. Add, remove or reorder groups freely.",
       entourageDefaults.entourage,
     ),
+    {
+      name: "secondaryTitle",
+      type: "text",
+      label: "Secondary sponsors heading",
+      defaultValue: entourageDefaults.secondaryTitle,
+      admin: { description: "Script heading above the best man and maid of honour, e.g. \"Secondary Sponsors\"." },
+    },
+    {
+      name: "littleOnesTitle",
+      type: "text",
+      label: "Children heading",
+      defaultValue: entourageDefaults.littleOnesTitle,
+      admin: {
+        description:
+          "Script heading above the groups after the veil, cord and candle sponsors (ring bearer, flower girls…), e.g. \"The Little Ones\".",
+      },
+    },
+    {
+      name: "photo",
+      type: "upload",
+      relationTo: "media",
+      label: "Closing photo",
+      admin: { description: "Optional wide photo at the end of the section, after the ring bearer and flower girls. Leave empty to hide it." },
+    },
   ],
 };

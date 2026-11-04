@@ -442,6 +442,16 @@ export interface Wedding {
  */
 export interface PageText {
   id: number;
+  cover?: {
+    /**
+     * Gold script line above the envelope on the opening screen, e.g. "You're invited".
+     */
+    title?: string | null;
+    /**
+     * Photo inside the envelope on the opening screen. A wide (landscape) photo works best; use the focal point to keep faces in view.
+     */
+    photo?: (number | null) | Media;
+  };
   hero?: {
     /**
      * First line guests see. {name} becomes the guest's name, e.g. "Dear Maria & Jose,".
@@ -572,6 +582,10 @@ export interface PageText {
      * Heading above the countdown timer.
      */
     countdownTitle?: string | null;
+    /**
+     * Full-screen photo above the countdown, after the welcome text. Use the focal point to keep faces in view. Leave empty to use the bundled bridge photo.
+     */
+    bannerPhoto?: (number | null) | Media;
     /**
      * Heading above the ceremony and reception cards.
      */
@@ -858,6 +872,18 @@ export interface Entourage {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Script heading above the best man and maid of honour, e.g. "Secondary Sponsors".
+   */
+  secondaryTitle?: string | null;
+  /**
+   * Script heading above the groups after the veil, cord and candle sponsors (ring bearer, flower girls…), e.g. "The Little Ones".
+   */
+  littleOnesTitle?: string | null;
+  /**
+   * Optional wide photo at the end of the section, after the ring bearer and flower girls. Leave empty to hide it.
+   */
+  photo?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1005,6 +1031,12 @@ export interface WeddingSelect<T extends boolean = true> {
  * via the `definition` "pageText_select".
  */
 export interface PageTextSelect<T extends boolean = true> {
+  cover?:
+    | T
+    | {
+        title?: T;
+        photo?: T;
+      };
   hero?:
     | T
     | {
@@ -1058,6 +1090,7 @@ export interface PageTextSelect<T extends boolean = true> {
     | T
     | {
         countdownTitle?: T;
+        bannerPhoto?: T;
         eventsTitle?: T;
         viewMap?: T;
         dressCodeLabel?: T;
@@ -1179,6 +1212,9 @@ export interface EntourageSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  secondaryTitle?: T;
+  littleOnesTitle?: T;
+  photo?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

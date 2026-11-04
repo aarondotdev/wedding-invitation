@@ -60,6 +60,8 @@ export async function getPageText(): Promise<PageText & { photos: PagePhotos; ch
     );
   }
   const photos: PagePhotos = {
+    cover: toPhoto(doc.cover?.photo),
+    banner: toPhoto(doc.sections?.bannerPhoto),
     hero: toPhoto(doc.hero?.photo),
     story: toPhoto(doc.story?.photo),
     statement: toPhoto(doc.statement?.photo),
@@ -96,6 +98,9 @@ export async function getEntourage(): Promise<Entourage> {
     parents?: SavedGroup[];
     sponsors?: SavedGroup;
     entourage?: SavedGroup[];
+    secondaryTitle?: string | null;
+    littleOnesTitle?: string | null;
+    photo?: unknown;
   };
   if (!doc.updatedAt) return entourageDefaults;
 
@@ -138,6 +143,9 @@ export async function getEntourage(): Promise<Entourage> {
     parents: (doc.parents ?? []).map(toGroup),
     sponsors: toGroup({ title: pick(doc.sponsors?.title, entourageDefaults.sponsors.title), names: doc.sponsors?.names }),
     entourage: groups,
+    secondaryTitle: pick(doc.secondaryTitle, entourageDefaults.secondaryTitle),
+    littleOnesTitle: pick(doc.littleOnesTitle, entourageDefaults.littleOnesTitle),
+    photo: toPhoto(doc.photo),
   };
 }
 

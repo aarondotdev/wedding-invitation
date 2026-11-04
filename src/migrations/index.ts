@@ -6,6 +6,12 @@ import * as migration_20261018_155456_rsvp_choice_cards from './20261018_155456_
 import * as migration_20261018_164253_header_menu_labels from './20261018_164253_header_menu_labels';
 import * as migration_20261031_091101_add_custom_section from './20261031_091101_add_custom_section';
 import * as migration_20261102_010150_add_wishes from './20261102_010150_add_wishes';
+import * as migration_20261103_233611_add_cover_title from './20261103_233611_add_cover_title';
+import * as migration_20261103_235052_add_cover_photo from './20261103_235052_add_cover_photo';
+import * as migration_20261104_002956_add_banner_photo from './20261104_002956_add_banner_photo';
+import * as migration_20261104_010518_add_little_ones_title from './20261104_010518_add_little_ones_title';
+import * as migration_20261104_011138_add_entourage_photo from './20261104_011138_add_entourage_photo';
+import * as migration_20261104_013146_add_secondary_title from './20261104_013146_add_secondary_title';
 
 export const migrations = [
   {
@@ -46,6 +52,36 @@ export const migrations = [
   {
     up: migration_20261102_010150_add_wishes.up,
     down: migration_20261102_010150_add_wishes.down,
-    name: '20261102_010150_add_wishes'
+    name: '20261102_010150_add_wishes',
+  },
+  {
+    up: migration_20261103_233611_add_cover_title.up,
+    down: migration_20261103_233611_add_cover_title.down,
+    name: '20261103_233611_add_cover_title',
+  },
+  {
+    up: migration_20261103_235052_add_cover_photo.up,
+    down: migration_20261103_235052_add_cover_photo.down,
+    name: '20261103_235052_add_cover_photo',
+  },
+  {
+    up: migration_20261104_002956_add_banner_photo.up,
+    down: migration_20261104_002956_add_banner_photo.down,
+    name: '20261104_002956_add_banner_photo',
+  },
+  {
+    up: migration_20261104_010518_add_little_ones_title.up,
+    down: migration_20261104_010518_add_little_ones_title.down,
+    name: '20261104_010518_add_little_ones_title',
+  },
+  {
+    up: migration_20261104_011138_add_entourage_photo.up,
+    down: migration_20261104_011138_add_entourage_photo.down,
+    name: '20261104_011138_add_entourage_photo',
+  },
+  {
+    up: migration_20261104_013146_add_secondary_title.up,
+    down: migration_20261104_013146_add_secondary_title.down,
+    name: '20261104_013146_add_secondary_title'
   },
 ];

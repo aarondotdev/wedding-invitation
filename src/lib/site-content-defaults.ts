@@ -14,6 +14,9 @@ export const pageTextDefaults = {
     menu: "Menu",
     close: "Close",
   },
+  cover: {
+    title: "You're invited",
+  },
   hero: {
     greeting: "Dear {name},",
     intro: "our very special guest",
@@ -108,6 +111,8 @@ export const focalPosition = (photo: Pick<SitePhoto, "focalX" | "focalY">) => `$
 
 // Photos chosen in "Page text". Each is optional and its block is hidden when empty.
 export type PagePhotos = {
+  cover: SitePhoto | null;
+  banner: SitePhoto | null;
   hero: SitePhoto | null;
   story: SitePhoto | null;
   statement: SitePhoto | null;

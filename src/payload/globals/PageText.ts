@@ -46,6 +46,14 @@ export const PageText: GlobalConfig = {
       type: "tabs",
       tabs: [
         {
+          name: "cover",
+          label: "Cover page",
+          fields: [
+            text("cover", "title", "Title", "Gold script line above the envelope on the opening screen, e.g. \"You're invited\"."),
+            photo("Photo inside the envelope on the opening screen. A wide (landscape) photo works best; use the focal point to keep faces in view.", "photo", "Envelope photo"),
+          ],
+        },
+        {
           name: "hero",
           label: "Top of the invitation",
           fields: [
@@ -131,6 +139,7 @@ export const PageText: GlobalConfig = {
           label: "Section headings",
           fields: [
             text("sections", "countdownTitle", "Countdown heading", "Heading above the countdown timer."),
+            photo("Full-screen photo above the countdown, after the welcome text. Use the focal point to keep faces in view. Leave empty to use the bundled bridge photo.", "bannerPhoto", "Banner photo"),
             text("sections", "eventsTitle", "Events heading", "Heading above the ceremony and reception cards."),
             text("sections", "viewMap", "Map link", "Link under each venue that opens the map."),
             text("sections", "dressCodeLabel", "Dress code label", "Shown before the dress code, e.g. \"Dress code:\"."),
