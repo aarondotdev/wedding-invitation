@@ -23,6 +23,8 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPl
  *                     "spread" closes in from wide letter-spacing; anything else fades and rises
  *   data-reveal       image unmasks from the bottom while its photo settles from a zoom
  *   data-parallax     drifts slower than the page (value = strength, e.g. "12")
+ *   data-pin-cover    section stays still: uncovered by the section above, then covered by the next one
+ *                     (both directions)
  *   data-drift        collage tile floats against the scroll, wide screens only (value = strength, sign = direction)
  *   data-timeline     its [data-timeline-fill] line grows with the scroll; [data-timeline-dot]s fill gold as it passes
  *   data-scrub        words light up one by one as the section is scrolled through
@@ -276,6 +278,22 @@ export default function InvitationMotion({
               // past them, the next trigger created force-measures them, these `once` triggers finish and
               // remove themselves mid-loop, and ScrollTrigger crashes ("reading 'end'").
               ScrollTrigger.create({ trigger: el, start: "top 85%", once: true, onEnter: () => tl.play() });
+            });
+
+            // Section stays still on screen, like a window onto it: the section above slides away to
+            // uncover it (and slides back over it when scrolling up), then it holds at the top while the
+            // next section scrolls up over it. No pin spacing, so the next section covers it straight away.
+            q<HTMLElement>("[data-pin-cover]").forEach((el) => {
+              const next = el.nextElementSibling as HTMLElement | null;
+              if (next) gsap.set(next, { position: "relative", zIndex: 1 });
+              // Arriving: the content moves against the scroll by exactly as much as the section rises,
+              // so it appears not to move while the section's top edge (and the section above) passes over it
+              gsap.fromTo(
+                [...el.children],
+                { y: () => -el.offsetHeight },
+                { y: 0, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "top top", scrub: true, invalidateOnRefresh: true } },
+              );
+              ScrollTrigger.create({ trigger: el, start: "top top", end: "bottom top", pin: true, pinSpacing: false });
             });
 
             q<HTMLElement>("[data-parallax]").forEach((el) => {

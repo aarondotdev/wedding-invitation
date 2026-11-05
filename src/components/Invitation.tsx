@@ -140,6 +140,7 @@ const nameFixes: Record<string, string> = {
   "Bryan Andal": "Mr. Bryan Andal",
   "Francis Gerald Fajardo": "Mr. Francis Gerald Fajardo",
   "Ms Niña Kyla Lariza": "Ms. Niña Kyla Lariza",
+  "Ms. Kaizee De Ocampo": "Ms. Kaizee Ocampo",
 };
 function fixName(name: string) { return nameFixes[name] ?? name; }
 
@@ -286,7 +287,8 @@ export default function Invitation({
           </div>
           <div data-hero-stage className="relative z-10 -mt-6 flex min-h-[min(80svh,48rem)] flex-1 items-end justify-center">
             <div data-hero-photo className="absolute inset-0 flex translate-y-10 pt-10 items-center justify-center">
-              <div data-reveal className="relative h-[calc(min(90svh,62rem)-5px)] aspect-square w-auto max-w-[110vw] sm:max-w-[95vw] md:max-w-[50rem]">
+              {/* Stationary: no reveal or zoom on scroll */}
+              <div className="relative h-[calc(min(90svh,62rem)-5px)] aspect-square w-auto max-w-[110vw] sm:max-w-[95vw] md:max-w-[50rem]">
                 <Image
                   src="/images/couple-hero-v2.png"
                   alt="Lorenz and Jenzell"
@@ -336,7 +338,7 @@ export default function Invitation({
         </section>
 
         {/* Countdown + Celebration photo combined */}
-        <section id="celebration" aria-label={text.nav.celebration} className="relative isolate flex h-svh scroll-mt-16 flex-col overflow-hidden bg-[#35090d]">
+        <section id="celebration" data-pin-cover aria-label={text.nav.celebration} className="relative isolate flex h-svh scroll-mt-16 flex-col overflow-hidden bg-[#35090d]">
           {text.photos.banner ? (
             <Image
               src={text.photos.banner.url}
@@ -345,7 +347,7 @@ export default function Invitation({
               sizes="100vw"
               data-parallax
               className="object-cover scale-110"
-              style={{ objectPosition: focalPosition(text.photos.banner), filter: "saturate(0.7) brightness(1.15) contrast(0.9) blur(0.5px)" }}
+              style={{ objectPosition: focalPosition(text.photos.banner) }}
             />
           ) : (
             <Image
@@ -356,18 +358,20 @@ export default function Invitation({
               sizes="100vw"
               data-parallax
               className="object-cover scale-110"
-              style={{ objectPosition: "55% 30%", filter: "saturate(0.7) brightness(1.15) contrast(0.9) blur(0.5px)" }}
+              style={{ objectPosition: "55% 30%" }}
             />
           )}
-          {/* Warm overlay to blend blue sky with beige */}
-          <div className="pointer-events-none absolute inset-0 z-[1] mix-blend-multiply" style={{ backgroundColor: "rgba(200, 173, 127, 0.45)" }} />
-          <div className="flex-1" />
-          <div className="relative z-10 flex items-center justify-center px-6 py-10" style={{ backgroundColor: "#35090d" }}>
+          {/* Photo as it is: no colour filter or overlay */}
+        </section>
+
+        {/* Countdown and the venues/dress code section: one block, so together they slide up over the
+            celebration photo (data-pin-cover layers the next element on top) */}
+        <div>
+          <div className="flex items-center justify-center px-6 py-10" style={{ backgroundColor: "#35090d" }}>
             <div data-fade className="text-center">
               <Countdown date={wedding.date} labels={text.countdown} />
             </div>
           </div>
-        </section>
 
         {/* Dress code */}
         {(dressCode.title || dressCode.description || dressCode.palette.length > 0) && (
@@ -436,9 +440,9 @@ export default function Invitation({
             </div>
           </section>
         )}
+        </div>
 
-        {/* Entourage through to the Moments gallery share one glitter layer, so it falls continuously
-            from behind the photo above down to the end of the page. It scrolls with the page; the wrapper clips
+        {/* The entourage has its own glitter layer, falling from behind the photo above it. It scrolls with the page; the wrapper clips
             its source, which sits above the wrapper's top edge. */}
         <div className="relative isolate overflow-hidden">
         <GlitterCascade
@@ -546,33 +550,41 @@ export default function Invitation({
                 })}
               </>
             )}
-            {/* Closing photo after the little ones, in colour: a full-bleed banner (negative margins cancel the
-                section's side and bottom padding). Phones show the whole photo uncropped (portrait); from md up it is
-                a wide band cropped around the focal point. The overlay fades the top and bottom edges into the page
-                background and softens the corners. */}
-            {entourage.photo && (
-              <figure data-fade className="relative -mx-6 -mb-24 mt-20 overflow-hidden md:-mx-12 md:-mb-36">
-                <Image
-                  src={entourage.photo.url}
-                  alt={entourage.photo.alt}
-                  width={entourage.photo.width}
-                  height={entourage.photo.height}
-                  sizes="100vw"
-                  className="h-auto w-full md:max-h-[70svh] md:object-cover"
-                  style={{ objectPosition: focalPosition(entourage.photo) }}
-                />
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(to bottom, var(--color-background) 0%, transparent 22%, transparent 76%, var(--color-background) 100%), radial-gradient(ellipse at 55% 50%, transparent 55%, color-mix(in srgb, var(--color-background) 55%, transparent) 100%)",
-                  }}
-                />
-              </figure>
-            )}
           </section>
         )}
+        </div>
+
+        {/* Closing photo after the entourage, in colour, full screen. It stays still like the celebration
+            photo: the entourage slides off it (and back over it when scrolling up), then it holds at the top
+            while the next block slides up over it (data-pin-cover). */}
+        {entourage.photo && (
+          <section data-pin-cover aria-label={entourage.photo.alt} className="relative isolate h-svh overflow-hidden bg-background">
+            <Image
+              src={entourage.photo.url}
+              alt={entourage.photo.alt}
+              fill
+              sizes="100vw"
+              className="object-cover"
+              style={{ objectPosition: focalPosition(entourage.photo) }}
+            />
+          </section>
+        )}
+
+        {/* From here to the gallery: a solid background, so this block covers the photo above as it slides up,
+            with its own glitter layer (the one above can't show through the background). */}
+        <div className="relative isolate overflow-hidden bg-background">
+        <GlitterCascade
+          windowed
+          density={170}
+          glints={7}
+          speed={55}
+          advanced={{ flakeSize: 2.4, glintArm: 24, glintHalo: 8, shimmer: 15, fallSpread: 40 }}
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            maskImage: "linear-gradient(to bottom, black 94%, transparent)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 94%, transparent)",
+          }}
+        />
 
         {/* Custom section */}
         {(text.customSection.title || text.customSection.body) && (
@@ -669,9 +681,9 @@ export default function Invitation({
           </div>
           {/* Attire note, styled like the Reminders entries below */}
           <div data-fade className="mx-auto mt-10 max-w-md rounded-lg px-6 py-5 ring-1 ring-line">
-            <h3 className="font-(family-name:--ff-inria-serif) text-sm font-medium uppercase tracking-[0.2em] text-accent-ink">Note</h3>
-            <p className="font-(family-name:--ff-inria-serif) mt-2 text-sm leading-relaxed text-muted sm:text-base">AVOID black, white, and overly casual attire (e.g. T-shirts, shorts, jeans, sneakers).</p>
-            <p className="font-(family-name:--ff-inria-serif) mt-2 text-sm leading-relaxed text-muted sm:text-base">Please RESERVE WHITE for the Bride.</p>
+            <h3 className="font-(family-name:--ff-inria-serif) text-sm font-bold uppercase tracking-[0.2em] text-accent-ink sm:text-base">Note</h3>
+            <p className="font-(family-name:--ff-inria-serif) mt-2 text-sm font-bold leading-relaxed text-muted sm:text-base">AVOID black, white, and overly casual attire (e.g. T-shirts, shorts, jeans, sneakers).</p>
+            <p className="font-(family-name:--ff-inria-serif) mt-2 text-sm font-bold leading-relaxed text-muted sm:text-base">Please RESERVE WHITE for the Bride.</p>
           </div>
         </section>
 
@@ -684,18 +696,18 @@ export default function Invitation({
           <div data-fade className="mx-auto mt-4 w-32">
             <Image src="/images/gold-ornament.png" alt="" width={450} height={106} className="w-full" aria-hidden="true" />
           </div>
-          <h3 data-fade className="font-(family-name:--ff-inria-serif) mt-4 text-sm font-medium uppercase tracking-[0.2em] text-accent-ink">Please Arrive Early</h3>
-          <p data-fade className="font-(family-name:--ff-inria-serif) mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted sm:text-base">To help everything to run smoothly, please arrive at least 30 minutes before the start of the ceremony.</p>
+          <h3 data-fade className="font-(family-name:--ff-inria-serif) mt-4 text-sm font-bold uppercase tracking-[0.2em] text-accent-ink sm:text-base">Please Arrive Early</h3>
+          <p data-fade className="font-(family-name:--ff-inria-serif) mx-auto mt-2 max-w-md text-sm font-bold leading-relaxed text-muted sm:text-base">To help everything to run smoothly, please arrive at least 30 minutes before the start of the ceremony.</p>
           <div data-fade className="mx-auto mt-4 w-32">
             <Image src="/images/gold-ornament.png" alt="" width={450} height={106} className="w-full" aria-hidden="true" />
           </div>
-          <h3 data-fade className="font-(family-name:--ff-inria-serif) mt-4 text-sm font-medium uppercase tracking-[0.2em] text-accent-ink">Please Keep Phones Off During the Ceremony</h3>
-          <p data-fade className="font-(family-name:--ff-inria-serif) mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted sm:text-base">To honor the intimacy of our vows, we ask that all guests keep phones and cameras put away during the ceremony and refrain from stepping into the aisle so our photographer may work freely.</p>
+          <h3 data-fade className="font-(family-name:--ff-inria-serif) mt-4 text-sm font-bold uppercase tracking-[0.2em] text-accent-ink sm:text-base">Please Keep Phones Off During the Ceremony</h3>
+          <p data-fade className="font-(family-name:--ff-inria-serif) mx-auto mt-2 max-w-md text-sm font-bold leading-relaxed text-muted sm:text-base">To honor the intimacy of our vows, we ask that all guests keep phones and cameras put away during the ceremony and refrain from stepping into the aisle so our photographer may work freely.</p>
           <div data-fade className="mx-auto mt-4 w-32">
             <Image src="/images/gold-ornament.png" alt="" width={450} height={106} className="w-full" aria-hidden="true" />
           </div>
-          <h3 data-fade className="font-(family-name:--ff-inria-serif) mt-4 text-sm font-medium uppercase tracking-[0.2em] text-accent-ink">Celebrating Intimately: Adults Only</h3>
-          <p data-fade className="font-(family-name:--ff-inria-serif) mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted sm:text-base">We kindly ask that guests join us without children, as we are planning an adults‑only ceremony and reception to ensure a comfortable experience for everyone.</p>
+          <h3 data-fade className="font-(family-name:--ff-inria-serif) mt-4 text-sm font-bold uppercase tracking-[0.2em] text-accent-ink sm:text-base">Celebrating Intimately: Adults Only</h3>
+          <p data-fade className="font-(family-name:--ff-inria-serif) mx-auto mt-2 max-w-md text-sm font-bold leading-relaxed text-muted sm:text-base">We kindly ask that guests join us without children, as we are planning an adults‑only ceremony and reception to ensure a comfortable experience for everyone.</p>
         </section>
 
         {/* Questions & answers: hidden for now (SHOW_FAQ); the content stays in the CMS for later */}

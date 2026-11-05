@@ -225,7 +225,7 @@ html.motion-pending [data-reveal] {
     grid-row: 1 / -1;
     align-self: center;
   }
-  [data-layout="split"] [data-hero][data-has-photo] [data-hero-photo] > [data-reveal] {
+  [data-layout="split"] [data-hero][data-has-photo] [data-hero-photo] > div {
     width: min(100%, 32rem);
   }
   [data-layout="split"] [data-hero][data-has-photo] [data-hero-greeting] {
