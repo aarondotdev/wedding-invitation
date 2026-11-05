@@ -6,6 +6,10 @@ import config from '@payload-config'
 import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
 import { importMap } from '../importMap'
 
+// Added by hand (keep if Payload regenerates this file): the CMS renders per request, so opt this
+// segment out of Next's instant-navigation checks too (see the note in ../../layout.tsx).
+export const instant = false
+
 type Args = {
   params: Promise<{
     segments: string[]

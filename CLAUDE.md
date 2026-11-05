@@ -111,8 +111,12 @@ There are no known hard-coded gaps. Keep it that way: new visible text gets a fi
 - CMS hooks must call `expireTags()` (`src/lib/revalidate.ts`), not `revalidateTag` directly: hooks also run
   in `payload run` scripts where Next's cache isn't available.
 - Personal photos go in the CMS (Vercel Blob), not in `public/` — the repo is public.
-- Everything must still work with reduced motion (no animation) and without JavaScript (the
-  `motion-pending` class only hides elements briefly and is removed after 3 s regardless).
+- Animations play even when the device asks for reduced motion (iOS "Reduce Motion"): the owner's
+  choice. Never check `prefers-reduced-motion` directly; use `prefersReducedMotion()` /
+  `MOTION_OK_QUERY` from `src/lib/motion.ts`, whose `RESPECT_REDUCED_MOTION` switch turns the still
+  versions back on (plus the commented gallery rule in globals.css).
+- Everything must still work without JavaScript (the `motion-pending` class only hides elements
+  briefly and is removed after 3 s regardless).
 - Don't put Tailwind `translate-*` on elements GSAP animates (`data-reveal`, `data-parallax`); GSAP and
   CSS `translate` stack. Position them with flexbox/grid instead.
 

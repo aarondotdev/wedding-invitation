@@ -132,42 +132,6 @@ function formatWishTime(iso: string) {
 // The FAQ section is hidden for now; set to true to show it again (its questions are kept in the CMS)
 const SHOW_FAQ = false;
 
-// Bento tile sizes on phones. A block of five tiles fills a 2-column grid exactly:
-//   [big 2x2] / [tall][small] / [ ... ][small] / [wide 2x1]
-// A shorter final block uses a pattern that still ends flush, so the grid never has holes.
-// Tablet and desktop ignore these spans.
-const BENTO = {
-  big: "max-md:col-span-2 max-md:row-span-2",
-  tall: "max-md:row-span-2",
-  wide: "max-md:col-span-2",
-  small: "",
-};
-const BENTO_BLOCK = [BENTO.big, BENTO.tall, BENTO.small, BENTO.small, BENTO.wide];
-const BENTO_TAIL: Record<number, string[]> = {
-  1: [BENTO.big],
-  2: [BENTO.big, BENTO.wide],
-  3: [BENTO.big, BENTO.small, BENTO.small],
-  4: [BENTO.big, BENTO.tall, BENTO.small, BENTO.small],
-};
-function bentoTile(index: number, total: number) {
-  const tailStart = total - (total % 5);
-  return index >= tailStart ? BENTO_TAIL[total % 5][index - tailStart] : BENTO_BLOCK[index % 5];
-}
-
-// Editorial collage on desktop (lg+), repeating every five photos on a 12-column grid:
-//   row A: [large portrait, cols 1-5] [small, cols 7-9, dropped low] [square, cols 10-12]
-//   row B: [portrait, cols 2-5] [wide landscape, cols 7-12, dropped]
-// The explicit column starts push tiles 4 and 1 onto new rows, so any number of photos lays out
-// without holes. `drift` is how far each tile floats against the scroll (data-drift, wide screens
-// only); mixed directions and strengths give the layered collage feel.
-const COLLAGE: Array<{ tile: string; drift: number }> = [
-  { tile: "lg:col-start-1 lg:col-span-5 lg:aspect-[4/5]", drift: 4 },
-  { tile: "lg:col-start-7 lg:col-span-3 lg:mt-40 lg:aspect-[3/4]", drift: -7 },
-  { tile: "lg:col-start-10 lg:col-span-3 lg:mt-12 lg:aspect-[2/3]", drift: 6 },
-  { tile: "lg:col-start-2 lg:col-span-4 lg:aspect-[3/4]", drift: -5 },
-  { tile: "lg:col-start-7 lg:col-span-6 lg:mt-12 lg:aspect-[3/2]", drift: 7 },
-];
-
 const nameFixes: Record<string, string> = {
   "Mr. Dave Malabanan": "Mr. David Andrew Malabanan",
   "Mr. Chona Fajardo": "Ms. Chona Fajardo",
@@ -212,13 +176,13 @@ export default function Invitation({
   wedding: Wedding;
   text: PageText & { photos: PagePhotos; chapters: StoryChapter[] };
   entourage: Entourage;
-  details: Details & { dressCodePhoto: GalleryPhoto | null; galleryPhotos: GalleryPhoto[] };
+  details: Details & { dressCodePhoto: GalleryPhoto | null; galleryPhotos: GalleryPhoto[]; galleryBanners: GalleryPhoto[] };
   guest: Guest;
   rsvpOpen: boolean;
   wishes: Wish[];
 }) {
   const { hero, sections, story, photos, chapters } = text;
-  const { dressCode, faq, gallery, galleryPhotos } = details;
+  const { dressCode, faq, gallery, galleryPhotos, galleryBanners } = details;
   const hasEntourage = entourage.parents.length + entourage.sponsors.names.length + entourage.entourage.length > 0;
   const bestMan = entourage.entourage.find((group) => /^best man$/i.test(group.title));
   const maidOfHonor = entourage.entourage.find((group) => /^maid of honou?r$/i.test(group.title));
@@ -248,7 +212,7 @@ export default function Invitation({
         <div className="relative isolate flex h-svh w-full flex-col items-center justify-center overflow-hidden px-6 text-center text-[#f6eee3]">
           {/* Textured maroon behind the cover */}
           <div className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center" aria-hidden="true" style={{ backgroundImage: "url(/images/cover-bg-maroon.jpg)" }} />
-          <p className="font-script text-[clamp(3rem,7vw,6.5rem)] leading-[1.3] text-accent-ink" style={{ textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>{text.cover.title}</p>
+          <p data-cover-fade className="font-script text-[clamp(3rem,7vw,6.5rem)] leading-[1.3] text-accent-ink lg:mt-10" style={{ textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>{text.cover.title}</p>
           <button
             data-cover-open
             type="button"
@@ -257,12 +221,12 @@ export default function Invitation({
           >
             {/* Envelope beats like a heart while hovered or pressed */}
             <style>{`@keyframes envelope-beat { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.08); } }
-            @media (prefers-reduced-motion: no-preference) { .envelope-beat:hover, .group:focus-visible .envelope-beat { animation: envelope-beat 0.7s ease-in-out 1; } .group[data-beating] .envelope-beat { animation: envelope-beat-once 1s ease-in-out 1; } }
-            @keyframes envelope-beat-once { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.1); } }`}</style>
-            {/* Gilded oval frame with roses, with the envelope in the middle of the oval; sized to fit the screen height beside the title and caption */}
-            <span aria-hidden className="relative my-4 block w-[min(24rem,84vw,calc((100svh_-_13rem)*1200/1491))] lg:w-[min(40rem,calc((100svh_-_13rem)*1200/1491))]" style={{ aspectRatio: "1200 / 1491" }}>
+            .group:not([data-opening]) .envelope-beat:hover, .group:not([data-opening]):focus-visible .envelope-beat { animation: envelope-beat 0.7s ease-in-out 1; }`}</style>
+            {/* Gilded oval frame with roses, with the envelope in the middle of the oval; sized to fit the screen height beside the title and caption (on computers it leaves room for the space above the title) */}
+            <span aria-hidden className="relative my-4 block w-[min(24rem,84vw,calc((100svh_-_13rem)*1200/1491))] lg:w-[min(40rem,calc((100svh_-_15.5rem)*1200/1491))]" style={{ aspectRatio: "1200 / 1491" }}>
               <Image src="/images/cover-frame-v1.webp" alt="" fill priority unoptimized className="pointer-events-none object-contain" style={{ filter: "drop-shadow(0 14px 18px rgba(15, 0, 3, 0.6))" }} />
-              <span className="envelope-beat absolute block drop-shadow-2xl" style={{ left: "21%", top: "6.2%", width: "60%", aspectRatio: "375 / 666" }}>
+              {/* Only the envelope zooms when tapped, before the flash; the frame stays put (InvitationMotion, data-cover-envelope) */}
+              <span data-cover-envelope className="envelope-beat absolute block drop-shadow-2xl" style={{ left: "21%", top: "6.2%", width: "60%", aspectRatio: "375 / 666" }}>
                 {/* Couple photo where the letter paper was; the envelope (paper keyed out) sits on top */}
                 <span className="absolute overflow-hidden" style={{ left: "23%", top: "37.5%", width: "54.5%", height: "21.5%" }}>
                   {text.photos.cover ? (
@@ -274,7 +238,7 @@ export default function Invitation({
                 <Image src="/images/cover-envelope-open-v2.png" alt="" fill priority unoptimized sizes="20rem" className="object-contain" />
               </span>
             </span>
-            <span className="text-xs font-medium uppercase tracking-[0.3em] text-[#d4ae62] transition-colors group-hover:text-[#f6eee3]">Tap to open your invitation</span>
+            <span data-cover-fade className="text-xs font-medium uppercase tracking-[0.3em] text-[#d4ae62] transition-colors group-hover:text-[#f6eee3]">Tap to open your invitation</span>
           </button>
         </div>
       }
@@ -300,7 +264,7 @@ export default function Invitation({
           />
           <div className="relative z-10 flex flex-col items-center text-center">
             <div
-              data-fade
+              data-intro="mark"
               role="img"
               aria-label={`${wedding.partner1.charAt(0)} and ${wedding.partner2.charAt(0)} monogram`}
               className="mx-auto"
@@ -315,10 +279,10 @@ export default function Invitation({
                 className="mx-auto h-auto w-[min(10rem,50vw)]"
               />
             </div>
-            <p data-fade="0.12" className="mt-5 whitespace-nowrap text-[clamp(2rem,8vw,4rem)] leading-none tracking-[0.06em] text-[#f6eee3]" style={{ fontFamily: "var(--ff-new-icon)" }}>
+            <p data-intro="type" className="mt-5 whitespace-nowrap text-[clamp(2rem,8vw,4rem)] leading-none tracking-[0.06em] text-[#f6eee3]" style={{ fontFamily: "var(--ff-new-icon)" }}>
               Lorenz <span className="text-[#d4ae62]">{hero.ampersand}</span> Jenzell
             </p>
-            <p data-fade="0.24" className="mt-2 text-sm font-bold uppercase tracking-[0.35em] text-[#d4b5ae] md:text-base">01. 17. 27</p>
+            <p data-intro="type" className="mt-2 whitespace-nowrap text-sm font-bold uppercase tracking-[0.35em] text-[#d4b5ae] md:text-base">01. 17. 27</p>
           </div>
           <div data-hero-stage className="relative z-10 -mt-6 flex min-h-[min(80svh,48rem)] flex-1 items-end justify-center">
             <div data-hero-photo className="absolute inset-0 flex translate-y-10 pt-10 items-center justify-center">
@@ -764,42 +728,84 @@ export default function Invitation({
           </section>
         )}
 
-        {/* Gallery: scrolls sideways on desktop, photos turn from black-and-white to colour */}
-        {galleryPhotos.length > 0 && (
-          <section id="gallery" className="scroll-mt-24 overflow-hidden pt-12 pb-24 md:pt-16 md:pb-36">
+        {/* Gallery: the photos glide right to left on their own, in a loop (pauses on hover; with reduced
+            motion respected, see lib/motion.ts, it's a strip guests can swipe). The track holds the photos three times so the loop is seamless.
+            Below it, in the same marble band, the landscape photos stand still, full width, one under another. */}
+        {(galleryPhotos.length > 0 || galleryBanners.length > 0) && (
+          <section id="gallery" className="scroll-mt-24 pt-12 md:pt-16">
             <div className="px-6 md:px-12">
               <div data-fade className="border-t-2 border-line" />
-              {/* Centred on phones; title left and intro right from md up */}
-              <div className="mt-12 flex flex-col items-center gap-6 text-center md:flex-row md:flex-wrap md:items-end md:justify-between md:text-left">
-                <h2 data-fade className="text-[clamp(3rem,7vw,6.5rem)] capitalize leading-[1.3] text-accent-ink" style={{ fontFamily: "var(--ff-eyesome)", textShadow: "0 0 8px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.3)" }}>
-                  {gallery.title.toLowerCase()}
-                </h2>
-                {gallery.intro && <p data-fade className="max-w-sm text-lg text-muted">{gallery.intro}</p>}
-              </div>
             </div>
-            {/* Phones: bento grid. Tablets: 3 columns. Desktop: drifting editorial collage (COLLAGE). */}
-            <div className="mt-12 grid grid-cols-2 gap-2 px-6 max-md:auto-rows-[8.5rem] max-md:grid-flow-dense md:grid-cols-3 md:gap-4 md:px-12 lg:mt-20 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-28 lg:px-16 xl:px-24">
-              {galleryPhotos.map((p, i) => {
-                const collage = COLLAGE[i % COLLAGE.length];
-                return (
-                  <figure
-                    key={`${p.url}-${i}`}
-                    data-drift={collage.drift}
-                    className={`overflow-hidden lg:self-start lg:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.6)] lg:ring-1 lg:ring-line ${bentoTile(i, galleryPhotos.length)} ${collage.tile}`}
-                  >
-                    <Image
-                      data-colorize
-                      src={p.url}
-                      alt={p.alt}
-                      width={p.width}
-                      height={p.height}
-                      sizes="(min-width: 1024px) 45vw, 50vw"
-                      className="h-full w-full object-cover grayscale"
-                      style={{ objectPosition: focalPosition(p) }}
-                    />
-                  </figure>
-                );
-              })}
+            {/* Light marble band from just under the line: same background as the venues section (white marble
+                with a soft burgundy glow in the corners). Re-scopes the theme tokens so the text stays readable. */}
+            <div
+              className="relative isolate overflow-hidden bg-[#e8ddd0] pt-12 pb-24 md:pb-36"
+              style={
+                {
+                  "--foreground": "#3b0d18",
+                  "--muted": "#7a4650",
+                  "--accent-ink": "#8a6516",
+                  "--line": "rgb(212 174 98 / 0.5)",
+                } as React.CSSProperties
+              }
+            >
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center"
+                style={{ backgroundImage: "url(/images/marble-bg-v1.jpg)" }}
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-10"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(ellipse 60% 45% at 0% 0%, rgba(122,28,46,0.14), transparent 70%), radial-gradient(ellipse 60% 45% at 100% 0%, rgba(122,28,46,0.12), transparent 70%), radial-gradient(ellipse 60% 45% at 0% 100%, rgba(122,28,46,0.12), transparent 70%), radial-gradient(ellipse 60% 45% at 100% 100%, rgba(122,28,46,0.14), transparent 70%)",
+                }}
+              />
+              <div className="px-6 md:px-12">
+                {/* Title with the intro centred below it, on every screen size */}
+                <div className="flex flex-col items-center gap-6 text-center">
+                  <h2 data-fade className="text-[clamp(3rem,7vw,6.5rem)] capitalize leading-[1.3] text-accent-ink" style={{ fontFamily: "var(--ff-eyesome)", textShadow: "0 0 8px rgba(201,168,76,0.45), 0 0 20px rgba(201,168,76,0.25)" }}>
+                    {gallery.title.toLowerCase()}
+                  </h2>
+                  {gallery.intro && <p data-fade className="max-w-sm text-lg text-muted">{gallery.intro}</p>}
+                </div>
+              </div>
+              {galleryPhotos.length > 0 && (
+                <div data-fade className="gallery-marquee mt-12 lg:mt-20">
+                  <div className="gallery-marquee-track" style={{ "--marquee-duration": `${galleryPhotos.length * 6}s` } as React.CSSProperties}>
+                    {[0, 1, 2].map((copy) =>
+                      galleryPhotos.map((p, i) => (
+                        <figure
+                          key={`${copy}-${p.url}-${i}`}
+                          aria-hidden={copy > 0 || undefined}
+                          data-marquee-copy={copy > 0 ? "" : undefined}
+                          className="relative aspect-[2/3] h-[22rem] shrink-0 overflow-hidden shadow-[0_24px_50px_-20px_rgba(59,13,24,0.45)] ring-1 ring-line sm:h-[26rem] lg:h-[32rem]"
+                        >
+                          <Image
+                            src={p.url}
+                            alt={copy > 0 ? "" : p.alt}
+                            fill
+                            sizes="(min-width: 1024px) 22rem, (min-width: 640px) 18rem, 15rem"
+                            className="object-cover"
+                            style={{ objectPosition: focalPosition(p) }}
+                          />
+                        </figure>
+                      )),
+                    )}
+                  </div>
+                </div>
+              )}
+              {/* Landscapes: their own section, sharing the gallery's marble so the background carries on */}
+              {galleryBanners.length > 0 && (
+                <section aria-label={gallery.title} className="mt-12 flex flex-col gap-4 px-6 md:px-12 lg:mt-20 lg:gap-6">
+                  {galleryBanners.map((p, i) => (
+                    <figure key={`${p.url}-${i}`} className="overflow-hidden shadow-[0_24px_50px_-20px_rgba(59,13,24,0.45)] ring-1 ring-line">
+                      <Image src={p.url} alt={p.alt} width={p.width} height={p.height} sizes="100vw" className="h-auto w-full" />
+                    </figure>
+                  ))}
+                </section>
+              )}
             </div>
           </section>
         )}

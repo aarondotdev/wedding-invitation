@@ -9,6 +9,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react"
+import { prefersReducedMotion } from "@/lib/motion"
 
 type RGBA = [number, number, number, number]
 
@@ -710,8 +711,8 @@ export default function GlitterCascade(props: Props) {
         const root = rootRef.current
         const canvas = canvasRef.current
         if (!root || !canvas) return
-        // Project rule: nothing moves for visitors who prefer reduced motion (a still frame is drawn)
-        const reduced = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        // A still frame is drawn only when reduced motion is respected (off by the owner's choice; see lib/motion.ts)
+        const reduced = prefersReducedMotion()
 
         // Frame (root) size in CSS px; the drawn window's height; buffer px per CSS px; the full
         // frame in buffer px; and the window's offset from the frame's top in buffer px

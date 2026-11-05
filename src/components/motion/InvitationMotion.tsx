@@ -7,6 +7,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
+import { MOTION_OK_QUERY, prefersReducedMotion } from "@/lib/motion";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPlugin);
 
@@ -14,6 +15,12 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPl
  * Animates server-rendered markup by data attributes, so all text stays in the HTML and the CMS:
  *   data-split        lines slide up from a mask when scrolled into view
  *   data-fade         fades and rises into view
+ *   data-cover-envelope / data-cover-fade   on the cover: tapping [data-cover-open] zooms the envelope
+ *                     alone (its frame stays, the text fades), flashes, then opens the page
+ *   data-intro        plays once, in page order, as soon as the invitation is opened (or on load without
+ *                     a cover): "mark" settles in from a soft blur, "chars" brings letters up one by one,
+ *                     "type" is typed letter by letter,
+ *                     "spread" closes in from wide letter-spacing; anything else fades and rises
  *   data-reveal       image unmasks from the bottom while its photo settles from a zoom
  *   data-parallax     drifts slower than the page (value = strength, e.g. "12")
  *   data-drift        collage tile floats against the scroll, wide screens only (value = strength, sign = direction)
@@ -22,7 +29,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, DrawSVGPl
  *   data-draw         SVG paths draw themselves
  *   data-hscroll      section pins and its [data-hscroll-track] scrolls sideways (wide screens only)
  *   data-colorize     image turns from black-and-white to colour as it comes into view
- * Nothing moves when the visitor prefers reduced motion. Smooth scrolling is desktop-only.
+ * Animations also play with the device's reduced-motion setting (see lib/motion.ts). Smooth scrolling is desktop-only.
  */
 export default function InvitationMotion({
   header,
@@ -41,6 +48,8 @@ export default function InvitationMotion({
 }) {
   const root = useRef<HTMLDivElement>(null);
   const [coverOpen, setCoverOpen] = useState(!cover);
+  // Read inside GSAP callbacks, which don't see state updates
+  const opened = useRef(!cover);
 
   // Behind a cover the page must always open from the top: stop the browser restoring the
   // previous scroll position on refresh, and reset it when the cover is opened.
@@ -96,15 +105,45 @@ export default function InvitationMotion({
           const open = () => {
             ScrollSmoother.get()?.scrollTop(0);
             window.scrollTo(0, 0);
+            opened.current = true;
             setCoverOpen(true);
             document.dispatchEvent(new CustomEvent("invitation-opened"));
           };
-          // Let the envelope beat once (see the cover's data-beating styles) before the page opens
-          if (matchMedia("(prefers-reduced-motion: reduce)").matches) open();
-          else if (!openButton.hasAttribute("data-beating")) {
-            openButton.setAttribute("data-beating", "");
-            window.setTimeout(open, 1000);
+          if (prefersReducedMotion()) {
+            open();
+            return;
           }
+          if (openButton.hasAttribute("data-opening")) return; // already on its way in
+          openButton.setAttribute("data-opening", "");
+
+          // Zoom into the envelope, flash, then open the page while the flash fades away.
+          // The flash lives on <body> so it outlasts the cover, which unmounts when the page opens.
+          const cover = openButton.closest<HTMLElement>("[role=dialog]") ?? openButton;
+          const envelope = cover.querySelector<HTMLElement>("[data-cover-envelope]");
+          const others = [...cover.querySelectorAll<HTMLElement>("[data-cover-fade]")];
+          const flash = document.createElement("div");
+          flash.setAttribute("aria-hidden", "true");
+          Object.assign(flash.style, {
+            position: "fixed",
+            inset: "0",
+            zIndex: "200",
+            pointerEvents: "none",
+            opacity: "0",
+            background: "radial-gradient(circle at 50% 50%, #fffdf6 0%, #fff4dc 45%, #f3dca0 100%)",
+          });
+          document.body.appendChild(flash);
+
+          // Slow and soft throughout: the envelope drifts larger with a gentle start and finish while
+          // the text fades, a warm light blooms over its last moments, and the page opens behind it
+          const tl = gsap.timeline({ onComplete: () => flash.remove() });
+          tl.to(others, { autoAlpha: 0, duration: 0.8, ease: "sine.out" }, 0);
+          if (envelope) {
+            // Only the envelope (not its frame), from its centre
+            tl.to(envelope, { scale: 1.5, duration: 2.4, ease: "power2.inOut", transformOrigin: "50% 50%" }, 0);
+          }
+          tl.to(flash, { opacity: 1, duration: 0.6, ease: "sine.in" }, envelope ? 1.8 : 0)
+            .call(open)
+            .to(flash, { opacity: 0, duration: 1.3, ease: "sine.out" }, "+=0.15");
           return;
         }
 
@@ -114,7 +153,7 @@ export default function InvitationMotion({
         event.preventDefault();
         const smoother = ScrollSmoother.get();
         if (smoother) smoother.scrollTo(target, true, "top 72px");
-        else target.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+        else target.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
       });
       root.current!.addEventListener("click", onClick);
 
@@ -129,9 +168,10 @@ export default function InvitationMotion({
 
         mm.add(
           {
-            motion: "(prefers-reduced-motion: no-preference)",
-            wide: "(prefers-reduced-motion: no-preference) and (min-width: 1024px)",
-            smooth: "(prefers-reduced-motion: no-preference) and (min-width: 1024px) and (pointer: fine)",
+            // MOTION_OK_QUERY: animations play even with the device's reduced-motion setting (see lib/motion.ts)
+            motion: MOTION_OK_QUERY,
+            wide: `${MOTION_OK_QUERY} and (min-width: 1024px)`,
+            smooth: `${MOTION_OK_QUERY} and (min-width: 1024px) and (pointer: fine)`,
           },
           (ctx) => {
             const { motion, wide, smooth } = ctx.conditions as { motion: boolean; wide: boolean; smooth: boolean };
@@ -170,6 +210,61 @@ export default function InvitationMotion({
                 scrollTrigger: { trigger: el, start: "top 90%", once: true },
               });
             });
+
+            // Hero entrance: one timeline in page order, held until the envelope is opened so it
+            // isn't spent behind the cover
+            const introEls = q<HTMLElement>("[data-intro]");
+            if (introEls.length) {
+              const intro = gsap.timeline({ paused: true });
+              let previousTyped = false;
+              introEls.forEach((el, i) => {
+                const typed = el.dataset.intro === "type";
+                // A short beat, then each step starts while the previous one settles; typing starts early,
+                // over the logo, and a typed line that follows another carries straight on
+                const at = i === 0 ? 0.15 : typed ? (previousTyped ? "+=0.05" : "-=1.1") : "-=0.75";
+                previousTyped = typed;
+                switch (el.dataset.intro) {
+                  case "mark":
+                    intro.from(el, { autoAlpha: 0, scale: 0.82, y: 24, filter: "blur(14px)", duration: 1.6, ease: "expo.out" }, at);
+                    break;
+                  case "chars": {
+                    const split = SplitText.create(el, { type: "chars" });
+                    cleanups.push(() => split.revert());
+                    intro.from(split.chars, { autoAlpha: 0, yPercent: 70, filter: "blur(6px)", duration: 1, stagger: 0.045, ease: "power3.out" }, at);
+                    break;
+                  }
+                  case "type": {
+                    // Typed on a keyboard: letters pop in one at a time at a quick, slightly uneven pace
+                    const split = SplitText.create(el, { type: "chars" });
+                    const chars = split.chars as HTMLElement[];
+                    cleanups.push(() => split.revert());
+                    gsap.set(chars, { autoAlpha: 0 });
+                    intro.addLabel(`type${i}`, at);
+                    let t = intro.labels[`type${i}`];
+                    chars.forEach((c, n) => {
+                      intro.set(c, { autoAlpha: 1 }, t);
+                      // A slightly longer pause at the end of a word, as a typist would before the space
+                      const after = c.nextSibling;
+                      const wordEnd = !after || (after.nodeType === Node.TEXT_NODE && /\s/.test(after.textContent ?? ""));
+                      t += 0.035 + Math.random() * 0.03 + (wordEnd && n < chars.length - 1 ? 0.06 : 0);
+                    });
+                    break;
+                  }
+                  case "spread":
+                    intro.from(el, { autoAlpha: 0, letterSpacing: "0.9em", duration: 1.4, ease: "power3.out" }, at);
+                    break;
+                  default:
+                    intro.from(el, { autoAlpha: 0, y: 30, duration: 1.2, ease: "power3.out" }, at);
+                }
+              });
+              // `from` tweens apply their start state now, so the elements stay hidden until played
+              const play = () => intro.play();
+              if (opened.current) play();
+              else {
+                document.addEventListener("invitation-opened", play, { once: true });
+                cleanups.push(() => document.removeEventListener("invitation-opened", play));
+              }
+            }
 
             q<HTMLElement>("[data-reveal]").forEach((el) => {
               const img = el.querySelector("img");

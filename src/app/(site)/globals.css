@@ -76,9 +76,42 @@ body {
    removed by InvitationMotion, or after 3 s by the inline fallback if scripts never run. */
 html.motion-pending [data-split],
 html.motion-pending [data-fade],
+html.motion-pending [data-intro],
 html.motion-pending [data-reveal] {
   visibility: hidden;
 }
+
+/* Gallery: photos glide right to left in a seamless loop. The track holds the photos three times and
+   moves by exactly one copy (0 to -33.333%), so the end lines up with the start, and the two copies
+   still in view cover even very wide screens when there are only a few photos. Edges fade out softly. */
+.gallery-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.gallery-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 1rem;
+  padding-right: 1rem; /* matches the gap, so the copies are spaced like every other photo */
+  animation: gallery-marquee var(--marquee-duration, 60s) linear infinite;
+}
+.gallery-marquee:hover .gallery-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes gallery-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.3333%); }
+}
+@media (min-width: 1024px) {
+  .gallery-marquee-track { gap: 1.5rem; padding-right: 1.5rem; }
+}
+/* The gallery slides even with the device's reduced-motion setting (the owner's choice; see
+   src/lib/motion.ts). To respect it again, also restore this still version:
+   @media (prefers-reduced-motion: reduce) {
+     .gallery-marquee { overflow-x: auto; mask-image: none; padding-inline: 1.5rem; }
+     .gallery-marquee-track { animation: none; }
+     .gallery-marquee-track [data-marquee-copy] { display: none; }
+   } */
 
 /* SplitText line masks */
 .split-line-mask {

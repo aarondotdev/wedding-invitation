@@ -104,7 +104,7 @@ export const Details: GlobalConfig = {
               type: "array",
               label: "Photos",
               labels: { singular: "Photo", plural: "Photos" },
-              admin: { description: "Shown in this order. On computers they scroll sideways; leave empty to hide the gallery." },
+              admin: { description: "Slide slowly across the screen from right to left, in this order, on a loop. Tall (portrait) photos fit best. The list loops, so a repeating pattern (e.g. 3 outfits in turn) works best with a multiple of 3 photos. Leave empty to hide the gallery." },
               fields: [{ name: "photo", type: "upload", relationTo: "media", required: true, label: "Photo" }],
             },
           ],

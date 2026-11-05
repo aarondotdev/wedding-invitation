@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /**
  * Live version of the hero's gold-dust photo, drawn in WebGL: a dense band of dust across the
@@ -172,7 +173,7 @@ export default function HeroParticles({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     const gl = canvas.getContext("webgl", { alpha: true, antialias: false, depth: false, premultipliedAlpha: true });
     if (!gl) return;
     const dustProg = link(gl, DUST_VERT, DUST_FRAG);

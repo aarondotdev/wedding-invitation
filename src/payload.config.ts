@@ -25,6 +25,9 @@ export default buildConfig({
     meta: { titleSuffix: " · Wedding CMS" },
   },
   collections: [Users, Media, Wishes],
+  // Full-size camera photos can be over Payload's default 20 MB. (On Vercel, uploads through the
+  // server are still capped at about 4.5 MB by the platform.)
+  upload: { limits: { fileSize: 50 * 1024 * 1024 } },
   globals: [Wedding, PageText, Entourage, Details, Seo],
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },

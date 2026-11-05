@@ -149,8 +149,13 @@ export async function getEntourage(): Promise<Entourage> {
   };
 }
 
+// Landscape photos shown full width below the gallery, by their Description in the Images library
+// (the owner names landscape uploads L1, L2, ...). Kept in code so no database change was needed;
+// a photo missing from the library is simply skipped.
+const LANDSCAPE_BANNERS = ["L8", "L2", "L11", "L5", "L3", "L16", "L12"];
+
 // Cached until "Guest details" is saved (or an image changes).
-export async function getDetails(): Promise<Details & { dressCodePhoto: GalleryPhoto | null; galleryPhotos: GalleryPhoto[] }> {
+export async function getDetails(): Promise<Details & { dressCodePhoto: GalleryPhoto | null; galleryPhotos: GalleryPhoto[]; galleryBanners: GalleryPhoto[] }> {
   "use cache";
   cacheLife("max");
   cacheTag(DETAILS_CACHE_TAG);
@@ -162,8 +167,12 @@ export async function getDetails(): Promise<Details & { dressCodePhoto: GalleryP
     faq?: { title?: string; intro?: string; items?: Array<{ question?: string; answer?: string }> };
     gallery?: { title?: string; intro?: string; photos?: Array<{ photo?: unknown }> };
   };
+  const banners = await payload.find({ collection: "media", where: { alt: { in: LANDSCAPE_BANNERS } }, depth: 0, pagination: false });
+  const galleryBanners = LANDSCAPE_BANNERS.map((alt) => toPhoto(banners.docs.find((m) => m.alt === alt))).filter(
+    (p): p is GalleryPhoto => p !== null,
+  );
   const d = detailsDefaults;
-  if (!doc.updatedAt) return { ...d, dressCodePhoto: null, galleryPhotos: [] };
+  if (!doc.updatedAt) return { ...d, dressCodePhoto: null, galleryPhotos: [], galleryBanners };
 
   return {
     dressCode: {
@@ -180,6 +189,7 @@ export async function getDetails(): Promise<Details & { dressCodePhoto: GalleryP
     gallery: { title: pick(doc.gallery?.title, d.gallery.title), intro: doc.gallery?.intro ?? "" },
     dressCodePhoto: toPhoto(doc.dressCode?.photo),
     galleryPhotos: (doc.gallery?.photos ?? []).map((p) => toPhoto(p.photo)).filter((p): p is GalleryPhoto => p !== null),
+    galleryBanners,
   };
 }
 
