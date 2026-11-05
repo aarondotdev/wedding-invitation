@@ -361,8 +361,6 @@ export default function Invitation({
           )}
           {/* Warm overlay to blend blue sky with beige */}
           <div className="pointer-events-none absolute inset-0 z-[1] mix-blend-multiply" style={{ backgroundColor: "rgba(200, 173, 127, 0.45)" }} />
-          {/* Burgundy glow from the bottom, blending the photo into the countdown band */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-40" style={{ boxShadow: "0 0 120px 80px #35090d", backgroundColor: "#35090d" }} />
           <div className="flex-1" />
           <div className="relative z-10 flex items-center justify-center px-6 py-10" style={{ backgroundColor: "#35090d" }}>
             <div data-fade className="text-center">
@@ -772,7 +770,8 @@ export default function Invitation({
                 </div>
               </div>
               {galleryPhotos.length > 0 && (
-                <div data-fade className="gallery-marquee mt-12 lg:mt-20">
+                // No data-fade here: the strip should be visible as soon as the section is (it moves anyway)
+                <div className="gallery-marquee mt-12 lg:mt-20">
                   <div className="gallery-marquee-track" style={{ "--marquee-duration": `${galleryPhotos.length * 6}s` } as React.CSSProperties}>
                     {[0, 1, 2].map((copy) =>
                       galleryPhotos.map((p, i) => (
@@ -780,12 +779,16 @@ export default function Invitation({
                           key={`${copy}-${p.url}-${i}`}
                           aria-hidden={copy > 0 || undefined}
                           data-marquee-copy={copy > 0 ? "" : undefined}
-                          className="relative aspect-[2/3] h-[22rem] shrink-0 overflow-hidden shadow-[0_24px_50px_-20px_rgba(59,13,24,0.45)] ring-1 ring-line sm:h-[26rem] lg:h-[32rem]"
+                          className="relative aspect-[2/3] h-[22rem] shrink-0 overflow-hidden bg-[#d9c9b4] shadow-[0_24px_50px_-20px_rgba(59,13,24,0.45)] ring-1 ring-line sm:h-[26rem] lg:h-[32rem]"
                         >
                           <Image
                             src={p.url}
                             alt={copy > 0 ? "" : p.alt}
                             fill
+                            // Load every photo up front: lazy loading can't tell when a photo is about to
+                            // slide in, so photos arrived blank. The repeat copies reuse the same files.
+                            loading="eager"
+                            fetchPriority="low"
                             sizes="(min-width: 1024px) 22rem, (min-width: 640px) 18rem, 15rem"
                             className="object-cover"
                             style={{ objectPosition: focalPosition(p) }}

@@ -94,6 +94,9 @@ html.motion-pending [data-reveal] {
   gap: 1rem;
   padding-right: 1rem; /* matches the gap, so the copies are spaced like every other photo */
   animation: gallery-marquee var(--marquee-duration, 60s) linear infinite;
+  /* Keeps the moving strip on its own GPU layer, so Safari doesn't drop the photos while it slides */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 .gallery-marquee:hover .gallery-marquee-track {
   animation-play-state: paused;
