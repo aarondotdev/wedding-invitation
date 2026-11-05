@@ -152,7 +152,7 @@ export async function getEntourage(): Promise<Entourage> {
 // Landscape photos shown full width below the gallery, by their Description in the Images library
 // (the owner names landscape uploads L1, L2, ...). Kept in code so no database change was needed;
 // a photo missing from the library is simply skipped.
-const LANDSCAPE_BANNERS = ["L8", "L2", "L11", "L5", "L3", "L16", "L12"];
+const LANDSCAPE_BANNERS = ["no monte", "L2", "L11", "L5", "L3", "L16", "L12"];
 
 // Cached until "Guest details" is saved (or an image changes).
 export async function getDetails(): Promise<Details & { dressCodePhoto: GalleryPhoto | null; galleryPhotos: GalleryPhoto[]; galleryBanners: GalleryPhoto[] }> {
