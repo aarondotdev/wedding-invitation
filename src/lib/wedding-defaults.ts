@@ -29,12 +29,12 @@ export const weddingDefaults = {
     },
   ],
   schedule: [
-    { time: "1:30 PM", item: "Arrival" },
-    { time: "2:00 PM", item: "Ceremony" },
-    { time: "4:00 PM", item: "Reception" },
-    { time: "5:00 PM", item: "Start of the Program" },
-    { time: "7:00 PM", item: "Dinner" },
-    { time: "8:00 PM", item: "End of the Program" },
+    { time: "1:00 PM", item: "Church Arrival" },
+    { time: "1:30 PM", item: "Wedding Ceremony" },
+    { time: "4:00 PM", item: "Reception Gathering" },
+    { time: "5:00 PM", item: "Celebration Program" },
+    { time: "7:30 PM", item: "Celebratory Dinner" },
+    { time: "8:30 PM", item: "Farewell & Send-off" },
   ],
   dressCode: "Garden formal — soft pastels welcome",
 };

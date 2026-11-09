@@ -49,7 +49,7 @@ export const entourageDefaults = {
     { title: "To light our path (Candle)", names: ["Candle Sponsor Name", "Candle Sponsor Name"] },
     { title: "Ring Bearer", names: ["Luis Caleb Alvarez"] },
     { title: "Bible Bearer", names: ["Christian Andaya"] },
-    { title: "Coin Bearer", names: ["Rhian Kay Sarmiento"] },
+    { title: "Coin Bearer", names: ["Ghian Kay Sarmiento"] },
     { title: "Flower Girls", names: ["Flower Girl Name", "Flower Girl Name"] },
   ] as NameGroup[],
 };
