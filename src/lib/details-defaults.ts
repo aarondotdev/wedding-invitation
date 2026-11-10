@@ -41,7 +41,7 @@ export const entourageDefaults = {
   } as NameGroup,
   entourage: [
     { title: "Best Man", names: ["Mr. David Andrew Malabanan"] },
-    { title: "Maid of Honour", names: ["Maid of Honour Name"] },
+    { title: "Maid of Honor", names: ["Maid of Honor Name"] },
     { title: "Groomsmen", names: groomsmenNames },
     { title: "Bridesmaids", names: ["Bridesmaid Name", "Bridesmaid Name", "Bridesmaid Name"] },
     { title: "To clothe us as one (Veil)", names: ["Veil Sponsor Name", "Veil Sponsor Name"] },
@@ -102,7 +102,7 @@ export const detailsDefaults = {
   },
   gallery: {
     title: "Gallery",
-    intro: "A few of our favourite memories together",
+    intro: "A few of our favourite memories together.",
   },
 };
 

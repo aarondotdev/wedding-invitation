@@ -18,6 +18,10 @@ export const Media: CollectionConfig = {
   admin: { useAsTitle: "alt", description: "Photos used on the website." },
   upload: {
     mimeTypes: ["image/*"],
+    // Shrink camera originals (often 6000px, 10-25 MB) to at most 2560px on the long side when
+    // uploaded. The site never shows a photo wider than 1920px, and smaller originals make the
+    // resized copies guests download much quicker to produce.
+    resizeOptions: { width: 2560, height: 2560, fit: "inside", withoutEnlargement: true },
   },
   hooks: {
     afterChange: [refreshPagesUsingImages],

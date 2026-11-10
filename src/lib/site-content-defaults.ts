@@ -15,7 +15,7 @@ export const pageTextDefaults = {
     close: "Close",
   },
   cover: {
-    title: "You're invited",
+    title: "You're Invited!",
   },
   hero: {
     greeting: "Dear {name},",

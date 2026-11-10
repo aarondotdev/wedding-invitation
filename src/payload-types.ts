@@ -852,7 +852,7 @@ export interface Entourage {
       | null;
   };
   /**
-   * Best man, maid of honour, groomsmen, bridesmaids, secondary sponsors, bearers and flower girls. Add, remove or reorder groups freely.
+   * Best man, maid of honor, groomsmen, bridesmaids, secondary sponsors, bearers and flower girls. Add, remove or reorder groups freely.
    */
   entourage?:
     | {
@@ -873,7 +873,7 @@ export interface Entourage {
       }[]
     | null;
   /**
-   * Script heading above the best man and maid of honour, e.g. "Secondary Sponsors".
+   * Script heading above the best man and maid of honor, e.g. "Secondary Sponsors".
    */
   secondaryTitle?: string | null;
   /**

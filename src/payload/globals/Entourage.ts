@@ -77,7 +77,7 @@ export const Entourage: GlobalConfig = {
     groupsField(
       "entourage",
       "Entourage",
-      "Best man, maid of honour, groomsmen, bridesmaids, secondary sponsors, bearers and flower girls. Add, remove or reorder groups freely.",
+      "Best man, maid of honor, groomsmen, bridesmaids, secondary sponsors, bearers and flower girls. Add, remove or reorder groups freely.",
       entourageDefaults.entourage,
     ),
     {
@@ -85,7 +85,7 @@ export const Entourage: GlobalConfig = {
       type: "text",
       label: "Secondary sponsors heading",
       defaultValue: entourageDefaults.secondaryTitle,
-      admin: { description: "Script heading above the best man and maid of honour, e.g. \"Secondary Sponsors\"." },
+      admin: { description: "Script heading above the best man and maid of honor, e.g. \"Secondary Sponsors\"." },
     },
     {
       name: "littleOnesTitle",

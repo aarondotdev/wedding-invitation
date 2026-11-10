@@ -225,7 +225,7 @@ export default function Invitation({
             .group:not([data-opening]) .envelope-beat:hover, .group:not([data-opening]):focus-visible .envelope-beat { animation: envelope-beat 0.7s ease-in-out 1; }`}</style>
             {/* Gilded oval frame with roses, with the envelope in the middle of the oval; sized to fit the screen height beside the title and caption (on computers it leaves room for the space above the title) */}
             <span aria-hidden className="relative my-4 block w-[min(24rem,84vw,calc((100svh_-_13rem)*1200/1491))] lg:w-[min(40rem,calc((100svh_-_15.5rem)*1200/1491))]" style={{ aspectRatio: "1200 / 1491" }}>
-              <Image src="/images/cover-frame-v1.webp" alt="" fill priority unoptimized className="pointer-events-none object-contain" style={{ filter: "drop-shadow(0 14px 18px rgba(15, 0, 3, 0.6))" }} />
+              <Image src="/images/cover-frame-v1.webp" alt="" fill priority quality={90} sizes="(min-width: 1024px) 40rem, 84vw" className="pointer-events-none object-contain" style={{ filter: "drop-shadow(0 14px 18px rgba(15, 0, 3, 0.6))" }} />
               {/* Only the envelope zooms when tapped, before the flash; the frame stays put (InvitationMotion, data-cover-envelope) */}
               <span data-cover-envelope className="envelope-beat absolute block drop-shadow-2xl" style={{ left: "21%", top: "6.2%", width: "60%", aspectRatio: "375 / 666" }}>
                 {/* Couple photo where the letter paper was; the envelope (paper keyed out) sits on top */}
@@ -233,10 +233,10 @@ export default function Invitation({
                   {text.photos.cover ? (
                     <Image src={text.photos.cover.url} alt="" fill priority sizes="12rem" className="object-cover" style={{ objectPosition: focalPosition(text.photos.cover) }} />
                   ) : (
-                    <Image src="/images/cover-envelope-photo-v2.jpg" alt="" fill priority unoptimized className="object-cover" style={{ objectPosition: "55% 47%" }} />
+                    <Image src="/images/cover-envelope-photo-v2.jpg" alt="" fill priority sizes="12rem" className="object-cover" style={{ objectPosition: "55% 47%" }} />
                   )}
                 </span>
-                <Image src="/images/cover-envelope-open-v2.png" alt="" fill priority unoptimized sizes="20rem" className="object-contain" />
+                <Image src="/images/cover-envelope-open-v2.png" alt="" fill priority quality={90} sizes="(min-width: 1024px) 24rem, 51vw" className="object-contain" />
               </span>
             </span>
             <span data-cover-fade className="text-xs font-medium uppercase tracking-[0.3em] text-[#d4ae62] transition-colors group-hover:text-[#f6eee3]">Tap to open your invitation</span>
@@ -290,7 +290,7 @@ export default function Invitation({
               {/* Stationary: no reveal or zoom on scroll */}
               <div className="relative h-[calc(min(90svh,62rem)-5px)] aspect-square w-auto max-w-[110vw] sm:max-w-[95vw] md:max-w-[50rem]">
                 <Image
-                  src="/images/couple-hero-v2.png"
+                  src="/images/couple-hero-v3.webp"
                   alt="Lorenz and Jenzell"
                   fill
                   priority
@@ -354,7 +354,6 @@ export default function Invitation({
               src="/images/celebration-feature.jpg"
               alt="Lorenz and Jenzell on the crescent-moon bridge"
               fill
-              unoptimized
               sizes="100vw"
               data-parallax
               className="object-cover scale-110"

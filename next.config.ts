@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
   images: {
     // CMS uploads are served from Vercel Blob
     remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
+    // Fewer widths means fewer resized copies to make, so more guests get one that's already cached.
+    // 1920 is the largest: full-screen photos stay sharp on laptops without 3840px downloads.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    // 90 for the gilded cover frame and envelope, where 75 shows banding
+    qualities: [75, 90],
+    // Keep resized copies for 31 days. CMS uploads get a new file name when replaced, so a long
+    // cache never shows an outdated photo.
+    minimumCacheTTL: 2678400,
   },
   experimental: {
     // Guest list uploads are capped at 2 MB in the import action; leave room for multipart overhead
