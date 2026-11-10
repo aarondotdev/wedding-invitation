@@ -14,6 +14,7 @@ import * as migration_20261104_011138_add_entourage_photo from './20261104_01113
 import * as migration_20261104_013146_add_secondary_title from './20261104_013146_add_secondary_title';
 import * as migration_20261110_081111_cover_title_exclamation from './20261110_081111_cover_title_exclamation';
 import * as migration_20261110_092840_entourage_intro_honor from './20261110_092840_entourage_intro_honor';
+import * as migration_20261110_093308_gallery_intro_favorite from './20261110_093308_gallery_intro_favorite';
 
 export const migrations = [
   {
@@ -94,6 +95,11 @@ export const migrations = [
   {
     up: migration_20261110_092840_entourage_intro_honor.up,
     down: migration_20261110_092840_entourage_intro_honor.down,
-    name: '20261110_092840_entourage_intro_honor'
+    name: '20261110_092840_entourage_intro_honor',
+  },
+  {
+    up: migration_20261110_093308_gallery_intro_favorite.up,
+    down: migration_20261110_093308_gallery_intro_favorite.down,
+    name: '20261110_093308_gallery_intro_favorite'
   },
 ];

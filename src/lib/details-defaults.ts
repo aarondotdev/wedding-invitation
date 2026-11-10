@@ -102,7 +102,7 @@ export const detailsDefaults = {
   },
   gallery: {
     title: "Gallery",
-    intro: "A few of our favourite memories together.",
+    intro: "A few of our favorite memories together.",
   },
 };
 
