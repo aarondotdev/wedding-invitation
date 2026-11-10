@@ -17,7 +17,7 @@ export const groomsmenNames = [
 
 export const entourageDefaults = {
   title: "THE ENTOURAGE",
-  intro: "With grateful hearts, we honour the people who guide us and stand beside us on our wedding day.",
+  intro: "With grateful hearts, we honor the people who guide us and stand beside us on our wedding day.",
   parents: [
     { title: "Parents of the Groom", names: ["Mr. Father of the Groom", "Mrs. Mother of the Groom"] },
     { title: "Parents of the Bride", names: ["Mr. Father of the Bride", "Mrs. Mother of the Bride"] },
