@@ -16,6 +16,7 @@ import * as migration_20261110_081111_cover_title_exclamation from './20261110_0
 import * as migration_20261110_092840_entourage_intro_honor from './20261110_092840_entourage_intro_honor';
 import * as migration_20261110_093308_gallery_intro_favorite from './20261110_093308_gallery_intro_favorite';
 import * as migration_20261111_235915_rsvp_message_placeholder from './20261111_235915_rsvp_message_placeholder';
+import * as migration_20261112_032259_rsvp_submit_response from './20261112_032259_rsvp_submit_response';
 
 export const migrations = [
   {
@@ -106,6 +107,11 @@ export const migrations = [
   {
     up: migration_20261111_235915_rsvp_message_placeholder.up,
     down: migration_20261111_235915_rsvp_message_placeholder.down,
-    name: '20261111_235915_rsvp_message_placeholder'
+    name: '20261111_235915_rsvp_message_placeholder',
+  },
+  {
+    up: migration_20261112_032259_rsvp_submit_response.up,
+    down: migration_20261112_032259_rsvp_submit_response.down,
+    name: '20261112_032259_rsvp_submit_response'
   },
 ];

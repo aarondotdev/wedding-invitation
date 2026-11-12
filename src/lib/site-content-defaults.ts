@@ -57,7 +57,7 @@ export const pageTextDefaults = {
     guestCountLabel: "Number of guests attending",
     messagePlaceholder: "Please note any food allergies or dietary restrictions",
     sendButton: "Send RSVP",
-    updateButton: "Update RSVP",
+    updateButton: "Submit response",
     sendingButton: "Sending…",
   },
   rsvpMessages: {
