@@ -15,9 +15,9 @@ const guestCount = (n: number, labels: Labels) =>
   `${n} ${n === 1 ? labels.guestSingular : labels.guestPlural}`;
 
 function RecordedResponse({ guest, labels, messages }: { guest: Guest; labels: Labels; messages: Messages }) {
-  if (guest.attending === null) return <p>{messages.noResponse}</p>;
-  if (!guest.attending) return <p>{messages.recordedDeclined}</p>;
-  return <p>{fill(messages.recordedAttending, { count: guestCount(guest.guest_count ?? 0, labels) })}</p>;
+  if (guest.attending === null) return <p className="font-(family-name:--ff-inria-serif)">{messages.noResponse}</p>;
+  if (!guest.attending) return <p className="font-(family-name:--ff-inria-serif)">{messages.recordedDeclined}</p>;
+  return <p className="font-(family-name:--ff-inria-serif)">{fill(messages.recordedAttending, { count: guestCount(guest.guest_count ?? 0, labels) })}</p>;
 }
 
 // A large selectable card around a real (visually hidden) radio button, so keyboard and screen
@@ -70,14 +70,14 @@ export default function RsvpForm({
     return (
       <div className="mx-auto max-w-md space-y-4 text-center text-xl">
         <RecordedResponse guest={guest} labels={labels} messages={messages} />
-        <p className="text-lg italic text-muted">{messages.closed}</p>
+        <p className="font-(family-name:--ff-inria-serif) text-lg italic text-muted">{messages.closed}</p>
       </div>
     );
   }
 
   if (state.status === "success") {
     return (
-      <p className="text-center font-display text-3xl leading-snug md:text-4xl">
+      <p className="text-center font-(family-name:--ff-inria-serif) text-3xl leading-snug md:text-4xl">
         {fill(state.attending ? messages.thanksAttending : messages.thanksDeclined, { name: guest.name })}
       </p>
     );

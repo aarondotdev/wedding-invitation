@@ -15,6 +15,7 @@ import * as migration_20261104_013146_add_secondary_title from './20261104_01314
 import * as migration_20261110_081111_cover_title_exclamation from './20261110_081111_cover_title_exclamation';
 import * as migration_20261110_092840_entourage_intro_honor from './20261110_092840_entourage_intro_honor';
 import * as migration_20261110_093308_gallery_intro_favorite from './20261110_093308_gallery_intro_favorite';
+import * as migration_20261111_235915_rsvp_message_placeholder from './20261111_235915_rsvp_message_placeholder';
 
 export const migrations = [
   {
@@ -100,6 +101,11 @@ export const migrations = [
   {
     up: migration_20261110_093308_gallery_intro_favorite.up,
     down: migration_20261110_093308_gallery_intro_favorite.down,
-    name: '20261110_093308_gallery_intro_favorite'
+    name: '20261110_093308_gallery_intro_favorite',
+  },
+  {
+    up: migration_20261111_235915_rsvp_message_placeholder.up,
+    down: migration_20261111_235915_rsvp_message_placeholder.down,
+    name: '20261111_235915_rsvp_message_placeholder'
   },
 ];
