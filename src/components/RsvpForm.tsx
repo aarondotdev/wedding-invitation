@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState, type FormEvent } from "react";
 import { submitRsvp, type RsvpState } from "@/app/(site)/i/[code]/actions";
 import { fill, type PageText } from "@/lib/site-content-defaults";
 import type { Guest } from "@/lib/supabase";
@@ -85,8 +85,21 @@ export default function RsvpForm({
 
   const defaultAttending = guest.attending === null ? undefined : guest.attending ? "yes" : "no";
 
+  // Many guests tap "Joyfully Accept" / "Regretfully Decline" and never press Submit, so the
+  // choice is saved as soon as it's picked (with the current guest count and message). The form
+  // stays open so they can still adjust the count or add a note and press Submit.
+  const saveChoice = (event: FormEvent<HTMLFormElement>) => {
+    const target = event.target as HTMLInputElement;
+    if (target.name !== "attending") return;
+    const data = new FormData(event.currentTarget);
+    startTransition(async () => {
+      const result = await submitRsvp(guest.code, { status: "idle" }, data);
+      if (result.status === "error") console.error("RSVP auto-save failed", result.message);
+    });
+  };
+
   return (
-    <form action={formAction} className="mx-auto grid max-w-xl gap-8">
+    <form action={formAction} onChange={saveChoice} className="mx-auto grid max-w-xl gap-8">
       <div className="grid grid-cols-1 gap-3 sm:gap-4">
         <ChoiceCard
           value="yes"
