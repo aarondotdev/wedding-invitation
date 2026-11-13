@@ -11,6 +11,7 @@ import {
   type GuestInput,
 } from "@/lib/guests";
 import { supabaseAdmin } from "@/lib/supabase";
+import { renameWishAuthor } from "@/lib/wishes";
 
 export type FormState =
   | { status: "idle" }
@@ -86,6 +87,14 @@ export async function updateGuest(
 
   const { error } = await db.from("guests").update(result.guest).eq("id", id);
   if (error) return { status: "error", message: error.message };
+
+  try {
+    await renameWishAuthor(id, result.guest.name);
+  } catch (wishError) {
+    console.error("Updating the well-wish name failed", wishError);
+    refresh();
+    return { status: "error", message: "Saved the guest, but couldn't update their name on Well Wishes. Try saving again." };
+  }
 
   refresh();
   return { status: "success", message: "Saved." };

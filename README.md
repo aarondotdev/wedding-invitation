@@ -51,7 +51,7 @@ Everything visitors read or see is changed here. You don't need to touch any cod
 
 **Changing the link-preview photo:** in *Sharing & SEO*, click **Preview image**, upload a photo and give it a description. A wide photo works best (1200 × 630 pixels, faces near the middle). Chat apps keep old previews for links shared before, so new links show the new photo right away and older ones may take a while.
 
-**Guest messages (Well wishes):** guests can leave a congratulations message on their invitation, and every guest sees the messages (newest first, with the guest's name). Each guest has one message; posting again replaces it. The wording of the section is in *Page text → Well wishes*. The messages themselves are listed in `/cms` under **Well wishes**: open one and tick **Hide from the invitation** to take it down (or delete it). You can also fix a typo there.
+**Guest messages (Well wishes):** guests can leave a congratulations message on their invitation, and every guest sees the messages (newest first, with the guest's name). Each guest has one message; posting again replaces it. The wording of the section is in *Page text → Well wishes*. The messages themselves are listed in `/cms` under **Well wishes**: open one and tick **Hide from the invitation** to take it down (or delete it). You can also fix a typo there. The name shown follows the guest list: when you change a guest's name in the Guest Admin (`/admin/guests`) and save, their message shows the new name too.
 
 **Adding someone who can edit:** in `/cms`, open **Users** and click **Create New**. This is separate from the guest admin login.
 

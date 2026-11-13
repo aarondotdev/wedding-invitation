@@ -38,6 +38,18 @@ export const listWishes = cache(async (): Promise<Wish[]> => {
   }));
 });
 
+// Keeps the name on a guest's message in step with the guest list (called when the admin saves a
+// guest). Runs on every save, so re-saving a guest also fixes a name changed before this existed.
+export async function renameWishAuthor(guestId: string, name: string): Promise<void> {
+  const payload = await getPayload({ config });
+  await payload.update({
+    collection: "wishes",
+    where: { and: [{ guestId: { equals: guestId } }, { name: { not_equals: name } }] },
+    data: { name },
+    depth: 0,
+  });
+}
+
 // Creates the guest's message, or replaces the one they left before (and un-hides it).
 export async function saveWish(guest: Guest, message: string): Promise<void> {
   const payload = await getPayload({ config });
